@@ -1,0 +1,11 @@
+C:\Users\Kyle\Desktop\FROSTEDBUTTS\MCLawl_.dll.config
+C:\Users\Kyle\Desktop\FROSTEDBUTTS\MCLawl_.dll
+C:\Users\Kyle\Desktop\FROSTEDBUTTS\MCLawl_.pdb
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\x86\Debug\MCLawl.Gui.PropertyWindow.resources
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\x86\Debug\MCLawl.Gui.UpdateWindow.resources
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\x86\Debug\MCLawl.Gui.Window.resources
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\x86\Debug\ResGen.read.1.tlog
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\x86\Debug\ResGen.write.1.tlog
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\x86\Debug\MCLawl_.dll
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\x86\Debug\MCLawl_.pdb

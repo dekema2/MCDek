@@ -1,0 +1,273 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A561CF37-37CA-4AD8-A74E-FC14A958214B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MCLawl</RootNamespace>
+    <AssemblyName>ScriptSupport</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\FROSTEDBUTTS\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\FROSTEDBUTTS\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AutoSaver.cs" />
+    <Compile Include="Block.cs" />
+    <Compile Include="Color.cs" />
+    <Compile Include="Commands\CmdAbort.cs" />
+    <Compile Include="Commands\CmdAbout.cs" />
+    <Compile Include="Commands\CmdAfk.cs" />
+    <Compile Include="Commands\CmdBan.cs" />
+    <Compile Include="Commands\CmdBanip.cs" />
+    <Compile Include="Commands\CmdBind.cs" />
+    <Compile Include="Commands\CmdBlocks.cs" />
+    <Compile Include="Commands\CmdBlockSet.cs" />
+    <Compile Include="Commands\CmdBotAdd.cs" />
+    <Compile Include="Commands\CmdBotAI.cs" />
+    <Compile Include="Commands\CmdBotRemove.cs" />
+    <Compile Include="Commands\CmdBots.cs" />
+    <Compile Include="Commands\CmdBotSet.cs" />
+    <Compile Include="Commands\CmdBotSummon.cs" />
+    <Compile Include="Commands\CmdClearBlockChanges.cs" />
+    <Compile Include="Commands\CmdClick.cs" />
+    <Compile Include="Commands\CmdClones.cs" />
+    <Compile Include="Commands\CmdCmdBind.cs" />
+    <Compile Include="Commands\CmdCmdCreate.cs" />
+    <Compile Include="Commands\CmdCmdSet.cs" />
+    <Compile Include="Commands\CmdColor.cs" />
+    <Compile Include="Commands\CmdCompile.cs" />
+    <Compile Include="Commands\CmdCopy.cs" />
+    <Compile Include="Commands\CmdCuboid.cs" />
+    <Compile Include="Commands\CmdDelete.cs" />
+    <Compile Include="Commands\CmdDeleteLvl.cs" />
+    <Compile Include="Commands\CmdDevs.cs" />
+    <Compile Include="Commands\CmdEmote.cs" />
+    <Compile Include="Commands\CmdFill.cs" />
+    <Compile Include="Commands\CmdFixGrass.cs" />
+    <Compile Include="Commands\CmdFlipHeads.cs" />
+    <Compile Include="Commands\CmdFly.cs" />
+    <Compile Include="Commands\CmdFollow.cs" />
+    <Compile Include="Commands\CmdFreeze.cs" />
+    <Compile Include="Commands\CmdGive.cs" />
+    <Compile Include="Commands\CmdGoto.cs" />
+    <Compile Include="Commands\CmdGun.cs" />
+    <Compile Include="Commands\CmdHacks.cs" />
+    <Compile Include="Commands\CmdHasirc.cs" />
+    <Compile Include="Commands\CmdHeartbeat.cs" />
+    <Compile Include="Commands\CmdHelp.cs" />
+    <Compile Include="Commands\CmdHide.cs" />
+    <Compile Include="Commands\CmdHighlight.cs" />
+    <Compile Include="Commands\CmdHollow.cs" />
+    <Compile Include="Commands\CmdHost.cs" />
+    <Compile Include="Commands\CmdImageprint.cs" />
+    <Compile Include="Commands\CmdInbox.cs" />
+    <Compile Include="Commands\CmdInfo.cs" />
+    <Compile Include="Commands\CmdInvincible.cs" />
+    <Compile Include="Commands\CmdJail.cs" />
+    <Compile Include="Commands\CmdJoker.cs" />
+    <Compile Include="Commands\CmdKick.cs" />
+    <Compile Include="Commands\CmdKickban.cs" />
+    <Compile Include="Commands\CmdKill.cs" />
+    <Compile Include="Commands\CmdLastCmd.cs" />
+    <Compile Include="Commands\CmdLevels.cs" />
+    <Compile Include="Commands\CmdLimit.cs" />
+    <Compile Include="Commands\CmdLine.cs" />
+    <Compile Include="Commands\CmdLoad.cs" />
+    <Compile Include="Commands\CmdLowlag.cs" />
+    <Compile Include="Commands\CmdMap.cs" />
+    <Compile Include="Commands\CmdMapInfo.cs" />
+    <Compile Include="Commands\CmdMe.cs" />
+    <Compile Include="Commands\CmdMeasure.cs" />
+    <Compile Include="Commands\CmdMegaboid.cs" />
+    <Compile Include="Commands\CmdMessageBlock.cs" />
+    <Compile Include="Commands\CmdMissile.cs" />
+    <Compile Include="Commands\CmdMode.cs" />
+    <Compile Include="Commands\CmdModerate.cs" />
+    <Compile Include="Commands\CmdMove.cs" />
+    <Compile Include="Commands\CmdMuseum.cs" />
+    <Compile Include="Commands\CmdMute.cs" />
+    <Compile Include="Commands\CmdNewLvl.cs" />
+    <Compile Include="Commands\CmdOpChat.cs" />
+    <Compile Include="Commands\CmdOutline.cs" />
+    <Compile Include="Commands\CmdPaint.cs" />
+    <Compile Include="Commands\CmdPaste.cs" />
+    <Compile Include="Commands\CmdPause.cs" />
+    <Compile Include="Commands\CmdPay.cs" />
+    <Compile Include="Commands\CmdPCount.cs" />
+    <Compile Include="Commands\CmdPermissionBuild.cs" />
+    <Compile Include="Commands\CmdPermissionVisit.cs" />
+    <Compile Include="Commands\CmdPhysics.cs" />
+    <Compile Include="Commands\CmdPlace.cs" />
+    <Compile Include="Commands\CmdPlayers.cs" />
+    <Compile Include="Commands\CmdPortal.cs" />
+    <Compile Include="Commands\CmdRainbow.cs" />
+    <Compile Include="Commands\CmdRedo.cs" />
+    <Compile Include="Commands\CmdRenameLvl.cs" />
+    <Compile Include="Commands\CmdRepeat.cs" />
+    <Compile Include="Commands\CmdReplace.cs" />
+    <Compile Include="Commands\CmdReplaceAll.cs" />
+    <Compile Include="Commands\CmdReplaceNot.cs" />
+    <Compile Include="Commands\CmdResetBot.cs" />
+    <Compile Include="Commands\cmdRestart.cs" />
+    <Compile Include="Commands\CmdRestartPhysics.cs" />
+    <Compile Include="Commands\CmdRestore.cs" />
+    <Compile Include="Commands\CmdRetrieve.cs" />
+    <Compile Include="Commands\CmdReveal.cs" />
+    <Compile Include="Commands\CmdRide.cs" />
+    <Compile Include="Commands\CmdRoll.cs" />
+    <Compile Include="Commands\CmdRules.cs" />
+    <Compile Include="Commands\CmdSave.cs" />
+    <Compile Include="Commands\CmdSay.cs" />
+    <Compile Include="Commands\CmdSend.cs" />
+    <Compile Include="Commands\CmdServerReport.cs" />
+    <Compile Include="Commands\CmdSetRank.cs" />
+    <Compile Include="Commands\CmdSetspawn.cs" />
+    <Compile Include="Commands\CmdSlap.cs" />
+    <Compile Include="Commands\CmdSpawn.cs" />
+    <Compile Include="Commands\CmdSpheroid.cs" />
+    <Compile Include="Commands\CmdSpin.cs" />
+    <Compile Include="Commands\CmdStairs.cs" />
+    <Compile Include="Commands\CmdStatic.cs" />
+    <Compile Include="Commands\CmdStore.cs" />
+    <Compile Include="Commands\CmdSummon.cs" />
+    <Compile Include="Commands\CmdTake.cs" />
+    <Compile Include="Commands\CmdTempBan.cs" />
+    <Compile Include="Commands\CmdText.cs" />
+    <Compile Include="Commands\CmdTime.cs" />
+    <Compile Include="Commands\CmdTimer.cs" />
+    <Compile Include="Commands\CmdTitle.cs" />
+    <Compile Include="Commands\CmdTnt.cs" />
+    <Compile Include="Commands\CmdTp.cs" />
+    <Compile Include="Commands\CmdTpZone.cs" />
+    <Compile Include="Commands\CmdTree.cs" />
+    <Compile Include="Commands\CmdTrust.cs" />
+    <Compile Include="Commands\CmdUnban.cs" />
+    <Compile Include="Commands\CmdUnbanip.cs" />
+    <Compile Include="Commands\CmdUndo.cs" />
+    <Compile Include="Commands\CmdUnload.cs" />
+    <Compile Include="Commands\CmdUnloaded.cs" />
+    <Compile Include="Commands\CmdUpdate.cs" />
+    <Compile Include="Commands\CmdView.cs" />
+    <Compile Include="Commands\CmdViewRanks.cs" />
+    <Compile Include="Commands\CmdVoice.cs" />
+    <Compile Include="Commands\CmdWhisper.cs" />
+    <Compile Include="Commands\CmdWhitelist.cs" />
+    <Compile Include="Commands\CmdWhoip.cs" />
+    <Compile Include="Commands\CmdWhois.cs" />
+    <Compile Include="Commands\CmdWhowas.cs" />
+    <Compile Include="Commands\CmdWrite.cs" />
+    <Compile Include="Commands\CmdZone.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandList.cs" />
+    <Compile Include="FindReference.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="GUI\Program.cs" />
+    <Compile Include="GUI\PropertyWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\PropertyWindow.Designer.cs">
+      <DependentUpon>PropertyWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\UpdateWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\UpdateWindow.Designer.cs">
+      <DependentUpon>UpdateWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Window.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Window.Designer.cs">
+      <DependentUpon>Window.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Heartbeat.cs" />
+    <Compile Include="IRCBot.cs" />
+    <Compile Include="Levels\Level.cs" />
+    <Compile Include="Levels\MapGenerator.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="Misc.cs" />
+    <Compile Include="MySQL.cs" />
+    <Compile Include="Player\Group.cs" />
+    <Compile Include="Player\Player.cs" />
+    <Compile Include="Player\PlayerBot.cs" />
+    <Compile Include="Player\PlayerList.cs" />
+    <Compile Include="Player\Team.cs" />
+    <Compile Include="Properties.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queue\Cache.cs" />
+    <Compile Include="Queue\Check.cs" />
+    <Compile Include="Queue\Enums.cs" />
+    <Compile Include="Queue\ICacheable.cs" />
+    <Compile Include="Queue\MainLoop.cs" />
+    <Compile Include="Queue\TorrentException.cs" />
+    <Compile Include="Scripting\Scripting.cs" />
+    <Compile Include="Server.cs" />
+    <Compile Include="Updater.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Meebey.SmartIrc4net, Version=0.4.0.34161, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MCLawl\Meebey.SmartIrc4net.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.3.0.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUI\PropertyWindow.resx">
+      <DependentUpon>PropertyWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\UpdateWindow.resx">
+      <DependentUpon>UpdateWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Window.resx">
+      <DependentUpon>Window.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

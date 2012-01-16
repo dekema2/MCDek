@@ -1,0 +1,10 @@
+C:\Users\Kyle\Desktop\FROSTEDBUTTS\ScriptSupport.dll
+C:\Users\Kyle\Desktop\FROSTEDBUTTS\ScriptSupport.pdb
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\Debug\MCLawl.Gui.PropertyWindow.resources
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\Debug\MCLawl.Gui.UpdateWindow.resources
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\Debug\MCLawl.Gui.Window.resources
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\Debug\ResGen.read.1.tlog
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\Debug\ResGen.write.1.tlog
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\Debug\ScriptSupport.dll
+C:\Users\Kyle\Desktop\MCLawlSource\MCLawl\obj\Debug\ScriptSupport.pdb
