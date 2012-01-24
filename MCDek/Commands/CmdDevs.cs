@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright 2010 MCLawl Team - Written by Valek
+	Copyright 2010 MCLawl Team - Written by Valek (Modified for use with MCDek
  
     Licensed under the
 	Educational Community License, Version 2.0 (the "License"); you may
@@ -40,12 +40,12 @@ namespace MCLawl
                 devlist += temp + ", ";
             }
             devlist = devlist.Remove(devlist.Length - 2);
-            Player.SendMessage(p, "&9MCLawl Development Team: " + Server.DefaultColor + devlist);
+            Player.SendMessage(p, "&9MCKat Development Team: " + Server.DefaultColor + devlist);
         }
 
         public override void Help(Player p)
         {
-            Player.SendMessage(p, "/devs - Displays the list of MCLawl developers.");
+            Player.SendMessage(p, "/devs - Displays the list of MCKat developers.");
         }
     }
 }
