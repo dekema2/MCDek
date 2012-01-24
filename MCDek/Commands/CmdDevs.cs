@@ -40,12 +40,12 @@ namespace MCLawl
                 devlist += temp + ", ";
             }
             devlist = devlist.Remove(devlist.Length - 2);
-            Player.SendMessage(p, "&9MCKat Development Team: " + Server.DefaultColor + devlist);
+            Player.SendMessage(p, "&9MCDek Development Team: " + Server.DefaultColor + devlist);
         }
 
         public override void Help(Player p)
         {
-            Player.SendMessage(p, "/devs - Displays the list of MCKat developers.");
+            Player.SendMessage(p, "/devs - Displays the list of MCDek developers.");
         }
     }
 }
