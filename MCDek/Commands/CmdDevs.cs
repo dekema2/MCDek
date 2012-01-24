@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright 2010 MCLawl Team - Written by Valek (Modified for use with MCDek
+	Copyright 2010 MCLawl Team - Written by Valek (Modified for use with MCDek)
  
     Licensed under the
 	Educational Community License, Version 2.0 (the "License"); you may
