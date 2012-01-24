@@ -78,7 +78,7 @@ namespace MCLawl
         public static PlayerList bannedIP;
         public static PlayerList whiteList;
         public static PlayerList ircControllers;
-        public static List<string> devs = new List<string>(new string[] { "lawlcat", "valek", "zallist" });
+        public static List<string> devs = new List<string>(new string[] { "Dekema2","303i" });
 
         public static List<TempBan> tempBans = new List<TempBan>();
         public struct TempBan { public string name; public DateTime allowedJoin; }
