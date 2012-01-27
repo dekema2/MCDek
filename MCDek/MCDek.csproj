@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -6,10 +6,10 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{12597DB0-7C34-4DE1-88EA-9250FF3372EB}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MCLawl</RootNamespace>
-    <AssemblyName>MCLawl</AssemblyName>
+    <AssemblyName>MCLawl_</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -54,11 +54,10 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup />
+  <PropertyGroup />
   <PropertyGroup>
-    <NoWin32Manifest>true</NoWin32Manifest>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>MCLawl.Gui.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Meebey.SmartIrc4net">
@@ -85,13 +84,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoSaver.cs" />
-    <Compile Include="Awards.cs" />
     <Compile Include="Block.cs" />
+    <Compile Include="Commands\CmdPossess.cs" />
+    <Compile Include="Commands\CmdTColor.cs" />
+    <Compile Include="Commands\CmdCmdUnload.cs" />
+    <Compile Include="Commands\CmdCmdLoad.cs" />
     <Compile Include="Commands\CmdCompile.cs" />
     <Compile Include="Commands\CmdCmdCreate.cs" />
+    <Compile Include="Commands\CmdCTF.cs" />
+    <Compile Include="Commands\CmdDrop.cs" />
     <Compile Include="Commands\CmdGun.cs" />
     <Compile Include="Commands\CmdHeartbeat.cs" />
     <Compile Include="Commands\CmdClick.cs" />
+    <Compile Include="Commands\CmdTeam.cs" />
     <Compile Include="Commands\CmdPCount.cs" />
     <Compile Include="Commands\CmdTempBan.cs" />
     <Compile Include="Commands\CmdSlap.cs" />
@@ -100,6 +105,15 @@
     <Compile Include="Commands\CmdFlipHeads.cs" />
     <Compile Include="Commands\CmdFly.cs" />
     <Compile Include="Commands\CmdMissile.cs" />
+    <Compile Include="Commands\CmdImport.cs" />
+    <Compile Include="Commands\CmdCrashServer.cs" />
+    <Compile Include="Commands\CmdPromote.cs" />
+    <Compile Include="Commands\CmdDemote.cs" />
+    <Compile Include="Commands\CmdDrill.cs" />
+    <Compile Include="Awards.cs" />
+    <Compile Include="Commands\CmdAward.cs" />
+    <Compile Include="Commands\CmdAwards.cs" />
+    <Compile Include="Commands\CmdAwardMod.cs" />
     <Compile Include="CTFGame.cs" />
     <Compile Include="FindReference.cs" />
     <Compile Include="Color.cs" />
@@ -252,7 +266,9 @@
     </Compile>
     <Compile Include="IRCBot.cs" />
     <Compile Include="Levels\Level.cs" />
+    <Compile Include="Levels\ConvertDAT.cs" />
     <Compile Include="MySQL.cs" />
+    <Compile Include="Player\Team.cs" />
     <Compile Include="Player\Group.cs" />
     <Compile Include="GUI\Program.cs" />
     <Compile Include="Heartbeat.cs" />
@@ -276,7 +292,7 @@
     <Compile Include="Queue\ICacheable.cs" />
     <Compile Include="Queue\MainLoop.cs" />
     <Compile Include="Queue\TorrentException.cs" />
-    <Compile Include="Scripting\Scripting.cs" />
+    <Compile Include="Scripting.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Updater.cs" />
     <EmbeddedResource Include="GUI\PropertyWindow.resx">
