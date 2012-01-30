@@ -1,16 +1,5 @@
 /*
-	Copyright 2010 MCSharp team (Modified for use with MCZall/MCLawl) Licensed under the
-	Educational Community License, Version 2.0 (the "License"); you may
-	not use this file except in compliance with the License. You may
-	obtain a copy of the License at
-	
-	http://www.osedu.org/licenses/ECL-2.0
-	
-	Unless required by applicable law or agreed to in writing,
-	software distributed under the License is distributed on an "AS IS"
-	BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-	or implied. See the License for the specific language governing
-	permissions and limitations under the License.
+	Copyright 2012 MCDek Team (Modified for use with MCZall/MCDek) 
 */
 using System;
 using System.Threading;
@@ -31,7 +20,7 @@ using System.Data;
 
 using MonoTorrent.Client;
 
-namespace MCLawl
+namespace MCDek
 {
     public class Server
     {
@@ -115,7 +104,7 @@ namespace MCLawl
         public const byte version = 7;
         public static string salt = "";
 
-        public static string name = "[MCLawl] Default";
+        public static string name = "[MCDek] Default";
         public static string motd = "Welcome!";
         public static byte players = 12;
         public static byte maps = 5;
@@ -137,7 +126,7 @@ namespace MCLawl
 
         public static bool irc = false;
         public static int ircPort = 6667;
-        public static string ircNick = "MCZall_Minecraft_Bot";
+        public static string ircNick = "MCDek_Minecraft_Bot";
         public static string ircServer = "irc.esper.net";
         public static string ircChannel = "#changethis";
         public static string ircOpChannel = "#changethistoo";
@@ -175,7 +164,7 @@ namespace MCLawl
         public static string MySQLPort = "3306";
         public static string MySQLUsername = "root";
         public static string MySQLPassword = "password";
-        public static string MySQLDatabaseName = "MCZallDB";
+        public static string MySQLDatabaseName = "MCDekDB";
         public static bool MySQLPooling = true;
 
         public static string DefaultColor = "&e";
