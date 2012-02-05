@@ -4,7 +4,7 @@
 
 ####General Overview
 
-MCDek is a Minecraft Classic Server software, originally forked from MCLawl on January 16, 2012. It's goals are to
+MCDek is a Minecraft Classic Server software, originally forked from MCLawl on January 16, 2012. It's goals are to:
 
 * Streamline MCLawl's command base
 * Add new commands to meet a competitive classic server software world
