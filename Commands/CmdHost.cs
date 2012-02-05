@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 
-namespace MCLawl
+namespace MCDek
 {
     public class CmdHost : Command
     {

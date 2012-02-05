@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
-namespace MCLawl
+namespace MCDek
 {
     public static class Updater
     {
