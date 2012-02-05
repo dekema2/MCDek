@@ -14,9 +14,9 @@ using System.Drawing;
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.Net;
-using MCLawl;
+using MCDek;
 
-namespace MCLawl_.Gui
+namespace MCDek_.Gui
 {
     public static class Program
     {
@@ -52,9 +52,9 @@ namespace MCLawl_.Gui
 
         public static void Main(string[] args)
         {
-            if (Process.GetProcessesByName("MCLawl").Length != 1)
+            if (Process.GetProcessesByName("MCDek").Length != 1)
             {
-                foreach (Process pr in Process.GetProcessesByName("MCLawl"))
+                foreach (Process pr in Process.GetProcessesByName("MCDek"))
                 {
                     if (pr.MainModule.BaseAddress == Process.GetCurrentProcess().MainModule.BaseAddress)
                         if (pr.Id != Process.GetCurrentProcess().Id)
@@ -96,7 +96,7 @@ namespace MCLawl_.Gui
                     s.OnSystem += Console.WriteLine;
                     s.Start();
 
-                    Console.Title = Server.name + " MCLawl Version: " + Server.Version;
+                    Console.Title = Server.name + " MCDek Version: " + Server.Version;
                     usingConsole = true;
                     handleComm(Console.ReadLine());
 
@@ -119,7 +119,7 @@ namespace MCLawl_.Gui
 
                     updateTimer.Elapsed += delegate { UpdateCheck(); }; updateTimer.Start();
 
-                    Application.Run(new MCLawl.Gui.Window());
+                    Application.Run(new MCDek.Gui.Window());
                 }
             }
             catch (Exception e) { Server.ErrorLog(e); return; }
@@ -162,7 +162,7 @@ namespace MCLawl_.Gui
                 return;
             }
 
-        talk: handleComm("say " + MCLawl.Group.findPerm(LevelPermission.Admin).color + "Console: &f" + s);
+        talk: handleComm("say " + MCDek.Group.findPerm(LevelPermission.Admin).color + "Console: &f" + s);
             handleComm(Console.ReadLine());
         }
 
@@ -181,7 +181,7 @@ namespace MCLawl_.Gui
                 if (wait) { if (!Server.checkUpdates) return; Thread.Sleep(10000); }
                 try
                 {
-                    if (Client.DownloadString("http://www.mclawl.tk/curversion.txt") != Server.Version)
+                    if (Client.DownloadString("http://www.dekemaserv.com") != Server.Version) /*303i this is where the server version goes. Once they release JDownloads I think we can host files from the site.*/
                     {
                         if (Server.autoupdate == true || p != null)
                         {
@@ -243,7 +243,7 @@ namespace MCLawl_.Gui
                                 ConsoleColor prevColor = Console.ForegroundColor;
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("An update was found!");
-                                Console.WriteLine("Update using the file at www.mclawl.tk/MCLawl_.dll and placing it over the top of your current MCLawl_.dll!");
+                                Console.WriteLine("Update using the file at www.dekemaserv.com and placing it over the top of your current MCDek_.dll!");
                                 Console.ForegroundColor = prevColor;
                             }
                         }
@@ -281,10 +281,10 @@ namespace MCLawl_.Gui
                     }
                     SW.WriteLine("::Version 3");
                     SW.WriteLine("TASKKILL /pid %2 /F");
-                    SW.WriteLine("if exist MCLawl_.dll.backup (erase MCLawl_.dll.backup)");
-                    SW.WriteLine("if exist MCLawl_.dll (rename MCLawl_.dll MCLawl_.dll.backup)");
-                    SW.WriteLine("if exist MCLawl.new (rename MCLawl.new MCLawl_.dll)");
-                    SW.WriteLine("start MCLawl.exe");
+                    SW.WriteLine("if exist MCDek_.dll.backup (erase MCDek_.dll.backup)");
+                    SW.WriteLine("if exist MCDek_.dll (rename MCDek_.dll MCDek_.dll.backup)");
+                    SW.WriteLine("if exist MCDek.new (rename MCDek.new MCDek_.dll)");
+                    SW.WriteLine("start MCDek.exe");
                 }
                 else
                 {
@@ -304,10 +304,10 @@ namespace MCLawl_.Gui
                     SW.WriteLine("#Version 2");
                     SW.WriteLine("#!/bin/bash");
                     SW.WriteLine("kill $2");
-                    SW.WriteLine("rm MCLawl_.dll.backup");
-                    SW.WriteLine("mv MCLawl_.dll MCLawl.dll_.backup");
-                    SW.WriteLine("wget http://mclawl.tk/MCLawl_.dll");
-                    SW.WriteLine("mono MCLawl.exe");
+                    SW.WriteLine("rm MCDek_.dll.backup");
+                    SW.WriteLine("mv MCDek_.dll MCDek.dll_.backup");
+                    SW.WriteLine("wget http://www.dekemaserv.com");
+                    SW.WriteLine("mono MCDek.exe");
                 }
 
                 SW.Flush(); SW.Close(); SW.Dispose();
@@ -327,7 +327,7 @@ namespace MCLawl_.Gui
                 if (oldrevision) { filelocation = ("http://www.mclawl.tk/archives/exe/" + Server.selectedrevision + ".exe"); }
                 if (!oldrevision) { filelocation = ("http://www.mclawl.tk/MCLawl_.dll"); }
                 WebClient Client = new WebClient();
-                Client.DownloadFile(filelocation, "MCLawl.new");
+                Client.DownloadFile(filelocation, "MCDek.new");
                 Client.DownloadFile("http://www.mclawl.tk/changelog.txt", "extra/Changelog.txt");
                 foreach (Level l in Server.levels) l.Save();
                 foreach (Player pl in Player.players) pl.save();
@@ -338,10 +338,10 @@ namespace MCLawl_.Gui
 
                 try
                 {
-                    if (MCLawl.Gui.Window.thisWindow.notifyIcon1 != null)
+                    if (MCDek.Gui.Window.thisWindow.notifyIcon1 != null)
                     {
-                        MCLawl.Gui.Window.thisWindow.notifyIcon1.Icon = null;
-                        MCLawl.Gui.Window.thisWindow.notifyIcon1.Visible = false;
+                        MCDek.Gui.Window.thisWindow.notifyIcon1.Icon = null;
+                        MCDek.Gui.Window.thisWindow.notifyIcon1.Visible = false;
                     }
                 }
                 catch { }
@@ -361,10 +361,10 @@ namespace MCLawl_.Gui
             {
                 try
                 {
-                    if (MCLawl.Gui.Window.thisWindow.notifyIcon1 != null)
+                    if (MCDek.Gui.Window.thisWindow.notifyIcon1 != null)
                     {
-                        MCLawl.Gui.Window.thisWindow.notifyIcon1.Icon = null;
-                        MCLawl.Gui.Window.thisWindow.notifyIcon1.Visible = false;
+                        MCDek.Gui.Window.thisWindow.notifyIcon1.Icon = null;
+                        MCDek.Gui.Window.thisWindow.notifyIcon1.Visible = false;
                     }
                 }
                 catch { }
@@ -392,10 +392,10 @@ namespace MCLawl_.Gui
                 Server.shuttingDown = true;
                 try
                 {
-                    if (MCLawl.Gui.Window.thisWindow.notifyIcon1 != null)
+                    if (MCDek.Gui.Window.thisWindow.notifyIcon1 != null)
                     {
-                        MCLawl.Gui.Window.thisWindow.notifyIcon1.Icon = null;
-                        MCLawl.Gui.Window.thisWindow.notifyIcon1.Visible = false;
+                        MCDek.Gui.Window.thisWindow.notifyIcon1.Icon = null;
+                        MCDek.Gui.Window.thisWindow.notifyIcon1.Visible = false;
                     }
                 }
                 catch { }
