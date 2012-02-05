@@ -311,7 +311,7 @@ namespace MCDek_.Gui
                 }
 
                 SW.Flush(); SW.Close(); SW.Dispose();
-
+				//Way too many old URLs
                 string filelocation = "";
                 string verscheck = "";
                 Process proc = Process.GetCurrentProcess();
