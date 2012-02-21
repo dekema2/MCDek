@@ -252,6 +252,12 @@
     <Compile Include="Commands\CmdText.cs" />
     <Compile Include="Commands\CmdView.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="GUI\MapViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\MapViewer.Designer.cs">
+      <DependentUpon>MapViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\PropertyWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -295,6 +301,9 @@
     <Compile Include="Scripting.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Updater.cs" />
+    <EmbeddedResource Include="GUI\MapViewer.resx">
+      <DependentUpon>MapViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\PropertyWindow.resx">
       <DependentUpon>PropertyWindow.cs</DependentUpon>
       <SubType>Designer</SubType>

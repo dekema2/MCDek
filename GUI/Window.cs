@@ -40,7 +40,7 @@ namespace MCLawl.Gui
         public NotifyIcon notifyIcon1 = new NotifyIcon();
         //  public static bool Minimized = false;
         
-        internal static Server s;
+        internal static MCDekMCDekServer s;
 
         bool shuttingDown = false;
         public Window() {
@@ -75,14 +75,14 @@ namespace MCLawl.Gui
         private void Window_Load(object sender, EventArgs e) {
             thisWindow = this;
             MaximizeBox = false;
-            this.Text = "<server name here>";
+            this.Text = "<MCDekMCDekServer name here>";
             this.Icon = new Icon(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("MCLawl.Lawl.ico"));
 
             this.Show();
             this.BringToFront();
             WindowState = FormWindowState.Normal;
 
-            s = new Server();
+            s = new MCDekMCDekServer();
             s.OnLog += WriteLine;
             s.OnCommand += newCommand;
             s.OnError += newError;
@@ -97,7 +97,7 @@ namespace MCLawl.Gui
             s.OnPlayerListChange += UpdateClientList;
             s.OnSettingsUpdate += SettingsUpdate;
             s.Start();
-            notifyIcon1.Text = ("MCLawl Server: " + Server.name);
+            notifyIcon1.Text = ("MCLawl MCDekMCDekServer: " + MCDekMCDekServer.name);
 
             this.notifyIcon1.ContextMenuStrip = this.iconContext;
             this.notifyIcon1.Icon = this.Icon;
@@ -113,7 +113,7 @@ namespace MCLawl.Gui
                 //txtErrors.Lines = File.ReadAllLines(Logger.ErrorLogPath);
             if (File.Exists("extra/Changelog.txt"))
             {
-                txtChangelog.Text = "Changelog for " + Server.Version + ":";
+                txtChangelog.Text = "Changelog for " + MCDekMCDekServer.Version + ":";
                 foreach (string line in File.ReadAllLines(("extra/Changelog.txt")))
                 {
                     txtChangelog.AppendText("\r\n           " + line);
@@ -129,7 +129,7 @@ namespace MCLawl.Gui
                 VoidDelegate d = new VoidDelegate(SettingsUpdate);
                 this.Invoke(d);
             }  else {
-                this.Text = Server.name + " MCLawl Version: " + Server.Version;
+                this.Text = MCDekMCDekServer.name + " MCLawl Version: " + MCDekMCDekServer.Version;
             }
         }
 
@@ -217,14 +217,14 @@ namespace MCLawl.Gui
                 this.Invoke(d, new object[] { blah });
             } else {
                 liMaps.Items.Clear();
-                foreach (Level level in Server.levels) {
+                foreach (Level level in MCDekMCDekServer.levels) {
                     liMaps.Items.Add(level.name + " - " + level.physics);
                 }
             }
         }
 
         /// <summary>
-        /// Places the server's URL at the top of the window
+        /// Places the MCDekMCDekServer's URL at the top of the window
         /// </summary>
         /// <param name="s">The URL to display</param>
         public void UpdateUrl(string s)
@@ -255,16 +255,16 @@ namespace MCLawl.Gui
                 if (txtInput.Text[0] == '#')
                 {
                     newtext = text.Remove(0, 1).Trim();
-                    Player.GlobalMessageOps("To Ops &f-"+Server.DefaultColor +"Console [&a" + Server.ZallState + Server.DefaultColor + "]&f- " + newtext);
-                    Server.s.Log("(OPs): Console: " + newtext);
+                    Player.GlobalMessageOps("To Ops &f-"+MCDekMCDekServer.DefaultColor +"Console [&a" + MCDekMCDekServer.ZallState + MCDekMCDekServer.DefaultColor + "]&f- " + newtext);
+                    MCDekMCDekServer.s.Log("(OPs): Console: " + newtext);
                     IRCBot.Say("Console: " + newtext, true);
                  //   WriteLine("(OPs):<CONSOLE> " + txtInput.Text);
                     txtInput.Clear();
                 }
                 else
                 {
-                    Player.GlobalMessage("Console [&a" + Server.ZallState + Server.DefaultColor + "]: &f" + txtInput.Text);
-                    IRCBot.Say("Console [" + Server.ZallState + "]: " + txtInput.Text);
+                    Player.GlobalMessage("Console [&a" + MCDekMCDekServer.ZallState + MCDekMCDekServer.DefaultColor + "]: &f" + txtInput.Text);
+                    IRCBot.Say("Console [" + MCDekMCDekServer.ZallState + "]: " + txtInput.Text);
                     WriteLine("<CONSOLE> " + txtInput.Text);
                     txtInput.Clear();
                 }
@@ -299,7 +299,7 @@ namespace MCLawl.Gui
                     Command.all.Find(sentCmd).Use(null, sentMsg);
                     newCommand("CONSOLE: USED /" + sentCmd + " " + sentMsg);
                 } catch (Exception ex) {
-                    Server.ErrorLog(ex);
+                    MCDekMCDekServer.ErrorLog(ex);
                     newCommand("CONSOLE: Failed command."); 
                 }
 
@@ -326,7 +326,7 @@ namespace MCLawl.Gui
             }
         }
 
-        void ChangeCheck(string newCheck) { Server.ZallState = newCheck; }
+        void ChangeCheck(string newCheck) { MCDekMCDekServer.ZallState = newCheck; }
 
         private void txtHost_TextChanged(object sender, EventArgs e)
         {
@@ -382,13 +382,13 @@ namespace MCLawl.Gui
 
         private void tmrRestart_Tick(object sender, EventArgs e)
         {
-            if (Server.autorestart)
+            if (MCDekMCDekServer.autorestart)
             {
-                if (DateTime.Now.TimeOfDay.CompareTo(Server.restarttime.TimeOfDay) > 0 && (DateTime.Now.TimeOfDay.CompareTo(Server.restarttime.AddSeconds(1).TimeOfDay)) < 0) {
+                if (DateTime.Now.TimeOfDay.CompareTo(MCDekMCDekServer.restarttime.TimeOfDay) > 0 && (DateTime.Now.TimeOfDay.CompareTo(MCDekMCDekServer.restarttime.AddSeconds(1).TimeOfDay)) < 0) {
                     Player.GlobalMessage("The time is now " + DateTime.Now.TimeOfDay);
-                    Player.GlobalMessage("The server will now begin auto restart procedures.");
-                    Server.s.Log("The time is now " + DateTime.Now.TimeOfDay);
-                    Server.s.Log("The server will now begin auto restart procedures.");
+                    Player.GlobalMessage("The MCDekMCDekServer will now begin auto restart procedures.");
+                    MCDekMCDekServer.s.Log("The time is now " + DateTime.Now.TimeOfDay);
+                    MCDekMCDekServer.s.Log("The MCDekMCDekServer will now begin auto restart procedures.");
 
                     if (notifyIcon1 != null) {
                         notifyIcon1.Icon = null;
@@ -410,7 +410,7 @@ namespace MCLawl.Gui
             WindowState = FormWindowState.Normal;
         }
 
-        private void shutdownServer_Click(object sender, EventArgs e)
+        private void shutdownMCDekMCDekServer_Click(object sender, EventArgs e)
         {
             if (notifyIcon1 != null)
             {
@@ -591,6 +591,11 @@ namespace MCLawl.Gui
                     }
                 }
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Restart();
         }
     }
 }

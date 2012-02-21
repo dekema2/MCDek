@@ -106,9 +106,13 @@ namespace MCLawl.Gui
             this.tmrRestart = new System.Windows.Forms.Timer(this.components);
             this.iconContext = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openConsole = new System.Windows.Forms.ToolStripMenuItem();
-            this.shutdownServer = new System.Windows.Forms.ToolStripMenuItem();
+            this.shutdownMCDekServer = new System.Windows.Forms.ToolStripMenuItem();
             this.btnProperties = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.mapsStrip.SuspendLayout();
@@ -119,6 +123,8 @@ namespace MCLawl.Gui
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.iconContext.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -129,41 +135,31 @@ namespace MCLawl.Gui
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Cursor = System.Windows.Forms.Cursors.Default;
             this.tabControl1.Font = new System.Drawing.Font("Calibri", 8.25F);
-            this.tabControl1.Location = new System.Drawing.Point(1, 12);
+            this.tabControl1.Location = new System.Drawing.Point(1, 44);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(581, 514);
+            this.tabControl1.Size = new System.Drawing.Size(651, 519);
             this.tabControl1.TabIndex = 2;
             this.tabControl1.Click += new System.EventHandler(this.tabControl1_Click);
             // 
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
-            this.tabPage1.Controls.Add(this.btnExtra);
-            this.tabPage1.Controls.Add(this.liMaps);
-            this.tabPage1.Controls.Add(this.button1);
             this.tabPage1.Controls.Add(this.gBCommands);
             this.tabPage1.Controls.Add(this.gBChat);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.txtHost);
-            this.tabPage1.Controls.Add(this.txtCommands);
-            this.tabPage1.Controls.Add(this.txtInput);
-            this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.txtUrl);
-            this.tabPage1.Controls.Add(this.liClients);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(573, 488);
+            this.tabPage1.Size = new System.Drawing.Size(643, 493);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Main";
             // 
             // btnExtra
             // 
             this.btnExtra.Font = new System.Drawing.Font("Calibri", 8.25F);
-            this.btnExtra.Location = new System.Drawing.Point(539, 458);
+            this.btnExtra.Location = new System.Drawing.Point(929, 567);
             this.btnExtra.Name = "btnExtra";
-            this.btnExtra.Size = new System.Drawing.Size(28, 23);
+            this.btnExtra.Size = new System.Drawing.Size(25, 23);
             this.btnExtra.TabIndex = 35;
             this.btnExtra.Text = "∇";
             this.btnExtra.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -175,10 +171,10 @@ namespace MCLawl.Gui
             this.liMaps.ContextMenuStrip = this.mapsStrip;
             this.liMaps.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.liMaps.FormattingEnabled = true;
-            this.liMaps.Location = new System.Drawing.Point(447, 237);
+            this.liMaps.Location = new System.Drawing.Point(6, 16);
             this.liMaps.Name = "liMaps";
             this.liMaps.ScrollAlwaysVisible = true;
-            this.liMaps.Size = new System.Drawing.Size(120, 186);
+            this.liMaps.Size = new System.Drawing.Size(281, 186);
             this.liMaps.TabIndex = 33;
             this.liMaps.MouseDown += new System.Windows.Forms.MouseEventHandler(this.liMaps_MouseDown);
             // 
@@ -201,7 +197,7 @@ namespace MCLawl.Gui
             this.toolStripMenuItem5,
             this.toolStripMenuItem6});
             this.physicsToolStripMenuItem.Name = "physicsToolStripMenuItem";
-            this.physicsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.physicsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.physicsToolStripMenuItem.Text = "Physics";
             // 
             // toolStripMenuItem2
@@ -242,7 +238,7 @@ namespace MCLawl.Gui
             // unloadToolStripMenuItem
             // 
             this.unloadToolStripMenuItem.Name = "unloadToolStripMenuItem";
-            this.unloadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.unloadToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.unloadToolStripMenuItem.Text = "Unload";
             this.unloadToolStripMenuItem.Click += new System.EventHandler(this.unloadToolStripMenuItem_Click);
             // 
@@ -257,7 +253,7 @@ namespace MCLawl.Gui
             this.killerBlocksToolStripMenuItem,
             this.rPChatToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             // 
             // finiteModeToolStripMenuItem
@@ -312,7 +308,7 @@ namespace MCLawl.Gui
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -320,11 +316,11 @@ namespace MCLawl.Gui
             // 
             this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button1.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(447, 5);
+            this.button1.Location = new System.Drawing.Point(661, 484);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(118, 23);
+            this.button1.Size = new System.Drawing.Size(293, 23);
             this.button1.TabIndex = 36;
-            this.button1.Text = "Updater";
+            this.button1.Text = "Update";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
@@ -332,9 +328,9 @@ namespace MCLawl.Gui
             // 
             this.gBCommands.Controls.Add(this.txtCommandsUsed);
             this.gBCommands.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gBCommands.Location = new System.Drawing.Point(13, 326);
+            this.gBCommands.Location = new System.Drawing.Point(13, 270);
             this.gBCommands.Name = "gBCommands";
-            this.gBCommands.Size = new System.Drawing.Size(428, 123);
+            this.gBCommands.Size = new System.Drawing.Size(630, 252);
             this.gBCommands.TabIndex = 34;
             this.gBCommands.TabStop = false;
             this.gBCommands.Text = "Commands";
@@ -349,16 +345,16 @@ namespace MCLawl.Gui
             this.txtCommandsUsed.Name = "txtCommandsUsed";
             this.txtCommandsUsed.ReadOnly = true;
             this.txtCommandsUsed.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtCommandsUsed.Size = new System.Drawing.Size(413, 100);
+            this.txtCommandsUsed.Size = new System.Drawing.Size(609, 201);
             this.txtCommandsUsed.TabIndex = 0;
             // 
             // gBChat
             // 
             this.gBChat.Controls.Add(this.txtLog);
             this.gBChat.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gBChat.Location = new System.Drawing.Point(13, 33);
+            this.gBChat.Location = new System.Drawing.Point(13, 6);
             this.gBChat.Name = "gBChat";
-            this.gBChat.Size = new System.Drawing.Size(428, 287);
+            this.gBChat.Size = new System.Drawing.Size(624, 258);
             this.gBChat.TabIndex = 32;
             this.gBChat.TabStop = false;
             this.gBChat.Text = "Chat";
@@ -368,19 +364,19 @@ namespace MCLawl.Gui
             this.txtLog.BackColor = System.Drawing.SystemColors.Window;
             this.txtLog.Cursor = System.Windows.Forms.Cursors.Default;
             this.txtLog.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtLog.Location = new System.Drawing.Point(6, 19);
+            this.txtLog.Location = new System.Drawing.Point(6, 20);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLog.Size = new System.Drawing.Size(413, 262);
+            this.txtLog.Size = new System.Drawing.Size(612, 232);
             this.txtLog.TabIndex = 1;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(384, 463);
+            this.label2.Location = new System.Drawing.Point(658, 572);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(57, 13);
             this.label2.TabIndex = 29;
@@ -389,9 +385,9 @@ namespace MCLawl.Gui
             // txtHost
             // 
             this.txtHost.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtHost.Location = new System.Drawing.Point(447, 428);
+            this.txtHost.Location = new System.Drawing.Point(661, 542);
             this.txtHost.Name = "txtHost";
-            this.txtHost.Size = new System.Drawing.Size(120, 21);
+            this.txtHost.Size = new System.Drawing.Size(293, 21);
             this.txtHost.TabIndex = 28;
             this.txtHost.Text = "Alive";
             this.txtHost.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -401,18 +397,18 @@ namespace MCLawl.Gui
             // txtCommands
             // 
             this.txtCommands.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCommands.Location = new System.Drawing.Point(447, 460);
+            this.txtCommands.Location = new System.Drawing.Point(716, 569);
             this.txtCommands.Name = "txtCommands";
-            this.txtCommands.Size = new System.Drawing.Size(86, 21);
+            this.txtCommands.Size = new System.Drawing.Size(204, 21);
             this.txtCommands.TabIndex = 28;
             this.txtCommands.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtCommands_KeyDown);
             // 
             // txtInput
             // 
             this.txtInput.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtInput.Location = new System.Drawing.Point(57, 459);
+            this.txtInput.Location = new System.Drawing.Point(52, 569);
             this.txtInput.Name = "txtInput";
-            this.txtInput.Size = new System.Drawing.Size(321, 21);
+            this.txtInput.Size = new System.Drawing.Size(600, 21);
             this.txtInput.TabIndex = 27;
             this.txtInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtInput_KeyDown);
             // 
@@ -420,7 +416,7 @@ namespace MCLawl.Gui
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(19, 462);
+            this.label1.Location = new System.Drawing.Point(15, 572);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(31, 13);
             this.label1.TabIndex = 26;
@@ -430,10 +426,10 @@ namespace MCLawl.Gui
             // 
             this.txtUrl.Cursor = System.Windows.Forms.Cursors.Default;
             this.txtUrl.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUrl.Location = new System.Drawing.Point(13, 7);
+            this.txtUrl.Location = new System.Drawing.Point(40, 12);
             this.txtUrl.Name = "txtUrl";
             this.txtUrl.ReadOnly = true;
-            this.txtUrl.Size = new System.Drawing.Size(428, 21);
+            this.txtUrl.Size = new System.Drawing.Size(612, 21);
             this.txtUrl.TabIndex = 25;
             // 
             // liClients
@@ -441,10 +437,10 @@ namespace MCLawl.Gui
             this.liClients.ContextMenuStrip = this.playerStrip;
             this.liClients.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.liClients.FormattingEnabled = true;
-            this.liClients.Location = new System.Drawing.Point(447, 32);
+            this.liClients.Location = new System.Drawing.Point(6, 13);
             this.liClients.Name = "liClients";
             this.liClients.ScrollAlwaysVisible = true;
-            this.liClients.Size = new System.Drawing.Size(120, 199);
+            this.liClients.Size = new System.Drawing.Size(281, 173);
             this.liClients.TabIndex = 23;
             this.liClients.MouseDown += new System.Windows.Forms.MouseEventHandler(this.liClients_MouseDown);
             // 
@@ -493,7 +489,7 @@ namespace MCLawl.Gui
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(573, 488);
+            this.tabPage4.Size = new System.Drawing.Size(643, 493);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "System";
             // 
@@ -506,7 +502,7 @@ namespace MCLawl.Gui
             this.txtSystem.Name = "txtSystem";
             this.txtSystem.ReadOnly = true;
             this.txtSystem.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtSystem.Size = new System.Drawing.Size(557, 471);
+            this.txtSystem.Size = new System.Drawing.Size(630, 481);
             this.txtSystem.TabIndex = 1;
             // 
             // tabPage2
@@ -516,7 +512,7 @@ namespace MCLawl.Gui
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(573, 488);
+            this.tabPage2.Size = new System.Drawing.Size(643, 493);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Changelog";
             // 
@@ -529,7 +525,7 @@ namespace MCLawl.Gui
             this.txtChangelog.Name = "txtChangelog";
             this.txtChangelog.ReadOnly = true;
             this.txtChangelog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtChangelog.Size = new System.Drawing.Size(557, 471);
+            this.txtChangelog.Size = new System.Drawing.Size(630, 481);
             this.txtChangelog.TabIndex = 0;
             // 
             // tabPage3
@@ -539,7 +535,7 @@ namespace MCLawl.Gui
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(573, 488);
+            this.tabPage3.Size = new System.Drawing.Size(643, 493);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Errors";
             // 
@@ -552,7 +548,7 @@ namespace MCLawl.Gui
             this.txtErrors.Name = "txtErrors";
             this.txtErrors.ReadOnly = true;
             this.txtErrors.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtErrors.Size = new System.Drawing.Size(557, 471);
+            this.txtErrors.Size = new System.Drawing.Size(630, 481);
             this.txtErrors.TabIndex = 1;
             // 
             // tmrRestart
@@ -564,7 +560,7 @@ namespace MCLawl.Gui
             // 
             this.iconContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openConsole,
-            this.shutdownServer});
+            this.shutdownMCDekServer});
             this.iconContext.Name = "iconContext";
             this.iconContext.Size = new System.Drawing.Size(164, 48);
             // 
@@ -575,20 +571,20 @@ namespace MCLawl.Gui
             this.openConsole.Text = "Open Console";
             this.openConsole.Click += new System.EventHandler(this.openConsole_Click);
             // 
-            // shutdownServer
+            // shutdownMCDekServer
             // 
-            this.shutdownServer.Name = "shutdownServer";
-            this.shutdownServer.Size = new System.Drawing.Size(163, 22);
-            this.shutdownServer.Text = "Shutdown Server";
-            this.shutdownServer.Click += new System.EventHandler(this.shutdownServer_Click);
+            this.shutdownMCDekServer.Name = "shutdownMCDekServer";
+            this.shutdownMCDekServer.Size = new System.Drawing.Size(163, 22);
+            this.shutdownMCDekServer.Text = "Shutdown MCDekServer";
+            this.shutdownMCDekServer.Click += new System.EventHandler(this.shutdownMCDekServer_Click);
             // 
             // btnProperties
             // 
             this.btnProperties.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnProperties.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnProperties.Location = new System.Drawing.Point(450, 5);
+            this.btnProperties.Location = new System.Drawing.Point(661, 455);
             this.btnProperties.Name = "btnProperties";
-            this.btnProperties.Size = new System.Drawing.Size(70, 23);
+            this.btnProperties.Size = new System.Drawing.Size(293, 23);
             this.btnProperties.TabIndex = 34;
             this.btnProperties.Text = "Properties";
             this.btnProperties.UseVisualStyleBackColor = true;
@@ -598,22 +594,73 @@ namespace MCLawl.Gui
             // 
             this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClose.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(523, 5);
+            this.btnClose.Location = new System.Drawing.Point(661, 513);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(43, 23);
+            this.btnClose.Size = new System.Drawing.Size(293, 23);
             this.btnClose.TabIndex = 35;
-            this.btnClose.Text = "Close";
+            this.btnClose.Text = "Shut-Down";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click_1);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.liClients);
+            this.groupBox1.Location = new System.Drawing.Point(661, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(293, 193);
+            this.groupBox1.TabIndex = 36;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Online Players:";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.liMaps);
+            this.groupBox2.Location = new System.Drawing.Point(661, 211);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(293, 209);
+            this.groupBox2.TabIndex = 37;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Online Maps:";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(661, 426);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(293, 23);
+            this.button2.TabIndex = 38;
+            this.button2.Text = "Restart";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(2, 14);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(32, 13);
+            this.label3.TabIndex = 39;
+            this.label3.Text = "URL:";
             // 
             // Window
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(580, 523);
+            this.ClientSize = new System.Drawing.Size(966, 598);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.btnExtra);
+            this.Controls.Add(this.txtUrl);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtInput);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.txtCommands);
+            this.Controls.Add(this.txtHost);
             this.Controls.Add(this.btnProperties);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.groupBox2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "Window";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Window_FormClosing);
@@ -621,7 +668,6 @@ namespace MCLawl.Gui
             this.Resize += new System.EventHandler(this.Window_Resize);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
             this.mapsStrip.ResumeLayout(false);
             this.gBCommands.ResumeLayout(false);
             this.gBCommands.PerformLayout();
@@ -635,7 +681,10 @@ namespace MCLawl.Gui
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.iconContext.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -665,7 +714,7 @@ namespace MCLawl.Gui
         private TextBox txtErrors;
         private ContextMenuStrip iconContext;
         private ToolStripMenuItem openConsole;
-        private ToolStripMenuItem shutdownServer;
+        private ToolStripMenuItem shutdownMCDekServer;
         private TabPage tabPage4;
         private TextBox txtSystem;
         private TextBox txtHost;
@@ -691,5 +740,9 @@ namespace MCLawl.Gui
         private ToolStripMenuItem killerBlocksToolStripMenuItem;
         private ToolStripMenuItem rPChatToolStripMenuItem;
         private ToolStripMenuItem saveToolStripMenuItem;
+        private GroupBox groupBox1;
+        private GroupBox groupBox2;
+        private Button button2;
+        private Label label3;
     }
 }

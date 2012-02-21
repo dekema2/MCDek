@@ -45,9 +45,9 @@ namespace MCLawl.Gui
         {
             StreamWriter SW = new StreamWriter(File.Create(givenPath));
             SW.WriteLine("#This file manages the update process");
-            SW.WriteLine("#Toggle AutoUpdate to true for the server to automatically update");
+            SW.WriteLine("#Toggle AutoUpdate to true for the MCDekServer to automatically update");
             SW.WriteLine("#Notify notifies players in-game of impending restart");
-            SW.WriteLine("#Restart Countdown is how long in seconds the server will count before restarting and updating");
+            SW.WriteLine("#Restart Countdown is how long in seconds the MCDekServer will count before restarting and updating");
             SW.WriteLine();
             SW.WriteLine("autoupdate= " + chkAutoUpdate.Checked.ToString());
             SW.WriteLine("notify = " + chkNotify.Checked.ToString());
@@ -104,7 +104,7 @@ namespace MCLawl.Gui
             else
             {
                 UpdSave("properties/update.properties");
-                Server.autoupdate = chkAutoUpdate.Checked;
+                MCDekServer.autoupdate = chkAutoUpdate.Checked;
             }
         }
 
@@ -116,7 +116,7 @@ namespace MCLawl.Gui
 
         private void cmdUpdate_Click(object sender, EventArgs e)
         {
-            if (Server.selectedrevision != "")
+            if (MCDekServer.selectedrevision != "")
             {
                 MCLawl_.Gui.Program.PerformUpdate(true);
                 
@@ -136,7 +136,7 @@ namespace MCLawl.Gui
 
         private void listRevisions_SelectedValueChanged(object sender, EventArgs e)
         {
-            Server.selectedrevision = listRevisions.SelectedItem.ToString();
+            MCDekServer.selectedrevision = listRevisions.SelectedItem.ToString();
             
         }
 

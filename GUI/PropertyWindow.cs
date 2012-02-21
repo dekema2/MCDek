@@ -37,7 +37,7 @@ namespace MCLawl.Gui
             {
                 cmbDefaultRank.Items.Add(grp.name);
                 cmbOpChat.Items.Add(grp.name);
-                if (grp.Permission == Server.opchatperm)
+                if (grp.Permission == MCDekServer.opchatperm)
                 {
                     opchatperm = grp.name;
                 }
@@ -45,8 +45,8 @@ namespace MCLawl.Gui
             cmbDefaultRank.SelectedIndex = 1;
             cmbOpChat.SelectedIndex = (opchatperm != "") ? cmbOpChat.Items.IndexOf(opchatperm) : 1;
             
-            //Load server stuff
-            LoadProp("properties/server.properties");
+            //Load MCDekServer stuff
+            LoadProp("properties/MCDekServer.properties");
             LoadRanks();
             try
             {
@@ -55,7 +55,7 @@ namespace MCLawl.Gui
             }
             catch
             {
-                Server.s.Log("Failed to load commands and blocks!");
+                MCDekServer.s.Log("Failed to load commands and blocks!");
             }
         }
 
@@ -140,13 +140,13 @@ namespace MCLawl.Gui
 
                         switch (key.ToLower())
                         {
-                            case "server-name":
+                            case "MCDekServer-name":
                                 if (ValidString(value, "![]:.,{}~-+()?_/\\ ")) txtName.Text = value;
-                                else txtName.Text = "[MCZall] Minecraft server";
+                                else txtName.Text = "[MCZall] Minecraft MCDekServer";
                                 break;
                             case "motd":
                                 if (ValidString(value, "![]&:.,{}~-+()?_/\\ ")) txtMOTD.Text = value;
-                                else txtMOTD.Text = "Welcome to my server!";
+                                else txtMOTD.Text = "Welcome to my MCDekServer!";
                                 break;
                             case "port":
                                 try { txtPort.Text = Convert.ToInt32(value).ToString(); }
@@ -170,7 +170,7 @@ namespace MCLawl.Gui
                                     }
                                     txtPlayers.Text = value;
                                 } catch { 
-                                    Server.s.Log("max-players invalid! setting to default.");
+                                    MCDekServer.s.Log("max-players invalid! setting to default.");
                                     txtPlayers.Text = "12";
                                 }
                                 break;
@@ -183,15 +183,15 @@ namespace MCLawl.Gui
                                     }
                                     txtMaps.Text = value;
                                 } catch {
-                                    Server.s.Log("max-maps invalid! setting to default.");
+                                    MCDekServer.s.Log("max-maps invalid! setting to default.");
                                     txtMaps.Text = "5";
                                 }
                                 break;
                             case "irc":
                                 chkIRC.Checked = (value.ToLower() == "true") ? true : false;
                                 break;
-                            case "irc-server":
-                                txtIRCServer.Text = value;
+                            case "irc-MCDekServer":
+                                txtIRCMCDekServer.Text = value;
                                 break;
                             case "irc-nick":
                                 txtNick.Text = value;
@@ -243,14 +243,14 @@ namespace MCLawl.Gui
                             case "defaultcolor":
                                 color = c.Parse(value);
                                 if (color == "") {
-                                    color = c.Name(value); if (color != "") color = value; else { Server.s.Log("Could not find " + value); return; }
+                                    color = c.Name(value); if (color != "") color = value; else { MCDekServer.s.Log("Could not find " + value); return; }
                                 }
                                 cmbDefaultColour.SelectedIndex = cmbDefaultColour.Items.IndexOf(c.Name(value)); break;
 
                             case "irc-color":
                                 color = c.Parse(value);
                                 if (color == "") {
-                                    color = c.Name(value); if (color != "") color = value; else { Server.s.Log("Could not find " + value); return; }
+                                    color = c.Name(value); if (color != "") color = value; else { MCDekServer.s.Log("Could not find " + value); return; }
                                 }
                                 cmbIRCColour.SelectedIndex = cmbIRCColour.Items.IndexOf(c.Name(value)); break;
                             case "default-rank":
@@ -354,21 +354,21 @@ namespace MCLawl.Gui
         public void Save(string givenPath) {
             try {
                 StreamWriter w = new StreamWriter(File.Create(givenPath));
-                if (givenPath.IndexOf("server") != -1) {
-                    w.WriteLine("# Edit the settings below to modify how your server operates. This is an explanation of what each setting does.");
-                    w.WriteLine("#   server-name\t=\tThe name which displays on minecraft.net");
+                if (givenPath.IndexOf("MCDekServer") != -1) {
+                    w.WriteLine("# Edit the settings below to modify how your MCDekServer operates. This is an explanation of what each setting does.");
+                    w.WriteLine("#   MCDekServer-name\t=\tThe name which displays on minecraft.net");
                     w.WriteLine("#   motd\t=\tThe message which displays when a player connects");
                     w.WriteLine("#   port\t=\tThe port to operate from");
-                    w.WriteLine("#   console-only\t=\tRun without a GUI (useful for Linux servers with mono)");
+                    w.WriteLine("#   console-only\t=\tRun without a GUI (useful for Linux MCDekServers with mono)");
                     w.WriteLine("#   verify-names\t=\tVerify the validity of names");
-                    w.WriteLine("#   public\t=\tSet to true to appear in the public server list");
+                    w.WriteLine("#   public\t=\tSet to true to appear in the public MCDekServer list");
                     w.WriteLine("#   max-players\t=\tThe maximum number of connections");
                     w.WriteLine("#   max-maps\t=\tThe maximum number of maps loaded at once");
                     w.WriteLine("#   world-chat\t=\tSet to true to enable world chat");
                     w.WriteLine("#   guest-goto\t=\tSet to true to give guests goto and levels commands");
                     w.WriteLine("#   irc\t=\tSet to true to enable the IRC bot");
                     w.WriteLine("#   irc-nick\t=\tThe name of the IRC bot");
-                    w.WriteLine("#   irc-server\t=\tThe server to connect to");
+                    w.WriteLine("#   irc-MCDekServer\t=\tThe MCDekServer to connect to");
                     w.WriteLine("#   irc-channel\t=\tThe channel to join");
                     w.WriteLine("#   irc-opchannel\t=\tThe channel to join (posts OpChat)");
                     w.WriteLine("#   irc-port\t=\tThe port to use to connect");
@@ -390,8 +390,8 @@ namespace MCLawl.Gui
                     w.WriteLine("#   defaultColor\t=\tThe color code of the default messages (Default = &e)");
                     w.WriteLine();
                     w.WriteLine();
-                    w.WriteLine("# Server options");
-                    w.WriteLine("server-name = " + txtName.Text);
+                    w.WriteLine("# MCDekServer options");
+                    w.WriteLine("MCDekServer-name = " + txtName.Text);
                     w.WriteLine("motd = " + txtMOTD.Text);
                     w.WriteLine("port = " + txtPort.Text);
                     w.WriteLine("verify-names = " + chkVerify.Checked.ToString().ToLower());
@@ -410,12 +410,12 @@ namespace MCLawl.Gui
                     w.WriteLine("# irc bot options");
                     w.WriteLine("irc = " + chkIRC.Checked.ToString());
                     w.WriteLine("irc-nick = " + txtNick.Text);
-                    w.WriteLine("irc-server = " + txtIRCServer.Text);
+                    w.WriteLine("irc-MCDekServer = " + txtIRCMCDekServer.Text);
                     w.WriteLine("irc-channel = " + txtChannel.Text);
                     w.WriteLine("irc-opchannel = " + txtOpChannel.Text);
-                    w.WriteLine("irc-port = " + Server.ircPort.ToString());
-                    w.WriteLine("irc-identify = " + Server.ircIdentify.ToString());
-                    w.WriteLine("irc-password = " + Server.ircPassword);
+                    w.WriteLine("irc-port = " + MCDekServer.ircPort.ToString());
+                    w.WriteLine("irc-identify = " + MCDekServer.ircIdentify.ToString());
+                    w.WriteLine("irc-password = " + MCDekServer.ircPassword);
                     w.WriteLine();
                     w.WriteLine("# other options");
                     w.WriteLine("anti-tunnels = " + ChkTunnels.Checked.ToString().ToLower());
@@ -428,7 +428,7 @@ namespace MCLawl.Gui
                     w.WriteLine("afk-kick = " + txtAFKKick.Text);
                     w.WriteLine("parse-emotes = " + chkSmile.Checked.ToString().ToLower());
                     w.WriteLine("dollar-before-dollar = " + chk17Dollar.Checked.ToString().ToLower());
-                    w.WriteLine("use-whitelist = " + Server.useWhitelist.ToString().ToLower());
+                    w.WriteLine("use-whitelist = " + MCDekServer.useWhitelist.ToString().ToLower());
                     w.WriteLine("money-name = " + txtMoneys.Text);
                     w.WriteLine("opchat-perm = " + ((sbyte)Group.GroupList.Find(grp => grp.name == cmbOpChat.Items[cmbOpChat.SelectedIndex].ToString()).Permission).ToString());
                     w.WriteLine("log-heartbeat = " + chkLogBeat.Checked.ToString().ToLower());
@@ -441,16 +441,16 @@ namespace MCLawl.Gui
                     w.WriteLine("backup-location = " + txtBackupLocation.Text);
                     w.WriteLine();
                     w.WriteLine("#Error logging");
-                    w.WriteLine("report-back = " + Server.reportBack.ToString().ToLower());
+                    w.WriteLine("report-back = " + MCDekServer.reportBack.ToString().ToLower());
                     w.WriteLine();
                     w.WriteLine("#MySQL information");
-                    w.WriteLine("UseMySQL = " + Server.useMySQL);
-                    w.WriteLine("Host = " + Server.MySQLHost);
-                    w.WriteLine("SQLPort = " + Server.MySQLPort);
-                    w.WriteLine("Username = " + Server.MySQLUsername);
-                    w.WriteLine("Password = " + Server.MySQLPassword);
-                    w.WriteLine("DatabaseName = " + Server.MySQLDatabaseName);
-                    w.WriteLine("Pooling = " + Server.MySQLPooling);
+                    w.WriteLine("UseMySQL = " + MCDekServer.useMySQL);
+                    w.WriteLine("Host = " + MCDekServer.MySQLHost);
+                    w.WriteLine("SQLPort = " + MCDekServer.MySQLPort);
+                    w.WriteLine("Username = " + MCDekServer.MySQLUsername);
+                    w.WriteLine("Password = " + MCDekServer.MySQLPassword);
+                    w.WriteLine("DatabaseName = " + MCDekServer.MySQLDatabaseName);
+                    w.WriteLine("Pooling = " + MCDekServer.MySQLPooling);
                     w.WriteLine();
                     w.WriteLine("#Colors");
                     w.WriteLine("defaultColor = " + cmbDefaultColour.Items[cmbDefaultColour.SelectedIndex].ToString());
@@ -476,7 +476,7 @@ namespace MCLawl.Gui
             }
             catch
             {
-                Server.s.Log("SAVE FAILED! " + givenPath);
+                MCDekServer.s.Log("SAVE FAILED! " + givenPath);
             }
         }
 
@@ -515,12 +515,12 @@ namespace MCLawl.Gui
                                 return; 
                             }
 
-            Save("properties/server.properties");
+            Save("properties/MCDekServer.properties");
             SaveRanks();
             SaveCommands();
             SaveBlocks();
 
-            Properties.Load("properties/server.properties", true);
+            Properties.Load("properties/MCDekServer.properties", true);
             GrpCommands.fillRanks();
         }
 
@@ -769,7 +769,7 @@ namespace MCLawl.Gui
                     {
                         Group foundGroup = Group.Find(perms[i]);
                         if (foundGroup != null) foundPerm = (int)foundGroup.Permission;
-                        else { Server.s.Log("Could not find " + perms[i]); continue; }
+                        else { MCDekServer.s.Log("Could not find " + perms[i]); continue; }
                     }
                     addTo.Add((LevelPermission)foundPerm);
                 }
@@ -796,7 +796,7 @@ namespace MCLawl.Gui
                 {
                     Group foundGroup = Group.Find(txtBox.Text);
                     if (foundGroup != null) foundPerm = (int)foundGroup.Permission;
-                    else { Server.s.Log("Could not find " + txtBox.Text); }
+                    else { MCDekServer.s.Log("Could not find " + txtBox.Text); }
                 }
 
                 txtBox.Text = "";

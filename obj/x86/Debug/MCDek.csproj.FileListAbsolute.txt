@@ -1,0 +1,8 @@
+C:\Users\Brandon\Dropbox\MinedroidMCDek\DekSource\obj\x86\Debug\MCDek.csprojResolveAssemblyReference.cache
+C:\Users\Brandon\Dropbox\MinedroidMCDek\DekSource\obj\x86\Debug\MCLawl.Gui.PropertyWindow.resources
+C:\Users\Brandon\Dropbox\MinedroidMCDek\DekSource\obj\x86\Debug\MCLawl.Gui.UpdateWindow.resources
+C:\Users\Brandon\Dropbox\MinedroidMCDek\DekSource\obj\x86\Debug\MCLawl.Gui.Window.resources
+C:\Users\Brandon\Dropbox\MinedroidMCDek\DekSource\obj\x86\Debug\MCDek.csproj.GenerateResource.Cache
+C:\Users\Brandon\Dropbox\MinedroidMCDek\DekSource\obj\x86\Debug\MCLawl_.dll
+C:\Users\Brandon\Dropbox\MinedroidMCDek\DekSource\obj\x86\Debug\MCLawl_.pdb
+C:\Users\Brandon\Dropbox\MinedroidMCDek\DekSource\obj\x86\Debug\MCLawl.GUI.Form2.resources
