@@ -19,15 +19,15 @@ namespace MCDek
         {
                         if (p != null)
             {
-                    Command.all.Find("explode").Use(p, message + "0 0 0");
-                    Command.all.Find("explode").Use(p, message + "50 0 0"); 
-                    Command.all.Find("explode").Use(p, message + "0 50 0"); 
-                    Command.all.Find("explode").Use(p, message + "-50 0 0"); 
-                    Command.all.Find("explode").Use(p, message + "0 -50 0");
-                    Command.all.Find("explode").Use(p, message + "50 50 0");
-                    Command.all.Find("explode").Use(p, message + "-50 -50 0");
-                    Command.all.Find("explode").Use(p, message + "50 -50 0");
-                    Command.all.Find("explode").Use(p, message + "-50 50 0");
+                    Command.all.Find("detonate").Use(p, message + "0 0 0");
+                    Command.all.Find("detonate").Use(p, message + "50 0 0"); 
+                    Command.all.Find("detonate").Use(p, message + "0 50 0"); 
+                    Command.all.Find("detonate").Use(p, message + "-50 0 0"); 
+                    Command.all.Find("detonate").Use(p, message + "0 -50 0");
+                    Command.all.Find("detonate").Use(p, message + "50 50 0");
+                    Command.all.Find("detonate").Use(p, message + "-50 -50 0");
+                    Command.all.Find("detonate").Use(p, message + "50 -50 0");
+                    Command.all.Find("detonate").Use(p, message + "-50 50 0");
                     Command.all.Find("botai").Use(p, message + "add Steve");
                     Command.all.Find("botset").Use(p, message + "hunt");
                     Command.all.Find("botset").Use(p, message + "kill");
