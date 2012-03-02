@@ -67,7 +67,7 @@ namespace MCDek
         public static PlayerList bannedIP;
         public static PlayerList whiteList;
         public static PlayerList ircControllers;
-        public static List<string> devs = new List<string>(new string[] { "dekema2","303i" });
+        public static List<string> devs = new List<string>(new string[] { "dekema2","303i","ballock1","MinedroidFTW" });
 
         public static List<TempBan> tempBans = new List<TempBan>();
         public struct TempBan { public string name; public DateTime allowedJoin; }
