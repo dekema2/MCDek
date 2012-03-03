@@ -12,7 +12,7 @@ namespace MCDek
     {
         public override string name { get { return "christmastree"; } }
         public override string shortcut { get { return "ct"; } }
-        public override string type { get { return "other"; } }
+        public override string type { get { return "build"; } }
         public override bool museumUsable { get { return false; } }
         public override LevelPermission defaultRank { get { return LevelPermission.AdvBuilder; } }
         public override void Use(Player p, string message)
