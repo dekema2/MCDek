@@ -1,3 +1,5 @@
+//Copyright 2012 Ballock1 and dekema2 of MCDek-DekemaServ, Inc. http://www.dekemaserv.com
+
 ﻿using System;
 using System.IO;
 using System.Net;
@@ -21,7 +23,7 @@ namespace MCDek
 
             if (!File.Exists("extra/copy/christmastree.copy"))
             {
-                Player.SendMessage(p, "ChrismasTree copy doesn't exist. Downloading...");
+                Player.SendMessage(p, "ChristmasTree copy doesn't exist. Downloading...");
                 try
                 {
                     using (WebClient WEB = new WebClient())
