@@ -27,7 +27,7 @@ namespace MCDek
                 try
                 {
                     using (WebClient WEB = new WebClient())
-                        WEB.DownloadFile("http://dl.dropbox.com/u/60701738/MCDek/xmas.cpy", "extra/copy/christmastree.copy");
+                        WEB.DownloadFile("http://dl.dropbox.com/u/60701738/MCDek/xmas.copy", "extra/copy/christmastree.copy");
                 }
                 catch
                 {
