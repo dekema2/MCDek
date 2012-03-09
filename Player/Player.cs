@@ -12,6 +12,9 @@
 	or implied. See the License for the specific language governing
 	permissions and limitations under the License.
 */
+
+//From dekema2: This will be heavily modified in some way or another, this one file determines our success.
+
 using System;
 using System.Threading;
 using System.Net;
