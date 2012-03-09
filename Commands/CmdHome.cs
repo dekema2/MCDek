@@ -1,3 +1,5 @@
+//Copyright 2012 MCDek-DekemaServ, Created by ballock1; 
+
 ﻿using System;
 
 
