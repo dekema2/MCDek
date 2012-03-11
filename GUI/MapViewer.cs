@@ -25,7 +25,7 @@ namespace MCDek.Gui
         {
             if (TextBox1.Text.Trim == "")
             {
-               MessageBox.Show("Type something in! Damn it!!!")
+               MessageBox.Show("Type something in! Darn it!!!")
             }
             else 
             {
