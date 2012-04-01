@@ -49,7 +49,7 @@ namespace MCLawl
                 Player.SendMessage(p, upTime);
 
                 if (Server.updateTimer.Interval > 1000) Player.SendMessage(p, "Server is currently in &5Low Lag" + Server.DefaultColor + " mode.");
-                Player.SendMessage(p, "MCDek is currently Owned and Developed by Dekema2, with minor editing by 303i");
+                Player.SendMessage(p, "MCDek was created by dekema2 and 303i, forked from MCLawl, and added commands to give you this.");
             }
         }
         public override void Help(Player p)
