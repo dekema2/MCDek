@@ -1,6 +1,11 @@
-(3/9/12)-v0.3.1.0:Added Commands
-				   - OpTest
+
+(4/1/12)-v0.3.2.0: Added Commands
+				   - FastHouse
 				   - Push
+				   Added Blocks
+				   - opdoor
+(3/31/12)-v0.3.1.0: Added Commands
+				   - OpTest
 				   - AutoC
 				   - Detonate
 				   - Uban

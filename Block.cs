@@ -82,6 +82,8 @@ namespace MCLawl
         public const byte op_cobblestone = (byte)104;
         public const byte op_air = (byte)105;
         public const byte op_water = (byte)106;
+        public const byte opdoor = (byte)107;
+
 
         public const byte wood_float = (byte)110;
         public const byte door = (byte)111;
@@ -289,6 +291,7 @@ namespace MCLawl
                     case op_air:
                     case op_water:
                     case blackrock:
+                    case opdoor:
 
                     case air_flood:
                     case air_flood_down:
@@ -662,7 +665,8 @@ namespace MCLawl
             {
                 case Block.blue_portal:
                 case Block.orange_portal:
-
+                
+                case Block.opdoor:
                 case Block.MsgWhite:
                 case Block.MsgBlack:
 
@@ -741,6 +745,7 @@ namespace MCLawl
                 case Block.op_water:
                 case Block.opsidian:
                 case Block.rocketstart:
+                case Block.opdoor:
 
                 case Block.Zero:
                     return true;
@@ -996,6 +1001,7 @@ namespace MCLawl
                 case Block.op_cobblestone:
                 case Block.op_air:
                 case Block.op_water:
+                case Block.opdoor:
 
                 case Block.door:
                 case Block.door2:
@@ -1119,6 +1125,7 @@ namespace MCLawl
                 case 104: return "op_cobblestone";        //TODO
                 case 105: return "op_air";                //TODO
                 case 106: return "op_water";              //TODO
+                case 107: return "opdoor";  
 
                 case wood_float: return "wood_float";            //TODO
                 case door: return "door_wood";
@@ -1344,7 +1351,7 @@ namespace MCLawl
                 case "op_cobblestone": return 104;        //TODO
                 case "op_air": return 105;                //TODO
                 case "op_water": return 106;              //TODO
-
+                case "opdoor": return 107;
                 case "wood_float": return 110;            //TODO
                 case "lava_fast": return 112;
 
@@ -1548,6 +1555,7 @@ namespace MCLawl
                 case 104: return (byte)4; //Op_cobblestone
                 case 105: return (byte)0; //Op_air - Must be cuboided / replaced
                 case 106: return Block.waterstill; //Op_water
+                case 107: return trunk;
 
                 case 110: return (byte)5; //wood_float
                 case 112: return (byte)10;

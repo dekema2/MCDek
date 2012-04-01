@@ -202,6 +202,7 @@ namespace MCLawl
             all.Add(new CmdAutoC());
             all.Add(new CmdPush());
             all.Add(new CmdGriefPatrol());
+            all.Add(new CmdFastHouse());
 
             core.commands = new List<Command>(all.commands);
 
