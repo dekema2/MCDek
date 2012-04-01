@@ -17,7 +17,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 //using MySql.Data.MySqlClient;
 //using MySql.Data.Types;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdUnbanip : Command

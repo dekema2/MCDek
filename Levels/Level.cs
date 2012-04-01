@@ -18,11 +18,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Data;
 using System.Threading;
-//using MySql.Data.MySqlClient;
-//using MySql.Data.Types;
+using MySql.Data.MySqlClient;
+using MySql.Data.Types;
+using MCDek;
 
-///WARNING! DO NOT CHANGE THE WAY THE LEVEL IS SAVED/LOADED!
-///You MUST make it able to save and load as a new version other wise you will make old levels incompatible!
 
 
 namespace MCLawl
@@ -41,6 +40,30 @@ namespace MCLawl
 
     public class Level
     {
+
+        #region Delegates
+
+        public delegate void OnLevelLoad(string level);
+
+        public delegate void OnLevelLoaded(Level l);
+
+        public delegate void OnLevelSave(Level l);
+
+        public delegate void OnLevelUnload(Level l);
+
+        public delegate void OnPhysicsUpdate(ushort x, ushort y, ushort z, byte time, string extraInfo, Level l);
+        #endregion
+        public static event OnLevelUnload LevelUnload = null;
+        [Obsolete("Please use OnLevelSaveEvent.Register()")]
+        public static event OnLevelSave LevelSave = null;
+        //public static event OnLevelSave onLevelSave = null;
+        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
+        public event OnLevelUnload onLevelUnload = null;
+        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
+        public static event OnLevelLoad LevelLoad = null;
+        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
+        public static event OnLevelLoaded LevelLoaded;        
+        
         public int id;
         public string name;
         public ushort width; // x

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 //using MySql.Data.MySqlClient;
 //using MySql.Data.Types;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdTpZone : Command

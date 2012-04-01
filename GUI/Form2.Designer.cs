@@ -1,4 +1,4 @@
-﻿namespace MCDek.Drawing
+﻿namespace MCDek.Gui
 {
     partial class Form2
     {

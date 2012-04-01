@@ -1,7 +1,7 @@
 ﻿using System;
+using MCDek;
 
-
-namespace MCDek
+namespace MCLawl
 {
     public class CmdHome : Command
     {
@@ -21,9 +21,9 @@ namespace MCDek
         {
             if (p != null)
             {
-                    Command.all.Find("time").Use(p, msg);
-                    Command.all.Find("inbox").Use(p, msg);
-                    Command.all.Find("who").Use(p, message);
+                    Command.all.Find("time").Use(p, message);
+                    Command.all.Find("inbox").Use(p, message);
+                    Command.all.Find("players").Use(p, message);
                     
             }
         }

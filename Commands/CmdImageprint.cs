@@ -6,7 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Threading;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdImageprint : Command

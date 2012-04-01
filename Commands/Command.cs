@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using MCLawl.Commands;
+using MCDek;
 
 namespace MCLawl
 {
@@ -57,7 +58,9 @@ namespace MCLawl
             all.Add(new CmdCompile());
             all.Add(new CmdColor());
             all.Add(new CmdCopy());
-            all.Add(new CmdCTF());
+            all.Add(new CmdAutoC()); 
+            all.Add(new CmdAirRaid()); 
+            all.Add(new CmdChristmasTree());
             all.Add(new CmdCuboid());
             all.Add(new CmdDelete());
             all.Add(new CmdDeleteLvl());
@@ -190,6 +193,15 @@ namespace MCLawl
             all.Add(new CmdAward());
             all.Add(new CmdAwards());
             all.Add(new CmdAwardMod());
+            all.Add(new CmdDetonate());
+            all.Add(new CmdMimic());
+            all.Add(new CmdUban());
+            all.Add(new CmdHome());
+            all.Add(new CmdOpTest());
+            all.Add(new CmdAirRaid());
+            all.Add(new CmdAutoC());
+            all.Add(new CmdPush());
+            all.Add(new CmdGriefPatrol());
 
             core.commands = new List<Command>(all.commands);
 

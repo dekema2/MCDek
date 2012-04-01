@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using MCDek;
+using MCLawl;
 
 namespace MCDek.Gui
 {
@@ -19,18 +21,19 @@ namespace MCDek.Gui
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = panel1.CreateGraphics();
+        }
             
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if (TextBox1.Text.Trim == "")
+            if (textBox1.Text == "")
             {
-               MessageBox.Show("Type something in! Damn it!!!")
+               MessageBox.Show("Type something in! Darn it!!!");
             }
             else 
             {
                 Level lvl = Level.Find(textBox1.Text.Trim().ToLower());
-                if (lvl == null) lvl = GetTopLevel.Load(textBox1.Text.Trim().ToLower());
+                if (lvl == null) lvl = Level.Load(textBox1.Text.Trim().ToLower());
                 if (lvl == null)
                 {
                        MessageBox.Show("I could Find That map");
@@ -42,17 +45,18 @@ namespace MCDek.Gui
                     {
                         for (ushort y = lvl.depth; y > 0; y--)
                         {
-                            for (ushort z = 0; z = < lvl.height; z++)
+                            for (ushort z = 0; z <= lvl.height; z++)
                             {
                                   if (Block.Convert(lvl.GetTile(x, y, z)) != Block.air)
                                 {
-                                    if (topBlock[x*z*lvl.width] ! null) topBlock [x*z*lvl.width] = lvl.GetTile(x,y,z);
+                                    if (topBlock[x*z*lvl.width] != null) topBlock [x*z*lvl.width] = lvl.GetTile(x,y,z);
                                   }
                             }
                         }
                     }
                 }
             }
+        }
             private Brush GetBrush(Byte b)
             {
                 switch (Block.Convert(b))
@@ -116,35 +120,41 @@ namespace MCDek.Gui
                     case 29:
                     case 30:
                     case 31:
-                        toreturn = Brushes.Purple;
+                        toReturn = Brushes.Purple;
                         break;
                     case 32:
-                toreturn = Brushes.MediumPurple;
+                toReturn = Brushes.MediumPurple;
                         break;
                     case 33:
-                        toreturn = Brushes.Pink;
+                        toReturn = Brushes.Pink;
                         break;
                     case 34:
-                        toreturn = Brushes.DarkGray;
+                        toReturn = Brushes.DarkGray;
                         break;
                     case 36:
-                    case Block.Iron:
+                    case Block.iron:
 
-                        toreturn = Brushes.White;
+                        toReturn = Brushes.White;
                         break;
                     case 43: 
                     case 44: 
-                        toreturn = Brushes.LightGray;
-                        break:
+                        toReturn = Brushes.LightGray;
+                        break;
                     default:
                         MessageBox.Show("It appears that the block " + Block.Name(b) + "has not been given a color! Aborting!");
-                        return Brushes.White HotPink;
+                        return Brushes.HotPink;
 
                         
-
-
-                     
+                   
+                
                 }
+                return toReturn;
+
             }
+
+
+
+
+            public Brush toReturn { get; set; }
     }
 }

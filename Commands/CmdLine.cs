@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdLine : Command

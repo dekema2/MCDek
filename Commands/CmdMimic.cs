@@ -1,7 +1,7 @@
 ﻿using System;
+using MCDek;
 
-
-namespace MCDek
+namespace MCLawl
 {
     public class CmdMimic : Command
     {

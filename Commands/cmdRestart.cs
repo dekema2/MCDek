@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MCLawl.Gui;
+using MCDek.Gui;
+using MCDek;
 
 namespace MCLawl
 {
@@ -18,7 +19,7 @@ namespace MCLawl
         public override void Use(Player p, string message)
         {
             if (message != "") { Help(p); return; }
-            MCLawl_.Gui.Program.restartMe();
+            MCDek_.Gui.Program.restartMe();
             //MCLawl_.Gui.Program.ExitProgram(true);
         }
         public override void Help(Player p)

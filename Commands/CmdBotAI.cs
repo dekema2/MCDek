@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdBotAI : Command

@@ -4,7 +4,7 @@ using System.Text;
 //using MySql.Data.MySqlClient;
 //using MySql.Data.Types;
 using System.Data;
-
+using MCDek;
 namespace MCLawl
 {
     class CmdClones : Command

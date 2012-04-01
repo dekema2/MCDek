@@ -14,7 +14,7 @@
 */
 // Copyright 2009, 2010 Matvei Stefarov <me@matvei.org>
 using System;
-
+using MCDek;
 /*
 This generator was developed by Neko_baron.
 

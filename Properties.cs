@@ -14,6 +14,7 @@
 */
 using System;
 using System.IO;
+using MCDek;
 
 namespace MCLawl
 {
@@ -331,10 +332,6 @@ namespace MCLawl
                                 break;
                             case "money-name":
                                 if (value != "") Server.moneys = value;
-                                break;
-                            case "mono":
-                                try { Server.mono = bool.Parse(value); }
-                                catch { Server.s.Log("Invalid " + key + ". Using default."); }
                                 break;
                             case "restart-on-error":
                                 try { Server.restartOnError = bool.Parse(value); }

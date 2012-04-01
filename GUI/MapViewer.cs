@@ -6,58 +6,118 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
+using MCLawl.Gui;
+using MCDek;
+using MCLawl;
+using System.Threading;
 
 namespace MCDek.Gui
 {
-    public partial class Form2 : Form
+    public partial class Form3 : Form
     {
-        public Form2()
+        delegate void StringCallback(string s);
+        delegate void PlayerListCallback(List<Player> players);
+        delegate void ReportCallback(Report r);
+        delegate void VoidDelegate();
+        public static bool fileexists = false;
+        bool mapgen = false;
+
+        PlayerCollection pc = new PlayerCollection(new PlayerListView());
+        LevelCollection lc = new LevelCollection(new LevelListView());
+        LevelCollection lcTAB = new LevelCollection(new LevelListViewForTab());
+
+        //public static event EventHandler Minimize;
+        public NotifyIcon notifyIcon1 = new NotifyIcon();
+        // public static bool Minimized = false;
+
+        Level prpertiesoflvl;
+        Player prpertiesofplyer;
+
+        internal static Server s;
+
+        readonly System.Timers.Timer UpdateListTimer = new System.Timers.Timer(10000);
+        
+        public Form3()
         {
             InitializeComponent();
         }
 
+        public void UpdateMapList()
+        {
+            if (InvokeRequired)
+                Invoke(new MCDek.Gui.Window.UpdateList(UpdateMapList));
+            else
+            {
+
+                if (dgvMaps.DataSource == null)
+                    dgvMaps.DataSource = lc;
+
+                string selected = null;
+                if (lc.Count > 0 && dgvMaps.SelectedRows.Count > 0)
+                {
+                    selected = (from DataGridViewRow row in dgvMaps.Rows where row.Selected select lc[row.Index]).First().name;
+                }
+
+                lc.Clear();
+                lc = new LevelCollection(new LevelListView());
+                Server.levels.ForEach(l => lc.Add(l));
+
+                dgvMaps.DataSource = null;
+                dgvMaps.DataSource = lc;
+                if (selected != null)
+                {
+                    foreach (DataGridViewRow row in Server.levels.SelectMany(l => dgvMaps.Rows.Cast<DataGridViewRow>().Where(row => (string)row.Cells[0].Value == selected)))
+                        row.Selected = true;
+                }
+
+                dgvMaps.Refresh();
+
+            }
+        }
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = panel1.CreateGraphics();
-            
+        }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void dgvMaps_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (TextBox1.Text.Trim == "")
-            {
-               MessageBox.Show("Type something in! Damn it!!!")
-            }
-            else 
+
+        }
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
             {
                 Level lvl = Level.Find(textBox1.Text.Trim().ToLower());
-                if (lvl == null) lvl = GetTopLevel.Load(textBox1.Text.Trim().ToLower());
+                if (lvl == null) lvl = Level.Load(textBox1.Text.Trim().ToLower());
                 if (lvl == null)
                 {
-                       MessageBox.Show("I could Find That map");
+                    MessageBox.Show("I could not find that map!");
                 }
                 else
                 {
-                    int[] topBlock = new int [ lvl.width * lvl.height ];
+                    int[] topBlock = new int[lvl.width * lvl.height * lvl.depth];
                     for (ushort x = 0; x < lvl.width; x++)
                     {
                         for (ushort y = lvl.depth; y > 0; y--)
                         {
-                            for (ushort z = 0; z = < lvl.height; z++)
+                            for (ushort z = 0; z <= lvl.height; z++)
                             {
-                                  if (Block.Convert(lvl.GetTile(x, y, z)) != Block.air)
+                                if (Block.Convert(lvl.GetTile(x, y, z)) != Block.air)
                                 {
-                                    if (topBlock[x*z*lvl.width] ! null) topBlock [x*z*lvl.width] = lvl.GetTile(x,y,z);
-                                  }
+                                    if (topBlock[x * z * lvl.width] != 0) topBlock[x * z * lvl.width] = lvl.GetTile(x, y, z);
+                                }
                             }
                         }
                     }
                 }
             }
-            private Brush GetBrush(Byte b)
+        }
+        private Brush GetBrush(Byte b)
+        {
+            switch (Block.Convert(b))
             {
-                switch (Block.Convert(b))
-                {
-                    case 1: //normal stone which is just a mclawl glitch
+                case 1: //normal stone which is just a mclawl glitch
                 case Block.stone: //cobblestone
                 case Block.gravel:
                 case Block.coal:
@@ -113,41 +173,55 @@ namespace MCDek.Gui
                 case 27: //cyan
                     toReturn = Brushes.Cyan;
                     break;
-                    case 29:
-                    case 30:
-                    case 31:
-                        toreturn = Brushes.Purple;
-                        break;
-                    case 32:
-                toreturn = Brushes.MediumPurple;
-                        break;
-                    case 33:
-                        toreturn = Brushes.Pink;
-                        break;
-                    case 34:
-                        toreturn = Brushes.DarkGray;
-                        break;
-                    case 36:
-                    case Block.Iron:
+                case 29:
+                case 30:
+                case 31:
+                    toReturn = Brushes.Purple;
+                    break;
+                case 32:
+                    toReturn = Brushes.MediumPurple;
+                    break;
+                case 33:
+                    toReturn = Brushes.Pink;
+                    break;
+                case 34:
+                    toReturn = Brushes.DarkGray;
+                    break;
+                case 36:
+                case Block.iron:
 
-                        toreturn = Brushes.White;
-                        break;
-                    case 43: 
-                    case 44: 
-                        toreturn = Brushes.LightGray;
-                        break:
-                    default:
-                        MessageBox.Show("It appears that the block " + Block.Name(b) + "has not been given a color! Aborting!");
-                        return Brushes.White HotPink;
-                }
-                return toReturn;
-               
-
-                        
-
-
-                     
-                }
+                    toReturn = Brushes.White;
+                    break;
+                case 43:
+                case 44:
+                    toReturn = Brushes.LightGray;
+                    break;
+                default:
+                    MessageBox.Show("It appears that the block " + Block.Name(b) + "has not been given a color! Aborting!");
+                    return Brushes.HotPink;
             }
+            return toReturn;
+
+
+
+
+
+
+        }
+
+        public Brush toReturn { get; set; }
+
+        private void PropertyWindow_Unload(object sender, EventArgs e)
+        {
+            Window.previousLoaded = false;
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+
     }
 }
+

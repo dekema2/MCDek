@@ -15,10 +15,11 @@
 using System;
 using System.Data;
 using System.Collections.Generic;
+using MCDek;
 //using MySql.Data.MySqlClient;
 //using MySql.Data.Types;
 
-namespace MCDek
+namespace MCLawl
 {
     public class CmdAbout : Command
     {

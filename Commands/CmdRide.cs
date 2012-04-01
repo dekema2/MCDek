@@ -15,7 +15,7 @@
 using System;
 using System.IO;
 using System.Threading;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdRide : Command

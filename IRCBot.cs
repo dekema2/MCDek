@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Text;
 using Meebey.SmartIrc4net;
 using System.Threading;
+using MCDek;
 
 namespace MCLawl
 {

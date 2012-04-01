@@ -15,6 +15,7 @@
 using System;
 using System.Net;
 using System.Threading;
+using MCDek;
 
 namespace MCLawl
 {
@@ -29,7 +30,7 @@ namespace MCLawl
 
         public override void Use(Player p, string message)
         {
-            if (p == null || p.group.Permission > LevelPermission.AdvBuilder) MCLawl_.Gui.Program.UpdateCheck(false, p);
+            if (p == null || p.group.Permission > LevelPermission.AdvBuilder) MCDek_.Gui.Program.UpdateCheck(false, p);
             else Player.SendMessage(p, "Ask an Operator to do it!");
         }
         public override void Help(Player p)

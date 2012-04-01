@@ -13,7 +13,7 @@
 	permissions and limitations under the License.
 */
 using System;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdKick : Command

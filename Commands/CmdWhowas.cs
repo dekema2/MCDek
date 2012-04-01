@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Data;
 //using MySql.Data.MySqlClient;
 //using MySql.Data.Types;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdWhowas : Command

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 //using MySql.Data.MySqlClient;
 //using MySql.Data.Types;
 using System.Data;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdPortal : Command

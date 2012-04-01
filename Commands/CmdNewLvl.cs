@@ -15,8 +15,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
-namespace MCDek
+using MCDek;
+namespace MCLawl
 {
     class CmdNewLvl : Command
     {

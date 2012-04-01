@@ -14,7 +14,7 @@
 */
 using System;
 using System.Collections.Generic;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdAwards : Command

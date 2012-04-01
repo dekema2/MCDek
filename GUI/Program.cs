@@ -15,6 +15,8 @@ using System.Threading;
 using System.Text.RegularExpressions;
 using System.Net;
 using MCDek;
+using MCLawl;
+using System.Reflection;
 
 namespace MCDek_.Gui
 {
@@ -26,13 +28,14 @@ namespace MCDek_.Gui
         public static extern IntPtr GetConsoleWindow();
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        private static string CurrentVersionFile = "http://www.dekemaserv.com";
         public static void GlobalExHandler(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = (Exception)e.ExceptionObject;
-            MCDekServer.ErrorLog(ex);
+            MCDek.Server.ErrorLog(ex);
             Thread.Sleep(500);
 
-            if (!MCDekServer.restartOnError)
+            if (!MCDek.Server.restartOnError)
                 Program.restartMe();
             else
                 Program.restartMe(false);
@@ -41,10 +44,10 @@ namespace MCDek_.Gui
         public static void ThreadExHandler(object sender, ThreadExceptionEventArgs e)
         {
             Exception ex = e.Exception;
-            MCDekServer.ErrorLog(ex);
+            MCDek.Server.ErrorLog(ex);
             Thread.Sleep(500);
 
-            if (!MCDekServer.restartOnError)
+            if (!MCDek.Server.restartOnError)
                 Program.restartMe();
             else
                 Program.restartMe(false);
@@ -90,13 +93,13 @@ namespace MCDek_.Gui
 
                 if (foundView[4].Split(' ')[2].ToLower() == "true")
                 {
-                    MCDekServer s = new MCDekServer();
+                    MCDek.Server s = new MCDek.Server();
                     s.OnLog += Console.WriteLine;
                     s.OnCommand += Console.WriteLine;
                     s.OnSystem += Console.WriteLine;
                     s.Start();
 
-                    Console.Title = MCDekServer.name + " MCDek Version: " + MCDekServer.Version;
+                    Console.Title = MCDek.Server.name + " MCDek Version: " + MCDek.Server.Version;
                     usingConsole = true;
                     handleComm(Console.ReadLine());
 
@@ -122,7 +125,7 @@ namespace MCDek_.Gui
                     Application.Run(new MCDek.Gui.Window());
                 }
             }
-            catch (Exception e) { MCDekServer.ErrorLog(e); return; }
+            catch (Exception e) { MCDek.Server.ErrorLog(e); return; }
         }
 
         public static void handleComm(string s)
@@ -156,13 +159,13 @@ namespace MCDek_.Gui
             }
             catch (Exception e)
             {
-                MCDekServer.ErrorLog(e);
+                MCDek.Server.ErrorLog(e);
                 Console.WriteLine("CONSOLE: Failed command.");
                 handleComm(Console.ReadLine());
                 return;
             }
 
-        talk: handleComm("say " + MCDek.Group.findPerm(LevelPermission.Admin).color + "Console: &f" + s);
+        talk: handleComm("say " + MCLawl.Group.findPerm(LevelPermission.Admin).color + "Console: &f" + s);
             handleComm(Console.ReadLine());
         }
 
@@ -178,35 +181,35 @@ namespace MCDek_.Gui
             {
                 WebClient Client = new WebClient();
 
-                if (wait) { if (!MCDekServer.checkUpdates) return; Thread.Sleep(10000); }
+                if (wait) { if (!MCDek.Server.checkUpdates) return; Thread.Sleep(10000); }
                 try
                 {
-                    if (Client.DownloadString("http://www.dekemaserv.com") != MCDekServer.Version) /*303i this is where the MCDekServer version goes. Once they release JDownloads I think we can host files from the site.*/
+                    if (Client.DownloadString("http://www.dekemaserv.com") != Server.Version) /*303i this is where the MCDekServer version goes. Once they release JDownloads I think we can host files from the site.*/
                     {
-                        if (MCDekServer.autoupdate == true || p != null)
+                        if (MCDek.Server.autoupdate == true || p != null)
                         {
-                            if (MCDekServer.autonotify == true || p != null)
+                            if (MCDek.Server.autonotify == true || p != null)
                             {
-                                if (p != null) MCDekServer.restartcountdown = "20";
-                                Player.GlobalMessage("Update found. Prepare for restart in &f" + MCDekServer.restartcountdown + MCDekServer.DefaultColor + " seconds.");
-                                MCDekServer.s.Log("Update found.  Prepare for restart in " + MCDekServer.restartcountdown + " seconds.");
-                                double nxtTime = Convert.ToDouble(MCDekServer.restartcountdown);
+                                if (p != null) MCDek.Server.restartcountdown = "20";
+                                Player.GlobalMessage("Update found. Prepare for restart in &f" + MCDek.Server.restartcountdown + MCDek.Server.DefaultColor + " seconds.");
+                                MCDek.Server.s.Log("Update found. Prepare for restart in " + MCDek.Server.restartcountdown + " seconds.");
+                                double nxtTime = Convert.ToDouble(MCDek.Server.restartcountdown);
                                 DateTime nextupdate = DateTime.Now.AddMinutes(nxtTime);
-                                int timeLeft = Convert.ToInt32(MCDekServer.restartcountdown);
+                                int timeLeft = Convert.ToInt32(MCDek.Server.restartcountdown);
                                 System.Timers.Timer countDown = new System.Timers.Timer();
                                 countDown.Interval = 1000;
                                 countDown.Start();
                                 countDown.Elapsed += delegate
                                 {
-                                    if (MCDekServer.autoupdate == true || p != null)
+                                    if (MCDek.Server.autoupdate == true || p != null)
                                     {
-                                        Player.GlobalMessage("Updating in &f" + timeLeft + MCDekServer.DefaultColor + " seconds.");
-                                        MCDekServer.s.Log("Updating in " + timeLeft + " seconds.");
+                                        Player.GlobalMessage("Updating in &f" + timeLeft + MCDek.Server.DefaultColor + " seconds.");
+                                        MCDek.Server.s.Log("Updating in " + timeLeft + " seconds.");
                                         timeLeft = timeLeft - 1;
                                         if (timeLeft < 0)
                                         {
                                             Player.GlobalMessage("---UPDATING MCDekServer---");
-                                            MCDekServer.s.Log("---UPDATING MCDekServer---");
+                                            MCDek.Server.s.Log("---UPDATING MCDekServer---");
                                             countDown.Stop();
                                             countDown.Dispose();
                                             PerformUpdate(false);
@@ -215,7 +218,7 @@ namespace MCDek_.Gui
                                     else
                                     {
                                         Player.GlobalMessage("Stopping auto restart.");
-                                        MCDekServer.s.Log("Stopping auto restart.");
+                                        MCDek.Server.s.Log("Stopping auto restart.");
                                         countDown.Stop();
                                         countDown.Dispose();
                                     }
@@ -253,7 +256,7 @@ namespace MCDek_.Gui
                         Player.SendMessage(p, "No update found!");
                     }
                 }
-                catch { MCDekServer.s.Log("No web MCDekServer found to update on."); }
+                catch { MCDek.Server.s.Log("No web MCDekServer found to update on."); }
                 Client.Dispose();
                 CurrentUpdate = false;
             })); updateThread.Start();
@@ -264,7 +267,7 @@ namespace MCDek_.Gui
             try
             {
                 StreamWriter SW;
-                if (!MCDekServer.mono)
+                if (!MCDek.Server.mono)
                 {
                     if (!File.Exists("Update.bat"))
                         SW = new StreamWriter(File.Create("Update.bat"));
@@ -311,7 +314,6 @@ namespace MCDek_.Gui
                 }
 
                 SW.Flush(); SW.Close(); SW.Dispose();
-				//Way too many old URLs
                 string filelocation = "";
                 string verscheck = "";
                 Process proc = Process.GetCurrentProcess();
@@ -319,24 +321,24 @@ namespace MCDek_.Gui
                 if (!oldrevision)
                 {
                     WebClient client = new WebClient();
-                    MCDekServer.selectedrevision = client.DownloadString("http://www.mclawl.tk/curversion.txt");
+                    MCDek.Server.selectedrevision = client.DownloadString("http://www.dekemaserv.com/ChangeLog.txt");
                     client.Dispose();
                 }
-                verscheck = MCDekServer.selectedrevision.TrimStart('r');
+                verscheck = MCDek.Server.selectedrevision.TrimStart('r');
                 int vers = int.Parse(verscheck.Split('.')[0]);
-                if (oldrevision) { filelocation = ("http://www.mclawl.tk/archives/exe/" + MCDekServer.selectedrevision + ".exe"); }
+                if (oldrevision) { filelocation = ("http://www.mclawl.tk/archives/exe/" + MCDek.Server.selectedrevision + ".exe"); }
                 if (!oldrevision) { filelocation = ("http://www.mclawl.tk/MCLawl_.dll"); }
                 WebClient Client = new WebClient();
                 Client.DownloadFile(filelocation, "MCDek.new");
-                Client.DownloadFile("http://www.mclawl.tk/changelog.txt", "extra/Changelog.txt");
-                foreach (Level l in MCDekServer.levels) l.Save();
+                Client.DownloadFile("", "Changelog.txt");
+                foreach (Level l in MCDek.Server.levels) l.Save();
                 foreach (Player pl in Player.players) pl.save();
 
                 string fileName;
-                if (!MCDekServer.mono) fileName = "Update.bat";
+                if (!MCDek.Server.mono) fileName = "Update.bat";
                 else fileName = "Update.sh";
 
-                try
+                /*try
                 {
                     if (MCDek.Gui.Window.thisWindow.notifyIcon1 != null)
                     {
@@ -344,22 +346,21 @@ namespace MCDek_.Gui
                         MCDek.Gui.Window.thisWindow.notifyIcon1.Visible = false;
                     }
                 }
-                catch { }
+                catch { }*/
 
                 Process p = Process.Start(fileName, "main " + System.Diagnostics.Process.GetCurrentProcess().Id.ToString());
                 p.WaitForExit();
             }
-            catch (Exception e) { MCDekServer.ErrorLog(e); }
+            catch (Exception e) { MCDek.Server.ErrorLog(e); }
         }
 
         static public void ExitProgram(Boolean AutoRestart)
         {
             Thread exitThread;
-            MCDekServer.Exit();
 
             exitThread = new Thread(new ThreadStart(delegate
             {
-                try
+                /*try
                 {
                     if (MCDek.Gui.Window.thisWindow.notifyIcon1 != null)
                     {
@@ -368,17 +369,17 @@ namespace MCDek_.Gui
                     }
                 }
                 catch { }
-
+*/
                 try
                 {
                     saveAll();
 
                     if (AutoRestart == true) restartMe();
-                    else MCDekServer.process.Kill();
+                    else MCDek.Server.process.Kill();
                 }
                 catch
                 {
-                    MCDekServer.process.Kill();
+                    MCDek.Server.process.Kill();
                 }
             })); exitThread.Start();
         }
@@ -389,8 +390,8 @@ namespace MCDek_.Gui
             {
                 saveAll();
 
-                MCDekServer.shuttingDown = true;
-                try
+                MCDek.Server.shuttingDown = true;
+                /*try
                 {
                     if (MCDek.Gui.Window.thisWindow.notifyIcon1 != null)
                     {
@@ -398,17 +399,17 @@ namespace MCDek_.Gui
                         MCDek.Gui.Window.thisWindow.notifyIcon1.Visible = false;
                     }
                 }
-                catch { }
+                catch { }*/
 
-                if (MCDekServer.listen != null) MCDekServer.listen.Close();
-                if (!MCDekServer.mono || fullRestart)
+                if (MCDek.Server.listen != null) MCDek.Server.listen.Close();
+                if (!MCDek.Server.mono || fullRestart)
                 {
                     Application.Restart();
-                    MCDekServer.process.Kill();
+                    MCDek.Server.process.Kill();
                 }
                 else
                 {
-                    MCDekServer.s.Start();
+                    MCDek.Server.s.Start();
                 }
             }));
             restartThread.Start();
@@ -421,12 +422,12 @@ namespace MCDek_.Gui
                 kickList.AddRange(Player.players);
                 foreach (Player p in kickList) { p.Kick("MCDekServer restarted! Rejoin!"); }
             }
-            catch (Exception exc) { MCDekServer.ErrorLog(exc); }
+            catch (Exception exc) { MCDek.Server.ErrorLog(exc); }
 
             try
             {
                 string level = null;
-                foreach (Level l in MCDekServer.levels)
+                foreach (Level l in MCDek.Server.levels)
                 {
                     level = level + l.name + "=" + l.physics + System.Environment.NewLine;
                     l.Save();
@@ -435,7 +436,7 @@ namespace MCDek_.Gui
 
                 File.WriteAllText("text/autoload.txt", level);
             }
-            catch (Exception exc) { MCDekServer.ErrorLog(exc); }
+            catch (Exception exc) { MCDek.Server.ErrorLog(exc); }
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
-	Copyright 2010 MCSharp team (Modified for use with MCZall/MCLawl) Licensed under the
+	Copyright 2010 MCSharp team (Modified for use with MCZall/MCDek) Licensed under the
 	Educational Community License, Version 2.0 (the "License"); you may
 	not use this file except in compliance with the License. You may
 	obtain a copy of the License at
@@ -22,8 +22,9 @@ using System.IO;
 using System.Threading;
 using System.ComponentModel;
 using System.Collections;
+using MCLawl;
 
-namespace MCLawl
+namespace MCDek
 {
 
     public static class Heartbeat
@@ -46,9 +47,9 @@ namespace MCLawl
 
         public static void Init()
         {
-            if(Server.logbeat)
+            if (Server.logbeat)
             {
-                if(!File.Exists("heartbeat.log"))
+                if (!File.Exists("heartbeat.log"))
                 {
                     File.Create("heartbeat.log").Close();
                 }
@@ -79,7 +80,7 @@ namespace MCLawl
                     lawlBeatTimer.Interval = 300000;
                     try
                     {
-                        Pump(Beat.MCLawl);;
+                        Pump(Beat.MCDek); ;
                     }
                     catch (Exception e)
                     {
@@ -97,7 +98,7 @@ namespace MCLawl
 
             string url = "http://www.minecraft.net/heartbeat.jsp";
             int totalTries = 0;
-    retry:  try
+        retry: try
             {
                 int hidden = 0;
                 totalTries++;
@@ -111,13 +112,13 @@ namespace MCLawl
                         }
                         postVars += "&salt=" + Server.salt;
                         goto default;
-                    case Beat.MCLawl:
+                    case Beat.MCDek:
                         if (hash == null)
                         {
                             throw new Exception("Hash not set");
                         }
 
-                        url = "http://www.mclawl.tk/hbannounce.php";
+                        url = "http://www.dekemaserv.com/hbannounce.php";
 
                         if (Player.number > 0)
                         {
@@ -181,8 +182,8 @@ namespace MCLawl
                         postVars += "&motd=" + UrlEncode(Server.motd) +
                                 "&hash=" + hash +
                                 "&data=" + Server.Version + "," + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() +
-                                "&server=MCLawl" +
-                                "&details=Running MCLawl version " + Server.Version;
+                                "&server=MCDek" +
+                                "&details=Running MCDek version " + Server.Version;
 
                         goto default;
                     default:
@@ -199,7 +200,7 @@ namespace MCLawl
                 request.ContentLength = formData.Length;
                 request.Timeout = 15000;
 
-   retryStream: try
+            retryStream: try
                 {
                     using (Stream requestStream = request.GetRequestStream())
                     {
@@ -247,7 +248,7 @@ namespace MCLawl
                             hash = line.Substring(line.LastIndexOf('=') + 1);
                             serverURL = line;
 
-                            //serverURL = "http://" + serverURL.Substring(serverURL.IndexOf('.') + 1);
+                            Server.URL = "http://" + serverURL.Substring(serverURL.IndexOf('.') + 1);
                             Server.s.UpdateUrl(serverURL);
                             File.WriteAllText("text/externalurl.txt", serverURL);
                             Server.s.Log("URL found: " + serverURL);
@@ -355,5 +356,5 @@ namespace MCLawl
                                                  '=', '+', '$', ',', '/', '?', '%', '#', '[', ']' };
     }
 
-    public enum Beat { Minecraft, TChalo, MCLawl }
+    public enum Beat { Minecraft, TChalo, MCDek }
 }

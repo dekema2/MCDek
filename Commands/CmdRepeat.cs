@@ -1,5 +1,5 @@
 using System;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdRepeat : Command

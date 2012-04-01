@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using MCDek;
 namespace MCLawl
 {
     public class Block
@@ -462,7 +462,7 @@ namespace MCLawl
             {
                 string[] lines = File.ReadAllLines("properties/block.properties");
 
-                if (lines.Length == 0) ;
+                if (lines.Length == 0);
                 else if (lines[0] == "#Version 2")
                 {
                     string[] colon = new string[] { " : " };

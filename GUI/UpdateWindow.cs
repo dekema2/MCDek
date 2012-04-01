@@ -104,7 +104,7 @@ namespace MCLawl.Gui
             else
             {
                 UpdSave("properties/update.properties");
-                MCDekServer.autoupdate = chkAutoUpdate.Checked;
+                MCDek.Server.autoupdate = chkAutoUpdate.Checked;
             }
         }
 
@@ -116,12 +116,12 @@ namespace MCLawl.Gui
 
         private void cmdUpdate_Click(object sender, EventArgs e)
         {
-            if (MCDekServer.selectedrevision != "")
+            if (MCDek.Server.selectedrevision != "")
             {
-                MCLawl_.Gui.Program.PerformUpdate(true);
+                MCDek_.Gui.Program.PerformUpdate(true);
                 
             }
-            else { MCLawl_.Gui.Program.PerformUpdate(false); }
+            else { MCDek_.Gui.Program.PerformUpdate(false); }
       /*      if (!Program.CurrentUpdate)
                 Program.UpdateCheck();
             else
@@ -136,7 +136,7 @@ namespace MCLawl.Gui
 
         private void listRevisions_SelectedValueChanged(object sender, EventArgs e)
         {
-            MCDekServer.selectedrevision = listRevisions.SelectedItem.ToString();
+            MCDek.Server.selectedrevision = listRevisions.SelectedItem.ToString();
             
         }
 

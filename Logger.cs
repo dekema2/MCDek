@@ -18,7 +18,7 @@ using System.Text;
 using System.IO;
 using System.Threading;
 using MCLawl.Gui;
-
+using MCDek;
 namespace MCLawl
 {
     public static class Logger

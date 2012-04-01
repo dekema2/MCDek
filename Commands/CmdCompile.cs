@@ -16,6 +16,7 @@
 */
 
 using System;
+using MCDek;
 
 namespace MCLawl
 {

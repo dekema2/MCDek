@@ -21,7 +21,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.IO;
 using System.Text;
-
+using MCDek;
 namespace MCLawl
 {
     static class Scripting

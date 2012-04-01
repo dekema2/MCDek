@@ -14,7 +14,10 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using MCDek;
 
 namespace MCLawl
 {
@@ -58,6 +61,7 @@ namespace MCLawl
 
         public static List<Group> GroupList = new List<Group>();
         public static Group standard;
+        
         public static void InitAll()
         {
             GroupList = new List<Group>();
@@ -225,6 +229,11 @@ namespace MCLawl
 
             saveGroups(GroupList);
         }
+        public static Group findPermInt(int Perm)
+        {
+            return GroupList.FirstOrDefault(grp => (int)grp.Permission == Perm);
+        }
+
         public static void saveGroups(List<Group> givenList)
         {
             StreamWriter SW = new StreamWriter(File.Create("properties/ranks.properties"));
@@ -375,7 +384,7 @@ namespace MCLawl
             {
                 string[] lines = File.ReadAllLines("properties/command.properties");
 
-                if (lines.Length == 0) ;
+                if (lines.Length == 0);
                 else if (lines[0] == "#Version 2")
                 {
                     string[] colon = new string[] { " : " };

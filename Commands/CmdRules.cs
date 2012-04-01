@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using MCDek;
 namespace MCLawl
 {
     class CmdRules : Command

@@ -1,3 +1,14 @@
-(2/21/12)-v0.1.2.0: Added a MapViewer to the GUI, fully customized with blocks
-(2/18/12)-v0.1.1.0: Added a Changelog.txt file
+(3/9/12)-v0.3.0.0: Added a Changelog.txt file
+                 - Added Commands
+				   - OpTest
+				   - Push
+				   - AutoC
+				   - Detonate
+				   - AirRaid
+				   - Uban
+				   - Home
+				   - ChristmasTree
+				   - Mimic
+				   - GriefPatrol
+
 (1/16/12)-v0.1.0.1: Initial release

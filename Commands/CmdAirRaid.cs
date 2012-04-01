@@ -1,8 +1,10 @@
 ﻿using System;
+using MCDek;
 // This still needs a ton of work
-namespace MCDek
+
+namespace MCLawl
 {
-    class CmdAirRaid
+    class CmdAirRaid : Command
     {        
         public override string name { get { return "airraid"; } }
         public override string shortcut { get { return "ar"; } }
@@ -19,26 +21,27 @@ namespace MCDek
         {
                         if (p != null)
             {
-                    Command.all.Find("detonate").Use(p, message + "0 0 0");
-                    Command.all.Find("detonate").Use(p, message + "50 0 0"); 
-                    Command.all.Find("detonate").Use(p, message + "0 50 0"); 
-                    Command.all.Find("detonate").Use(p, message + "-50 0 0"); 
-                    Command.all.Find("detonate").Use(p, message + "0 -50 0");
-                    Command.all.Find("detonate").Use(p, message + "50 50 0");
-                    Command.all.Find("detonate").Use(p, message + "-50 -50 0");
-                    Command.all.Find("detonate").Use(p, message + "50 -50 0");
-                    Command.all.Find("detonate").Use(p, message + "-50 50 0");
+                    Command.all.Find("detonate").Use(p, message + "32 32 32");
+                    Command.all.Find("detonate").Use(p, message + "64 64 64"); 
+                    Command.all.Find("detonate").Use(p, message + "32 32 64"); 
+                    Command.all.Find("detonate").Use(p, message + "64 32 32"); 
+                    Command.all.Find("detonate").Use(p, message + "32 32 64");
+                    Command.all.Find("detonate").Use(p, message + "5 64 5");
+                    Command.all.Find("detonate").Use(p, message + "64 32 64");
+                    Command.all.Find("detonate").Use(p, message + "128 64 128");
+                    Command.all.Find("detonate").Use(p, message + "5 64 5");
                     Command.all.Find("botai").Use(p, message + "add Steve");
-                    Command.all.Find("botset").Use(p, message + "hunt");
-                    Command.all.Find("botset").Use(p, message + "kill");
+                    Command.all.Find("botadd").Use(p, message + "Steve");
+                    Command.all.Find("botadd").Use(p, message + "Steve");
+                    Command.all.Find("botadd").Use(p, message + "Steve");
+                    Command.all.Find("botadd").Use(p, message + "Steve");
+                    Command.all.Find("botadd").Use(p, message + "Steve");
+                    Command.all.Find("botadd").Use(p, message + "Steve");
                     Command.all.Find("botadd").Use(p, message + "Steve");
                     Command.all.Find("botadd").Use(p, message + "Steve"); 
-                    Command.all.Find("botadd").Use(p, message + "Steve"); 
-                    Command.all.Find("botadd").Use(p, message + "Steve"); 
-                    Command.all.Find("botadd").Use(p, message + "Steve"); 
-                    Command.all.Find("botadd").Use(p, message + "Steve"); 
-                    Command.all.Find("botadd").Use(p, message + "Steve"); 
-                    Command.all.Find("botadd").Use(p, message + "Steve");
+                    Command.all.Find("botset").Use(p, message + "Steve hunt");
+                    Command.all.Find("botset").Use(p, message + "Steve kill");
+
             }
         }
     }

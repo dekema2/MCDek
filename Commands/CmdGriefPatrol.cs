@@ -1,4 +1,8 @@
 ﻿using System;
+using MCLawl;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MCDek
 {
@@ -12,7 +16,7 @@ namespace MCDek
         public CmdGriefPatrol() { }
         public override void Help(Player p)
         {
-            Player.SendMessage(p, "/griefpatrol - Takes you to a random " + Group.findPermInt(CommandOtherPerms.GetPerm(this)).name + " or lower and hides you from view!");
+            Player.SendMessage(p, "/griefpatrol - Takes you to a random " + MCLawl.Group.findPermInt(CommandOtherPerms.GetPerm(this)).name + " or lower and hides you from view!");
         }
 
         public override void Use(Player p, string message)
@@ -38,7 +42,7 @@ namespace MCDek
             string value = getpatrol[index];
             Player who = Player.Find(value);
             Command.all.Find("tp").Use(p, who.name);
-            Command.all.Find("hide").Use(p, msg);
+            Command.all.Find("hide").Use(p, message);
             Player.SendMessage(p, "You are now watching " + who.color + who.name + "!");
         }
     }

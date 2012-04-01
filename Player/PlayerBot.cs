@@ -21,7 +21,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
-
+using MCDek;
 namespace MCLawl
 {
     public sealed class PlayerBot

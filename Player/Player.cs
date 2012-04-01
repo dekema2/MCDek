@@ -22,10 +22,11 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.Data;
+using MCDek;
 
 namespace MCLawl
 {
-    public sealed class Player
+    public sealed partial class Player
     {
         public static List<Player> players = new List<Player>();
         public static Dictionary<string, string> left = new Dictionary<string, string>();
@@ -49,6 +50,8 @@ namespace MCLawl
 
         public bool megaBoid = false;
         public bool cmdTimer = false;
+
+        public bool voted = false;
 
         byte[] buffer = new byte[0];
         byte[] tempbuffer = new byte[0xFF];
@@ -89,8 +92,6 @@ namespace MCLawl
         public string following = "";
         public string possess = "";
         
-        // Only used for possession.
-        //Using for anything else can cause unintended effects!
         public bool canBuild = true;
 
         public int money = 0;
@@ -150,7 +151,14 @@ namespace MCLawl
 
         public string prevMsg = "";
 
-
+        public static string CheckPlayerStatus(Player p)
+        {
+            if (p.hidden)
+                return "hidden";
+            if (Server.afkset.Contains(p.name))
+                return "afk";
+            return "active";
+        }
         //Movement
         public ushort oldBlock = 0;
         public ushort deathCount = 0;

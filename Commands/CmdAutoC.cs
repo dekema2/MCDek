@@ -1,16 +1,19 @@
 ﻿using System;
+using MCDek;
+using System.IO;
 
 
-namespace MCDek
+namespace MCLawl
 {
     public class CmdAutoC : Command
     {
-        public override string name { get { return "ac"; } }
-        public override string shortcut { get { return ""; } }
+        public override string name { get { return "autocubiod"; } }
+        public override string shortcut { get { return "ac"; } }
         public override string type { get { return "mod"; } }
         public override bool museumUsable { get { return true; } }
         public override LevelPermission defaultRank { get { return LevelPermission.Operator; } }
         public CmdAutoC() { }
+        public override void Use(Player p, string message)   
         {
             if ((p.group.CanExecute(Command.all.Find("cuboid"))) && (p.group.CanExecute(Command.all.Find("static"))))
             {

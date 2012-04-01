@@ -1,6 +1,7 @@
 ﻿using System;
+using MCDek;
 
-namespace MCDek
+namespace MCLawl
 {
     class CmdDetonate : Command
     {

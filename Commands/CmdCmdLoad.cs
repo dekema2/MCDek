@@ -18,7 +18,7 @@
 using System;
 using System.IO;
 using System.Reflection;
-
+using MCDek;
 namespace MCLawl
 {
     class CmdCmdLoad : Command

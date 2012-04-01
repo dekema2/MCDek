@@ -1,0 +1,20 @@
+Type: NullReferenceException
+Source: mcdektest2
+Message: Object reference not set to an instance of an object.
+Target: LogError
+Trace:    at MCLawl.PidgeonLogger.LogError(Exception ex) in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Logger.cs:line 120
+Type: NullReferenceException
+Source: mcdektest2
+Message: Object reference not set to an instance of an object.
+Target: LogError
+Trace:    at MCLawl.PidgeonLogger.LogError(Exception ex) in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Logger.cs:line 120
+Type: NullReferenceException
+Source: mcdektest2
+Message: Object reference not set to an instance of an object.
+Target: LogError
+Trace:    at MCLawl.PidgeonLogger.LogError(Exception ex) in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Logger.cs:line 120
+Type: NullReferenceException
+Source: mcdektest2
+Message: Object reference not set to an instance of an object.
+Target: LogError
+Trace:    at MCLawl.PidgeonLogger.LogError(Exception ex) in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Logger.cs:line 120

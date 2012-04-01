@@ -16,7 +16,7 @@
 */
 
 using System;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdWhitelist : Command

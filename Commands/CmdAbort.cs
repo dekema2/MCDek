@@ -13,7 +13,7 @@
 	permissions and limitations under the License.
 */
 using System;
-
+using MCDek;
 namespace MCLawl
 {
     public class CmdAbort : Command
@@ -29,6 +29,7 @@ namespace MCLawl
         {
             p.ClearBlockchange();
             p.painting = false;
+            p.isFlying = false;
             p.BlockAction = 0;
             p.megaBoid = false;
             p.cmdTimer = false;
