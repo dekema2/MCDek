@@ -1,6 +1,8 @@
 
+
 (4/1/12)-v0.3.2.0: Added Commands
 				   - FastHouse
+				   - OpTest
 				   - Push
 				   Added Blocks
 				   - opdoor
@@ -17,5 +19,4 @@
 (2/25/12)-v0.2.0.0: Updated jkush321's MapViewer to allow non-square maps, added [commands], courtesy of ballock1
 (2/21/12)-v0.1.2.0: Added a MapViewer to the GUI courtesy of jkush321, fully customized with blocks
 (2/18/12)-v0.1.1.0: Added a Changelog.txt file
->>>>>>> 82d1c3725cf3d4ddb9306e32e3d1fc2101dd01ea
 (1/16/12)-v0.1.0.1: Initial release
