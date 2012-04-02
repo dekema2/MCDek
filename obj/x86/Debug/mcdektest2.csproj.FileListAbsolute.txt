@@ -10,7 +10,6 @@ C:\Documents and Settings\mcraner\Local Settings\Application Data\Temporary Proj
 C:\Documents and Settings\mcraner\Local Settings\Application Data\Temporary Projects\mcdektest2\obj\x86\Debug\ResGen.write.1.tlog
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\bin\Debug\mcdektest2.exe.config
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\MCLawl.GUI.Form1.resources
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\MCLawl.Gui.UpdateWindow.resources
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\MCDek.Gui.Window.resources
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\GenerateResource.read.1.tlog

@@ -1,8 +1,9 @@
 
-
+(4/2/12)-v0.3.2.0: Added Commands
+                   - Converse
+				   - Vote
 (4/1/12)-v0.3.2.0: Added Commands
 				   - FastHouse
-				   - OpTest
 				   - Push
 				   Added Blocks
 				   - opdoor

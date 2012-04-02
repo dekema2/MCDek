@@ -26,25 +26,25 @@ namespace MCLawl
             ushort currentX = (ushort)(who.pos[0] / 32);
             ushort currentY = (ushort)(who.pos[1] / 32);
             ushort currentZ = (ushort)(who.pos[2] / 32);
-            ushort foundHeight = 0;
+            ushort foundX = 0;
 
             for (ushort xx = currentX; xx <= 1000; xx++)
             {
                 if (!Block.Walkthrough(p.level.GetTile(currentY, xx, currentZ)) && p.level.GetTile(currentY, xx, currentZ) != Block.Zero)
                 {
-                    foundHeight = (ushort)(xx - 1);
+                    foundX = (ushort)(xx - 1);
                     who.level.ChatLevel(who.color + who.name + Server.DefaultColor + " was slapped into the wall by " + p.color + p.name);
                     break;
                 }
             }
 
-            if (foundHeight == 0)
+            if (foundX == 0)
             {
                 who.level.ChatLevel(who.color + who.name + Server.DefaultColor + " was slapped across the map by " + p.color + p.name);
-                foundHeight = 128;
+                foundX = 128;
             }
 
-            unchecked { who.SendPos((byte)-1, who.pos[0], (ushort)(foundHeight * 32), who.pos[2], who.rot[0], who.rot[1]); }
+            unchecked { who.SendPos((byte)-1, (ushort)(foundX * 32), who.pos[1], who.pos[2], who.rot[0], who.rot[1]); }
         }
         public override void Help(Player p)
         {

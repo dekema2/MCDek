@@ -82,19 +82,11 @@ namespace MCDek.Gui
 
         private void dgvMaps_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-<<<<<<< HEAD
 
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-=======
-            if (TextBox1.Text.Trim == "")
-            {
-               MessageBox.Show("Type something in! Darn it!!!")
-            }
-            else 
->>>>>>> 82d1c3725cf3d4ddb9306e32e3d1fc2101dd01ea
             {
                 Level lvl = Level.Find(textBox1.Text.Trim().ToLower());
                 if (lvl == null) lvl = Level.Load(textBox1.Text.Trim().ToLower());
@@ -118,6 +110,7 @@ namespace MCDek.Gui
                             }
                         }
                     }
+                    
                 }
             }
         }

@@ -14,7 +14,6 @@ using MCDek;
 namespace MCLawl
 {
     public class CTFGame
-    ///A cute little game.
     {
         public List<Team> teams = new List<Team>();
 

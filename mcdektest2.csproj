@@ -136,6 +136,7 @@
     <Compile Include="Commands\CmdCmdUnload.cs" />
     <Compile Include="Commands\CmdColor.cs" />
     <Compile Include="Commands\CmdCompile.cs" />
+    <Compile Include="Commands\CmdConverse.cs" />
     <Compile Include="Commands\CmdCopy.cs" />
     <Compile Include="Commands\CmdCrashServer.cs" />
     <Compile Include="Commands\CmdCuboid.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="Commands\CmdDrill.cs" />
     <Compile Include="Commands\CmdDrop.cs" />
     <Compile Include="Commands\CmdEmote.cs" />
+    <Compile Include="Commands\CmdFastHouse.cs" />
     <Compile Include="Commands\CmdFill.cs" />
     <Compile Include="Commands\CmdFixGrass.cs" />
     <Compile Include="Commands\CmdFlipHeads.cs" />
@@ -265,6 +267,8 @@
     <Compile Include="Commands\CmdView.cs" />
     <Compile Include="Commands\CmdViewRanks.cs" />
     <Compile Include="Commands\CmdVoice.cs" />
+    <Compile Include="Commands\CmdVote.cs" />
+    <Compile Include="Commands\CmdVoteResults.cs" />
     <Compile Include="Commands\CmdWhisper.cs" />
     <Compile Include="Commands\CmdWhitelist.cs" />
     <Compile Include="Commands\CmdWhoip.cs" />
@@ -279,12 +283,6 @@
     <Compile Include="CTFGame.cs" />
     <Compile Include="FindReference.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="GUI\Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
     <Compile Include="GUI\Form2.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -298,6 +296,7 @@
       <DependentUpon>MapViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\Program.cs" />
+    <Compile Include="GUI\Properties.cs" />
     <Compile Include="GUI\PropertyWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -391,9 +390,6 @@
     <Content Include="Starter.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="GUI\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="GUI\Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>

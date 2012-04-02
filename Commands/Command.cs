@@ -203,6 +203,8 @@ namespace MCLawl
             all.Add(new CmdPush());
             all.Add(new CmdGriefPatrol());
             all.Add(new CmdFastHouse());
+            all.Add(new CmdVote());
+            all.Add(new CmdConverse());
 
             core.commands = new List<Command>(all.commands);
 

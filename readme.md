@@ -8,7 +8,6 @@ MCDek is a Minecraft Classic Server software, originally forked from MCLawl on J
 
 * Streamline MCLawl's command base
 * Add new commands to meet a competitive classic server software world
-* Update MCLawl/Dek's core to remore bugs, speed up memory and pave the way for better features, commands and operations
 * Develop a new, intuitive, feature-packed beta server software
 
 ---
@@ -20,6 +19,6 @@ MCDek is a Minecraft Classic Server software, originally forked from MCLawl on J
 ---
 #####Extended Information:
 
-For extended information on this product, it's goals and interests, as well as how you can help, visit <http://www.dekemaserv.com/forums/viewtopic.php?f=15&t=15&sid=3a3d748fbb9055bbd320a3d13c4e672f>.
+For extended information on this product, it's goals and interests, as well as how you can help, visit <http://www.dekemaserv.com/forums/showthread.php?tid=879>.
 
 ---
