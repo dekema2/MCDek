@@ -67,6 +67,7 @@ namespace MCLawl
                             else
                                 devs += " " + foundName + " (" + pl.level.name + "),";
                         }
+
                         else
                         {
                             if (pl.voice)

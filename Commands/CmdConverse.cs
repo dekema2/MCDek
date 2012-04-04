@@ -15,52 +15,52 @@ namespace MCDek
         {
             if (message.ToLower() == "1")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is feeling happy! :)");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is feeling happy! :)");
             }
             
             else if (message.ToLower() == "2")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is feeling sad :(");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is feeling sad :(");
             }
             
             else if (message.ToLower() == "3")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is angry >:(");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is angry >:(");
             }
             
             else if (message.ToLower() == "4")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is excited :D");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is excited :D");
             }
             
             else if (message.ToLower() == "5")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is bored |-O");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is bored |-O");
             }
             
             else if (message.ToLower() == "6")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is feeling mischevious }:-)");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is feeling mischevious }:-)");
             }
             
             else if (message.ToLower() == "7")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is suprised o.O");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is suprised o.O");
             }
             
             else if (message.ToLower() == "8")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is not amused -_-");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is not amused -_-");
             }            
             
             else if (message.ToLower() == "9")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is confused :-/");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is confused :S");
             }            
             
             else if (message.ToLower() == "10")
             {
-                Player.GlobalChat(p, p.name + Server.DefaultColor + "is feeling happy!");
+                Player.GlobalChat(p, p.color + "*" + p.name + Server.DefaultColor + " is tired Z.Z");
             }
         }
 

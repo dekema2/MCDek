@@ -1,621 +1,1190 @@
-/*
-	Copyright 2010 MCSharp team (Modified for use with MCZall/MCLawl) Licensed under the
-	Educational Community License, Version 2.0 (the "License"); you may
-	not use this file except in compliance with the License. You may
-	obtain a copy of the License at
-	
-	http://www.osedu.org/licenses/ECL-2.0
-	
-	Unless required by applicable law or agreed to in writing,
-	software distributed under the License is distributed on an "AS IS"
-	BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-	or implied. See the License for the specific language governing
-	permissions and limitations under the License.
-*/
-// Copyright 2009, 2010 Matvei Stefarov <me@matvei.org>
 using System;
-using MCDek;
-/*
-This generator was developed by Neko_baron.
+using System.ComponentModel;
+using System.Linq;
+using MCDek.Gui.MapEditor;
+using MCLawl;
 
-Ideas, concepts, and code were used from the following two sources:
-1) Isaac McGarvey's 'perlin noise generator' code
-2) http://www.lighthouse3d.com/opengl/terrain/index.php3?introduction
-
-*/
-
-namespace MCLawl
+namespace MCDek
 {
 
-    public class MapGenerator
+    public enum MapGenTheme
     {
-        static bool Inuse = false;
-        static float[] terrain;
-        static float[] overlay;
-        static float[] overlay2;
-        static float divide;
+        Arctic,
+        Desert,
+        Forest,
+        Hell,
+        Swamp
+    }
 
-        public MapGenerator()
+    public enum MapGenTemplate
+    {
+        Archipelago,
+        Atoll,
+        Bay,
+        Default,
+        Dunes,
+        Flat,
+        Hills,
+        Ice,
+        Island,
+        Lake,
+        Mountains,
+        Peninsula,
+        River,
+        Streams
+    }
+
+    public sealed class MapGenerator
+    {
+        MapGeneratorArgs args;
+        Random rand;
+        Noise noise;
+        float[,] heightmap, blendmap, slopemap;
+
+        const int WaterCoveragePasses = 10;
+        const float CliffsideBlockThreshold = 0.01f;
+
+        // theme-dependent vars
+        byte bWaterSurface, bGroundSurface, bWater, bGround, bSeaFloor, bBedrock, bDeepWaterSurface, bCliff;
+        int groundThickness = 5, seaFloorThickness = 3;
+
+        public MapGenerator(MapGeneratorArgs _args)
         {
-
+            args = _args;
+            args.Validate();
+            if (!args.customWaterLevel)
+            {
+                args.waterLevel = (args.dimH - 1) / 2;
+            }
+            rand = new Random(args.seed);
+            noise = new Noise(args.seed, NoiseInterpolationMode.Bicubic);
+            ApplyTheme(args.theme);
+            EstimateComplexity();
         }
 
-        public bool GenerateMap(Level Lvl, string type)
+        public Level Generate()
         {
-            Server.s.Log("Attempting map gen");
-            if (Inuse) { Server.s.Log("Generator in use"); return false; }
-            Random rand = new System.Random();
+            GenerateHeightmap();
+            return GenerateMap();
+        }
+
+        public static void GenerationTask(object task)
+        {
+            ((MapGenerator)task).Generate();
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized);
+        }
+
+        public static void GenerateFlatgrass(Level map)
+        {
+            for (int i = 0; i < map.width; i++)
+            {
+                for (int j = 0; j < map.depth; j++)
+                {
+                    for (int k = 0; k < ((map.height / 2) - 1); k++)
+                    {
+                        if (k < ((map.height / 2) - 5))
+                        {
+                            map.SetTile(i, j, k, Block.rock);
+                        }
+                        else
+                        {
+                            map.SetTile(i, j, k, Block.dirt);
+                        }
+                    }
+                    map.SetTile(i, j, (map.height / 2) - 1, Block.grass);
+                }
+            }
+        }
+
+        #region Progress Reporting
+        public ProgressChangedEventHandler ProgressCallback;
+
+        int progressTotalEstimate = 0, progressRunningTotal = 0;
+
+        private void EstimateComplexity()
+        {
+            this.progressTotalEstimate = 10;
+            if (this.args.useBias)
+            {
+                this.progressTotalEstimate += 2;
+            }
+            if (this.args.layeredHeightmap)
+            {
+                this.progressTotalEstimate += 10;
+            }
+            if (this.args.marbledHeightmap)
+            {
+                this.progressTotalEstimate++;
+            }
+            if (this.args.invertHeightmap)
+            {
+                this.progressTotalEstimate++;
+            }
+            if (this.args.matchWaterCoverage)
+            {
+                this.progressTotalEstimate += 2;
+            }
+            if ((this.args.belowFuncExponent != 1f) || (this.args.aboveFuncExponent != 1f))
+            {
+                this.progressTotalEstimate += 5;
+            }
+            if (this.args.cliffSmoothing)
+            {
+                this.progressTotalEstimate += 2;
+            }
+            this.progressTotalEstimate += 2;
+            if ((this.args.maxHeightVariation > 0) || (this.args.maxDepthVariation > 0))
+            {
+                this.progressTotalEstimate += 5;
+            }
+            this.progressTotalEstimate += 15;
+            if (this.args.addCaves)
+            {
+                this.progressTotalEstimate += 5;
+            }
+            if (this.args.addOre)
+            {
+                this.progressTotalEstimate += 3;
+            }
+            if (this.args.addBeaches)
+            {
+                this.progressTotalEstimate += 10;
+            }
+            if (this.args.addTrees)
+            {
+                this.progressTotalEstimate += 5;
+            }
+        }
+
+        private void ReportProgress(int relativeIncrease, string message)
+        {
+            if (this.ProgressCallback != null)
+            {
+                this.ProgressCallback(this, new ProgressChangedEventArgs((100 * this.progressRunningTotal) / this.progressTotalEstimate, message));
+            }
+            this.progressRunningTotal += relativeIncrease;
+        }
+
+        #endregion
+
+        #region Heightmap Processing
+
+        private void GenerateHeightmap()
+        {
+            this.ReportProgress(10, "Heightmap: Priming");
+            this.heightmap = new float[this.args.dimX, this.args.dimY];
+
+            this.noise.PerlinNoiseMap(this.heightmap, this.args.featureScale, this.args.detailScale, this.args.roughness, 0, 0);
+            
+            if (this.args.useBias && !this.args.delayBias)
+            {
+                this.ReportProgress(2, "Heightmap: Biasing");
+                Noise.Normalize(this.heightmap);
+                this.ApplyBias();
+            }
+
+            Noise.Normalize(this.heightmap);
+            
+            if (this.args.layeredHeightmap)
+            {
+                this.ReportProgress(10, "Heightmap: Layering");
+
+                // needs a new Noise object to randomize second map
+                float[,] heightmap2 = new float[this.args.dimX, this.args.dimY];
+                new Noise(this.rand.Next(), NoiseInterpolationMode.Bicubic).PerlinNoiseMap(heightmap2, 0, this.args.detailScale, this.args.roughness, 0, 0);
+                Noise.Normalize(heightmap2);
+
+                // make a blendmap
+                this.blendmap = new float[this.args.dimX, this.args.dimY];
+                int blendmapDetailSize = ((int)Math.Log((double)Math.Max(this.args.dimX, this.args.dimY), 2.0)) - 2;
+                new Noise(this.rand.Next(), NoiseInterpolationMode.Cosine).PerlinNoiseMap(this.blendmap, 3, blendmapDetailSize, 0.5f, 0, 0);
+                Noise.Normalize(this.blendmap);
+                float cliffSteepness = ((float)Math.Max(this.args.dimX, this.args.dimY)) / 6f;
+                Noise.ScaleAndClip(this.blendmap, cliffSteepness);
+
+                Noise.Blend(this.heightmap, heightmap2, this.blendmap);
+            }
+
+            if (this.args.marbledHeightmap)
+            {
+                this.ReportProgress(1, "Heightmap: Marbling");
+                Noise.Marble(this.heightmap);
+            }
+
+            if (this.args.invertHeightmap)
+            {
+                this.ReportProgress(1, "Heightmap: Inverting");
+                Noise.Invert(this.heightmap);
+            }
+
+            if (this.args.useBias && this.args.delayBias)
+            {
+                this.ReportProgress(2, "Heightmap: Biasing");
+                Noise.Normalize(this.heightmap);
+                this.ApplyBias();
+            }
+
+            Noise.Normalize(this.heightmap);
+        }
+
+        private void ApplyBias()
+        {
+            // set corners and midpoint
+            float[] corners = new float[4];
+            int c = 0;
+            for (int i = 0; i < this.args.raisedCorners; i++)
+            {
+                corners[c++] = this.args.bias;
+            }
+            for (int i = 0; i < this.args.loweredCorners; i++)
+            {
+                corners[c++] = -this.args.bias;
+            }
+            float midpoint = this.args.midPoint * this.args.bias;
+
+            // shuffle corners
+            corners = corners.OrderBy(r => rand.Next()).ToArray();
+
+            // overlay the bias
+            Noise.ApplyBias(this.heightmap, corners[0], corners[1], corners[2], corners[3], midpoint);
+        }
+
+        // assumes normalzied heightmap
+        public static float MatchWaterCoverage(float[,] heightmap, float desiredWaterCoverage)
+        {
+            if (desiredWaterCoverage == 0)
+            {
+                return 0;
+            }
+            if (desiredWaterCoverage == 1)
+            {
+                return 1;
+            }
+
+            float waterLevel = 0.5f;
+            for (int i = 0; i < WaterCoveragePasses; i++)
+            {
+                if (CalculateWaterCoverage(heightmap, waterLevel) > desiredWaterCoverage)
+                {
+                    waterLevel = waterLevel - 1 / (float)(4 << i);
+                }
+                else
+                {
+                    waterLevel = waterLevel + 1 / (float)(4 << i);
+                }
+            }
+            return waterLevel;
+        }
+
+        public static float CalculateWaterCoverage(float[,] heightmap, float waterLevel)
+        {
+            int underwaterBlocks = 0;
+            for (int x = heightmap.GetLength(0) - 1; x >= 0; x--)
+            {
+                for (int y = heightmap.GetLength(1) - 1; y >= 0; y--)
+                {
+                    if (heightmap[x, y] < waterLevel)
+                    {
+                        underwaterBlocks++;
+                    }
+                }
+            }
+            return underwaterBlocks / (float)heightmap.Length;
+        }
+
+        #endregion
+
+        #region Map Processing
+
+        public Level GenerateMap()
+        {
+            Level map = new Level("newmap", (ushort)args.dimX, (ushort)args.dimY, (ushort)args.dimH, String.Empty);
+            return GenerateMap(map);
+        }
+
+        public Level GenerateMap(Level map)
+        {
             try
             {
-                Inuse = true;
-                terrain = new float[Lvl.width * Lvl.height];
-                overlay = new float[Lvl.width * Lvl.height];
-
-                if (!type.Equals("ocean"))
-                { overlay2 = new float[Lvl.width * Lvl.height]; }
-
-                //float dispAux, pd;
-                ushort WaterLevel = (ushort)(Lvl.depth / 2 + 2);
-
-                if (type.Equals("ocean"))
+                float desiredWaterLevel = 0.5f;
+                if (this.args.matchWaterCoverage)
                 {
-                    WaterLevel = (ushort)(Lvl.depth * 0.85f);
+                    this.ReportProgress(2, "Heightmap Processing: Matching water coverage");
+                    desiredWaterLevel = MatchWaterCoverage(this.heightmap, this.args.waterCoverage);
                 }
 
-                //Generate the level
-                GenerateFault(terrain, Lvl, type, rand);
-
-                //APPLY FILTER to terrain
-                FilterAverage(Lvl);
-
-                //CREATE OVERLAY
-                //GenerateFault(overlay, Lvl, "overlay", rand);
-                Server.s.Log("Creating overlay");
-                GeneratePerlinNoise(overlay, Lvl, "", rand);
-
-                if (!type.Equals("ocean") && type != "desert")
+                // Calculate above/below water multipliers
+                float aboveWaterMultiplier = 0f;
+                if (desiredWaterLevel != 1)
                 {
-                    Server.s.Log("Planning trees");
-                    GeneratePerlinNoise(overlay2, Lvl, "", rand);
+                    aboveWaterMultiplier = (float)(this.args.maxDepth / (1 - desiredWaterLevel));
                 }
 
-                Server.s.Log("Converting height map");
-                Server.s.Log("And applying overlays");
-                float RangeLow = 0.2f;
-                float RangeHigh = 0.8f;
-                float TreeDens = 0.35f;
-                short TreeDist = 3;
-                //changes the terrain range based on type, also tree threshold
-                switch (type)
+                // Apply power functions to above/below water parts of the heightmap
+                if ((this.args.belowFuncExponent != 1) || (this.args.aboveFuncExponent != 1))
                 {
-                    case "island":
-                        RangeLow = 0.4f;
-                        RangeHigh = 0.75f;
-                        break;
-                    case "forest":
-                        RangeLow = 0.45f;
-                        RangeHigh = 0.8f;
-                        TreeDens = 0.7f;
-                        TreeDist = 2;
-                        break;
-                    case "mountains":
-                        RangeLow = 0.3f;
-                        RangeHigh = 0.9f;
-                        TreeDist = 4;
-                        break;
-                    case "ocean":
-                        RangeLow = 0.1f;
-                        RangeHigh = 0.6f;
-                        break;
-                    case "desert":
-                        RangeLow = 0.5f;
-                        RangeHigh = 0.85f;
-                        WaterLevel = 0;
-                        TreeDist = 24;
-                        break;
-                    default:
-                        break;
-                }
-
-                //loops though evey X/Z coordinate
-                for (int bb = 0; bb < terrain.Length; bb++)
-                {
-                    ushort x = (ushort)(bb % Lvl.width);
-                    ushort y = (ushort)(bb / Lvl.width);
-                    ushort z;
-                    if (type.Equals("island"))
+                    this.ReportProgress(5, "Heightmap Processing: Adjusting slope");
+                    for (int x = this.heightmap.GetLength(0) - 1; x >= 0; x--)
                     {
-                        z = Evaluate(Lvl, Range(terrain[bb], RangeLow - NegateEdge(x, y, Lvl), RangeHigh - NegateEdge(x, y, Lvl)));
-                    }
-                    else
-                    {
-                        z = Evaluate(Lvl, Range(terrain[bb], RangeLow, RangeHigh));
-                    }
-                    if (z > WaterLevel)
-                    {
-                        for (ushort zz = 0; z - zz >= 0; zz++)
+                        for (int y = this.heightmap.GetLength(1) - 1; y >= 0; y--)
                         {
-                            if (type == "desert")
+                            if (this.heightmap[x, y] < desiredWaterLevel)
                             {
-                                Lvl.skipChange(x, (ushort)(z - zz), y, Block.sand);
+                                float normalizedDepth = 1 - (this.heightmap[x, y] / desiredWaterLevel);
+                                this.heightmap[x, y] = desiredWaterLevel - (float)Math.Pow(normalizedDepth, args.belowFuncExponent) * desiredWaterLevel;
                             }
-                            else if (overlay[bb] < 0.72f)    //If not zoned for rocks or gravel
+                            else
                             {
-                                if (type.Equals("island"))      //increase sand height for island
+                                float normalizedHeight = (this.heightmap[x, y] - desiredWaterLevel) / (1 - desiredWaterLevel);
+                                this.heightmap[x, y] = desiredWaterLevel + (float)Math.Pow(normalizedHeight, args.aboveFuncExponent) * (1 - desiredWaterLevel);
+                            }
+                        }
+                    }
+                }
+
+                // Calculate the slope
+                if (this.args.cliffSmoothing)
+                {
+                    this.ReportProgress(2, "Heightmap Processing: Smoothing");
+                    this.slopemap = Noise.CalculateSlope(Noise.GaussianBlur5x5(this.heightmap));
+                }
+                else
+                {
+                    this.slopemap = Noise.CalculateSlope(this.heightmap);
+                }
+
+                int level;
+                float slope;
+
+                /* draw heightmap visually (DEBUG)
+
+float underWaterMultiplier = 0;
+if( desiredWaterLevel != 0 ) {
+underWaterMultiplier = (float)(args.maxDepth / desiredWaterLevel);
+}
+for( int x = heightmap.GetLength( 0 ) - 1; x >= 0; x-- ) {
+for( int y = heightmap.GetLength( 1 ) - 1; y >= 0; y-- ) {
+if( heightmap[x, y] < desiredWaterLevel ) {
+slope = slopemap[x, y] * args.maxDepth;
+level = args.waterLevel - (int)Math.Round( (desiredWaterLevel - heightmap[x, y]) * underWaterMultiplier );
+} else {
+slope = slopemap[x, y] * args.maxHeight;
+level = args.waterLevel + (int)Math.Round( (heightmap[x, y] - desiredWaterLevel) * aboveWaterMultiplier );
+}
+Block block;
+if( slope < .12 ) {
+block = Block.Green;
+} else if( slope < .24 ) {
+block = Block.Lime;
+} else if( slope < .36 ) {
+block = Block.Yellow;
+} else if( slope < .48 ) {
+block = Block.Orange;
+} else if( slope < .6 ) {
+block = Block.Red;
+} else {
+block = Block.Black;
+}
+for( int i = level; i >= 0; i-- ) {
+map.SetTile( x, y, i, block );
+}
+}
+}*/
+
+                float[,] altmap = null;
+                if ((this.args.maxHeightVariation != 0) || (this.args.maxDepthVariation != 0))
+                {
+                    this.ReportProgress(5, "Heightmap Processing: Randomizing");
+                    altmap = new float[map.width, map.depth];
+                    int blendmapDetailSize = (int)Math.Log((double)Math.Max(args.dimX, args.dimY), 2) - 2;
+                    new Noise(this.rand.Next(), NoiseInterpolationMode.Cosine).PerlinNoiseMap(altmap, 3, blendmapDetailSize, 0.5f, 0, 0);
+                    Noise.Normalize(altmap, -1, 1);
+                }
+
+                int snowStartThreshold = this.args.snowAltitude - this.args.snowTransition;
+                int snowThreshold = this.args.snowAltitude;
+
+                this.ReportProgress(10, "Filling");
+                for (int x = this.heightmap.GetLength(0) - 1; x >= 0; x--)
+                {
+                    for (int y = this.heightmap.GetLength(1) - 1; y >= 0; y--)
+                    {
+                        if (this.heightmap[x, y] < desiredWaterLevel)
+                        {
+                            float depth = (args.maxDepthVariation != 0 ? (args.maxDepth + altmap[x, y] * args.maxDepthVariation) : args.maxDepth);
+                            slope = this.slopemap[x, y] * depth;
+                            level = args.waterLevel - (int)Math.Round(Math.Pow(1 - heightmap[x, y] / desiredWaterLevel, args.belowFuncExponent) * depth);
+                            if (this.args.addWater)
+                            {
+                                if ((this.args.waterLevel - level) > 3)
                                 {
-                                    if (z > WaterLevel + 2)
+                                    map.SetTile(x, y, this.args.waterLevel, this.bDeepWaterSurface);
+                                }
+                                else
+                                {
+                                    map.SetTile(x, y, this.args.waterLevel, this.bWaterSurface);
+                                }
+                                for (int i = this.args.waterLevel; i > level; i--)
+                                {
+                                    map.SetTile(x, y, i, this.bWater);
+                                }
+                                for (int i = level; i >= 0; i--)
+                                {
+                                    if (level - i < this.seaFloorThickness)
                                     {
-                                        if (zz == 0) { Lvl.skipChange(x, (ushort)(z - zz), y, Block.grass); }      //top layer
-                                        else if (zz < 3) { Lvl.skipChange(x, (ushort)(z - zz), y, Block.dirt); }   //next few
-                                        else { Lvl.skipChange(x, (ushort)(z - zz), y, Block.rock); }               //ten rock it
+                                        map.SetTile(x, y, i, this.bSeaFloor);
                                     }
                                     else
                                     {
-                                        Lvl.skipChange(x, (ushort)(z - zz), y, Block.sand);                        //SAAAND extra for islands
+                                        map.SetTile(x, y, i, this.bBedrock);
                                     }
-                                }
-                                else if (type == "desert")
-                                {
-                                    Lvl.skipChange(x, (ushort)(z - zz), y, Block.sand);
-                                }
-                                else
-                                {
-                                    if (zz == 0) { Lvl.skipChange(x, (ushort)(z - zz), y, Block.grass); }
-                                    else if (zz < 3) { Lvl.skipChange(x, (ushort)(z - zz), y, Block.dirt); }
-                                    else { Lvl.skipChange(x, (ushort)(z - zz), y, Block.rock); }
                                 }
                             }
                             else
                             {
-                                Lvl.skipChange(x, (ushort)(z - zz), y, Block.rock);    //zoned for above sea level rock floor
-                            }
-                        }
-
-                        if (overlay[bb] < 0.25f && type != "desert")    //Zoned for flowers
-                        {
-                            int temprand = rand.Next(12);
-
-                            switch (temprand)
-                            {
-                                case 10:
-                                    Lvl.skipChange(x, (ushort)(z + 1), y, Block.redflower);
-                                    break;
-                                case 11:
-                                    Lvl.skipChange(x, (ushort)(z + 1), y, Block.yellowflower);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-
-                        if (!type.Equals("ocean"))
-                        {
-                            if (overlay[bb] < 0.65f && overlay2[bb] < TreeDens)
-                            {
-                                if (Lvl.GetTile(x, (ushort)(z + 1), y) == Block.air)
+                                if (blendmap != null && blendmap[x, y] > .25 && blendmap[x, y] < .75)
                                 {
-                                    if (Lvl.GetTile(x, z, y) == Block.grass || type == "desert")
+                                    map.SetTile(x, y, level, bCliff);
+                                }
+                                else
+                                {
+                                    if (slope < args.cliffThreshold)
                                     {
-                                        if (rand.Next(13) == 0)
+                                        map.SetTile(x, y, level, bGroundSurface);
+                                    }
+                                    else
+                                    {
+                                        map.SetTile(x, y, level, bCliff);
+                                    }
+                                }
+
+                                for (int i = level - 1; i >= 0; i--)
+                                {
+                                    if (level - i < groundThickness)
+                                    {
+                                        if (blendmap != null && blendmap[x, y] > CliffsideBlockThreshold && blendmap[x, y] < (1 - CliffsideBlockThreshold))
                                         {
-                                            if (!TreeCheck(Lvl, x, z, y, TreeDist))
+                                            map.SetTile(x, y, i, bCliff);
+                                        }
+                                        else
+                                        {
+                                            if (slope < args.cliffThreshold)
                                             {
-                                                if (type == "desert")
-                                                    AddCactus(Lvl, x, (ushort)(z + 1), y, rand);
-                                                else
-                                                    AddTree(Lvl, x, (ushort)(z + 1), y, rand);
+                                                map.SetTile(x, y, i, bGround);
+                                            }
+                                            else
+                                            {
+                                                map.SetTile(x, y, i, bCliff);
                                             }
                                         }
                                     }
+                                    else
+                                    {
+                                        map.SetTile(x, y, i, bBedrock);
+                                    }
                                 }
                             }
                         }
-
-                    }
-                    else    //Must be on/under the water line then
-                    {
-                        for (ushort zz = 0; WaterLevel - zz >= 0; zz++)
+                        else
                         {
-                            if (WaterLevel - zz > z)
-                            { Lvl.skipChange(x, (ushort)(WaterLevel - zz), y, Block.water); }    //better fill the water aboce me
-                            else if (WaterLevel - zz > z - 3)
+                            float height = (args.maxHeightVariation != 0 ? (args.maxHeight + altmap[x, y] * args.maxHeightVariation) : args.maxHeight);
+                            slope = this.slopemap[x, y] * height;
+                            if (height != 0)
                             {
-                                if (overlay[bb] < 0.75f)
+                                level = args.waterLevel + (int)Math.Round(Math.Pow(heightmap[x, y] - desiredWaterLevel, args.aboveFuncExponent) * aboveWaterMultiplier / args.maxHeight * height);
+                            }
+                            else
+                            {
+                                level = this.args.waterLevel;
+                            }
+
+                            bool snow = args.addSnow &&
+                                    (level > snowThreshold ||
+                                    (level > snowStartThreshold && rand.NextDouble() < (level - snowStartThreshold) / (double)(snowThreshold - snowStartThreshold)));
+
+                            if (blendmap != null && blendmap[x, y] > .25 && blendmap[x, y] < .75)
+                            {
+                                map.SetTile(x, y, level, bCliff);
+                            }
+                            else
+                            {
+                                if (slope < args.cliffThreshold)
                                 {
-                                    Lvl.skipChange(x, (ushort)(WaterLevel - zz), y, Block.sand);   //sand top
+                                    if (snow)
+                                    {
+                                        map.SetTile(x, y, level, Block.white);
+                                    }
+                                    else
+                                    {
+                                        map.SetTile(x, y, level, bGroundSurface);
+                                    }
                                 }
                                 else
                                 {
-                                    Lvl.skipChange(x, (ushort)(WaterLevel - zz), y, Block.gravel);  //zoned for gravel
+                                    map.SetTile(x, y, level, bCliff);
                                 }
                             }
-                            else
-                            { 
-                                Lvl.skipChange(x, (ushort)(WaterLevel - zz), y, Block.rock); 
-                            }
-                        }
-                    }
-                }
 
-            }
-            catch (Exception e)
-            {
-                Server.ErrorLog(e);
-                Server.s.Log("Gen Fail");
-                Inuse = false;
-                return false;
-            }
-
-            terrain = new float[0]; //Derp
-            overlay = new float[0]; //Derp
-            overlay2 = new float[0]; //Derp
-
-            Inuse = false;
-
-            return true;
-        }
-
-        //condensed fault generator
-        #region ==FaultGen==
-        void GenerateFault(float[] array, Level Lvl, string type, Random rand)
-        {
-            float startheight = 0.5f;
-            float dispAux;
-            ushort i, j, k, halfX, halfZ;
-            float a, b, c, w, d;
-
-            float DispMax, DispMin, DispChange;
-            DispMax = 0.01f;
-            DispChange = -0.0025f;
-            if (type.Equals("mountains"))
-            {
-                DispMax = 0.02f;
-                startheight = 0.6f;
-            }
-            else if (type.Equals("overlay"))
-            {
-                DispMax = 0.02f;
-                DispChange = -0.01f;
-            }
-
-            for (int x = 0; x < array.Length; x++)
-            {
-                array[x] = startheight;
-                //overlay[x] = 0.5f;
-            }
-            DispMin = -DispMax;
-            float disp = DispMax;
-            //if (terrainHeights == NULL)
-            //    return (TERRAIN_ERROR_NOT_INITIALISED);
-
-
-            halfX = (ushort)(Lvl.width / 2);
-            halfZ = (ushort)(Lvl.height / 2);
-            int numIterations = (int)((Lvl.width + Lvl.height));
-            Server.s.Log("Iterations = " + numIterations.ToString());
-            for (k = 0; k < numIterations; k++)
-            {
-                //s.Log("itteration " + k.ToString());
-                d = (float)Math.Sqrt(halfX * halfX + halfZ * halfZ);
-                w = (float)(rand.NextDouble() * 360);
-                //w = (float)(rand.NextDouble()*90);
-                a = (float)Math.Cos(w);
-                b = (float)Math.Sin(w);
-
-                c = ((float)rand.NextDouble()) * 2 * d - d;
-                //c = ((float)rand.NextDouble() / 1) * 2 * d - d;
-                //float disp = (float)(rand.NextDouble()* 0.02f - 0.01f);
-                //iterationsDone++;
-                //if (iterationsDone < itMinDisp)
-                //    disp = maxDisp + (iterationsDone / (itMinDisp + 0.0)) * (minDisp - maxDisp);
-                //else
-                //    disp = minDisp;
-                for (i = 0; i < Lvl.height; i++)
-                {
-                    for (j = 0; j < Lvl.width; j++)
-                    {
-                        //switch (terrainFunction)
-                        //{
-                        //case STEP:
-                        if ((i - halfZ) * a + (j - halfX) * b + c > 0)
-                            dispAux = disp;
-                        else
-                            dispAux = -disp;
-                        //    break;
-                        /*case SIN:
-                            pd = ((i - halfZ) * a + (j - halfX) * b + c) / terrainWaveSize;
-                            if (pd > 1.57) pd = 1.57;
-                            else if (pd < 0) pd = 0;
-                            dispAux = -disp / 2 + sin(pd) * disp;
-                            break;
-                        case COS:
-                            pd = ((i - halfZ) * a + (j - halfX) * b + c) / terrainWaveSize;
-                            if (pd > 3.14) pd = 3.14;
-                            else if (pd < -3.14) pd = -3.14;
-                            dispAux = disp - (terrainWaveSize / (terrainGridWidth + 0.0)) + cos(pd) * disp;
-                            break;
-                    }*/
-                        //s.Log("adding " + dispAux.ToString());
-                        AddTerrainHeight(array, j, i, Lvl.width, dispAux);
-                        //terrainHeights[i * terrainGridWidth + j] += dispAux;
-                    }
-                }
-
-                disp += DispChange;
-                if (disp < DispMin) { disp = DispMax; }
-            }
-        }
-        #endregion
-
-        //hur hur, more copy pasted code :/
-        #region ==PerlinGen==
-        void GeneratePerlinNoise(float[] array, Level Lvl, string type, Random rand)
-        {
-            GenerateNormalized(array, 0.7f, 8, Lvl.width, Lvl.height, rand.Next(), 64);
-        }
-
-        void GenerateNormalized(float[] array, float persistence, int octaves, int width, int height, int seed, float zoom)
-        {
-            float min = 0;
-            float max = 0;
-            //float * pDataFloat = new float[width * height];
-
-            //Generate raw float data
-            for (int y = 0; y < height; ++y)
-            {
-                for (int x = 0; x < width; ++x)
-                {
-                    float total = 0;
-                    float frequency = 1;
-                    float amplitude = 1;
-
-                    for (int i = 0; i < octaves; ++i)
-                    {
-                        total = total + InterpolatedNoise(x * frequency / zoom, y * frequency / zoom, seed) * amplitude;
-                        frequency *= 2;
-                        amplitude *= persistence;
-                    }
-
-                    array[y * width + x] = total;
-
-                    min = total < min ? total : min;
-                    max = total > max ? total : max;
-                }
-            }
-
-            //Normalize
-            for (int i = 0; i < width * height; ++i)
-            {
-                array[i] = (array[i] - min) / (max - min);
-                //array[i] = (255 << 24) | ((unsigned char) (red * ((pDataFloat[i] - min) / (max - min)) * 255) << 16) | 
-                //((unsigned char) (green * ((pDataFloat[i] - min) / (max - min)) * 255) << 8) | (unsigned char) (blue * ((pDataFloat[i] - min) / (max - min)) * 255);
-            }
-        }
-
-        float Noise(int x, int y, int seed)
-        {
-            int n = x + y * 57 + seed;
-            n = (n << 13) ^ n;
-            return (float)(1.0 - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
-            //return value is always in range [-1.0, 1.0]
-        }
-
-        float SmoothNoise(int x, int y, int seed)
-        {
-            float corners = (Noise(x - 1, y - 1, seed) + Noise(x + 1, y - 1, seed) + Noise(x - 1, y + 1, seed) + Noise(x + 1, y + 1, seed)) / 16;
-            float sides = (Noise(x - 1, y, seed) + Noise(x + 1, y, seed) + Noise(x, y - 1, seed) + Noise(x, y + 1, seed) / 8);
-            float center = Noise(x, y, seed) / 4;
-            return corners + sides + center;
-        }
-
-        float Interpolate(float a, float b, float x)
-        {
-            float ft = x * 3.1415927f;
-            float f = (float)(1 - Math.Cos(ft)) * .5f;
-
-            return a * (1 - f) + b * f;
-        }
-
-        float InterpolatedNoise(float x, float y, int seed)
-        {
-            int wholePartX = (int)x;
-            float fractionPartX = x - wholePartX;
-
-            int wholePartY = (int)y;
-            float fractionPartY = y - wholePartY;
-
-            float v1 = SmoothNoise(wholePartX, wholePartY, seed);
-            float v2 = SmoothNoise(wholePartX + 1, wholePartY, seed);
-            float v3 = SmoothNoise(wholePartX, wholePartY + 1, seed);
-            float v4 = SmoothNoise(wholePartX + 1, wholePartY + 1, seed);
-
-            float i1 = Interpolate(v1, v2, fractionPartX);
-            float i2 = Interpolate(v3, v4, fractionPartX);
-
-            return Interpolate(i1, i2, fractionPartY);
-        }
-
-        #endregion
-
-        //
-        void AddTree(Level Lvl, ushort x, ushort y, ushort z, Random Rand)
-        {
-            byte height = (byte)Rand.Next(5, 8);
-            for (ushort yy = 0; yy < height; yy++) Lvl.skipChange(x, (ushort)(y + yy), z, Block.trunk);
-
-            short top = (short)(height - Rand.Next(2, 4));
-
-            for (short xx = (short)-top; xx <= top; ++xx)
-            {
-                for (short yy = (short)-top; yy <= top; ++yy)
-                {
-                    for (short zz = (short)-top; zz <= top; ++zz)
-                    {
-                        short Dist = (short)(Math.Sqrt(xx * xx + yy * yy + zz * zz));
-                        if (Dist < top + 1)
-                        {
-                            if (Rand.Next((int)(Dist)) < 2)
+                            for (int i = level - 1; i >= 0; i--)
                             {
-                                try
+                                if (level - i < this.groundThickness)
                                 {
-                                    Lvl.skipChange((ushort)(x + xx), (ushort)(y + yy + height), (ushort)(z + zz), Block.leaf);
+                                    if (blendmap != null && blendmap[x, y] > CliffsideBlockThreshold && blendmap[x, y] < (1 - CliffsideBlockThreshold))
+                                    {
+                                        map.SetTile(x, y, i, this.bCliff);
+                                    }
+                                    else if (slope < this.args.cliffThreshold)
+                                    {
+                                        if (snow)
+                                        {
+                                            map.SetTile(x, y, i, Block.white);
+                                        }
+                                        else
+                                        {
+                                            map.SetTile(x, y, i, this.bGround);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        map.SetTile(x, y, i, this.bCliff);
+                                    }
                                 }
-                                catch { }
+                                else
+                                {
+                                    map.SetTile(x, y, i, this.bBedrock);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (this.args.addCaves || this.args.addOre)
+                {
+                    this.AddCaves(map);
+                }
+
+                if (this.args.addBeaches)
+                {
+                    this.ReportProgress(10, "Processing: Adding beaches");
+                    this.AddBeaches(map);
+                }
+
+                if (args.addTrees)
+                {
+                    ReportProgress(5, "Processing: Planting trees");
+                    Level outMap = new Level(map.name, map.width, map.depth, map.height, String.Empty);
+                    outMap.blocks = (byte[])map.blocks.Clone();
+                    //outMap.EnableOwnershipTracking(ReservedPlayerID.None);
+
+                    Forester treeGen = new Forester(new Forester.ForesterArgs
+                    {
+                        inMap = map,
+                        outMap = outMap,
+                        rand = rand,
+                        TREECOUNT = (int)(map.width * map.depth * 4 / (1024f * (args.treeSpacingMax + args.treeSpacingMin) / 2)),
+                        OPERATION = Forester.Operation.Add,
+                        bGroundSurface = bGroundSurface
+                    });
+                    treeGen.Generate();
+                    map = outMap;
+
+                    GenerateTrees(map);
+                }
+
+                this.ReportProgress(0, "Generation complete");
+                map.ResetSpawn();
+
+                /*
+map.SetMeta("_Origin", "GeneratorName", "fCraft");
+map.SetMeta("_Origin", "GeneratorVersion", Updater.GetVersionString());
+map.SetMeta("_Origin", "GeneratorParams", args.Serialize().ToString(System.Xml.Linq.SaveOptions.DisableFormatting));
+*/
+
+                return map;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+
+
+        #region Caves
+
+        // Cave generation method from Omen 0.70, used with osici's permission
+        static void AddSingleCave(Random rand, Level map, byte bedrockType, byte fillingType, int length, double maxDiameter)
+        {
+
+            int startX = rand.Next(0, map.width);
+            int startY = rand.Next(0, map.depth);
+            int startH = rand.Next(0, map.height);
+
+            int k1;
+            for (k1 = 0; map.blocks[startX + map.width * map.depth * (map.height - 1 - startH) + map.width * startY] != bedrockType && k1 < 10000; k1++)
+            {
+                startX = rand.Next(0, map.width);
+                startY = rand.Next(0, map.depth);
+                startH = rand.Next(0, map.height);
+            }
+
+            if (k1 >= 10000)
+                return;
+
+            int x = startX;
+            int y = startY;
+            int h = startH;
+
+            for (int k2 = 0; k2 < length; k2++)
+            {
+                int diameter = (int)(maxDiameter * rand.NextDouble() * map.width);
+                if (diameter < 1) diameter = 2;
+                int radius = diameter / 2;
+                if (radius == 0) radius = 1;
+                x += (int)(0.7 * (rand.NextDouble() - 0.5D) * diameter);
+                y += (int)(0.7 * (rand.NextDouble() - 0.5D) * diameter);
+                h += (int)(0.7 * (rand.NextDouble() - 0.5D) * diameter);
+
+                for (int j3 = 0; j3 < diameter; j3++)
+                {
+                    for (int k3 = 0; k3 < diameter; k3++)
+                    {
+                        for (int l3 = 0; l3 < diameter; l3++)
+                        {
+                            if ((j3 - radius) * (j3 - radius) + (k3 - radius) * (k3 - radius) + (l3 - radius) * (l3 - radius) >= radius * radius ||
+                                x + j3 >= map.width || h + k3 >= map.height || y + l3 >= map.depth ||
+                                x + j3 < 0 || h + k3 < 0 || y + l3 < 0)
+                            {
+                                continue;
+                            }
+
+                            int index = x + j3 + map.width * map.depth * (map.height - 1 - (h + k3)) + map.width * (y + l3);
+
+                            if (map.blocks[index] == bedrockType)
+                            {
+                                map.blocks[index] = (byte)fillingType;
+                            }
+                            if ((fillingType == 10 || fillingType == 11 || fillingType == 8 || fillingType == 9) &&
+                                h + k3 < startH)
+                            {
+                                map.blocks[index] = 0;
                             }
                         }
                     }
                 }
             }
         }
-        void AddCactus(Level Lvl, ushort x, ushort y, ushort z, Random Rand)
+
+
+        static void AddSingleVein(Random rand, Level map, byte bedrockType, byte fillingType, int k, double maxDiameter, int l)
         {
-            byte height = (byte)Rand.Next(3, 6);
-            ushort yy;
-
-            for (yy = 0; yy <= height; yy++) Lvl.skipChange(x, (ushort)(y + yy), z, Block.green);
-
-            int inX = 0, inZ = 0;
-
-            switch (Rand.Next(1, 3))
-            {
-                case 1: inX = -1; break;
-                case 2:
-                default: inZ = -1; break;
-            }
-
-            for (yy = height; yy <= Rand.Next(height + 2, height + 5); yy++) Lvl.skipChange((ushort)(x + inX), (ushort)(y + yy), (ushort)(z + inZ), Block.green);
-            for (yy = height; yy <= Rand.Next(height + 2, height + 5); yy++) Lvl.skipChange((ushort)(x - inX), (ushort)(y + yy), (ushort)(z - inZ), Block.green);
+            AddSingleVein(rand, map, bedrockType, fillingType, k, maxDiameter, l, 10);
         }
 
-        private bool TreeCheck(Level Lvl, ushort x, ushort z, ushort y, short dist)         //return true if tree is near
+        static void AddSingleVein(Random rand, Level map, byte bedrockType, byte fillingType, int k, double maxDiameter, int l, int i1)
         {
-            for (short xx = (short)-dist; xx <= +dist; ++xx)
+
+            int j1 = rand.Next(0, map.width);
+            int k1 = rand.Next(0, map.height);
+            int l1 = rand.Next(0, map.depth);
+
+            double thirteenOverK = 1 / (double)k;
+
+            for (int i2 = 0; i2 < i1; i2++)
             {
-                for (short yy = (short)-dist; yy <= +dist; ++yy)
+                int j2 = j1 + (int)(.5 * (rand.NextDouble() - .5) * (double)map.width);
+                int k2 = k1 + (int)(.5 * (rand.NextDouble() - .5) * (double)map.height);
+                int l2 = l1 + (int)(.5 * (rand.NextDouble() - .5) * (double)map.depth);
+                for (int l3 = 0; l3 < k; l3++)
                 {
-                    for (short zz = (short)-dist; zz <= +dist; ++zz)
+                    int diameter = (int)(maxDiameter * rand.NextDouble() * map.width);
+                    if (diameter < 1) diameter = 2;
+                    int radius = diameter / 2;
+                    if (radius == 0) radius = 1;
+                    int i3 = (int)((1 - thirteenOverK) * (double)j1 + thirteenOverK * (double)j2 + (double)(l * radius) * (rand.NextDouble() - .5));
+                    int j3 = (int)((1 - thirteenOverK) * (double)k1 + thirteenOverK * (double)k2 + (double)(l * radius) * (rand.NextDouble() - .5));
+                    int k3 = (int)((1 - thirteenOverK) * (double)l1 + thirteenOverK * (double)l2 + (double)(l * radius) * (rand.NextDouble() - .5));
+                    for (int k4 = 0; k4 < diameter; k4++)
                     {
-                        byte foundTile = Lvl.GetTile((ushort)(x + xx), (ushort)(z + zz), (ushort)(y + yy));
-                        if (foundTile == Block.trunk || foundTile == Block.green)
+                        for (int l4 = 0; l4 < diameter; l4++)
                         {
-                            return true;
+                            for (int i5 = 0; i5 < diameter; i5++)
+                            {
+                                if ((k4 - radius) * (k4 - radius) + (l4 - radius) * (l4 - radius) + (i5 - radius) * (i5 - radius) < radius * radius &&
+                                    i3 + k4 < map.width && j3 + l4 < map.height && k3 + i5 < map.depth &&
+                                    i3 + k4 >= 0 && j3 + l4 >= 0 && k3 + i5 >= 0)
+                                {
+
+                                    int index = i3 + k4 + map.width * map.depth * (map.height - 1 - (j3 + l4)) + map.width * (k3 + i5);
+
+                                    if (map.blocks[index] == bedrockType)
+                                    {
+                                        map.blocks[index] = fillingType;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                j1 = j2;
+                k1 = k2;
+                l1 = l2;
+            }
+        }
+
+        static void SealLiquids(Level map, byte sealantType)
+        {
+            for (int x = 1; x < map.width - 1; x++)
+            {
+                for (int h = 1; h < map.height; h++)
+                {
+                    for (int y = 1; y < map.depth - 1; y++)
+                    {
+                        int index = map.FCPosToInt(x, y, h);
+                        if ((map.blocks[index] == 10 || map.blocks[index] == 11 || map.blocks[index] == 8 || map.blocks[index] == 9) &&
+                            (map.GetTile(x - 1, y, h) == 0 || map.GetTile(x + 1, y, h) == 0 ||
+                            map.GetTile(x, y - 1, h) == 0 || map.GetTile(x, y + 1, h) == 0 ||
+                            map.GetTile(x, y, h - 1) == 0))
+                        {
+                            map.blocks[index] = sealantType;
                         }
                     }
                 }
             }
-            return false;
         }
 
-        void AddTerrainHeight(float[] array, ushort x, ushort y, ushort width, float height)
+        public void AddCaves(Level map)
         {
-            int temp = x + y * width;
-            if (temp < 0) return;
-            if (temp > array.Length) return;
+            Random rand = new Random();
 
-            array[temp] += height;
-
-            if (array[temp] > 1.0f) array[temp] = 1.0f;
-            if (array[temp] < 0.0f) array[temp] = 0.0f;
-        }
-
-        //converts the float into a ushort for map height
-        ushort Evaluate(Level lvl, float height)
-        {
-            ushort temp = (ushort)(height * lvl.depth);
-            if (temp < 0) return 0;
-            if (temp > lvl.depth - 1) return (ushort)(lvl.depth - 1);
-            return temp;
-        }
-
-        //applys the average filter
-        void FilterAverage(Level Lvl)
-        {
-            Server.s.Log("Applying average filtering");
-
-            float[] filtered = new float[terrain.Length];
-
-            for (int bb = 0; bb < terrain.Length; bb++)
+            if (args.addCaves)
             {
-                ushort x = (ushort)(bb % Lvl.width);
-                ushort y = (ushort)(bb / Lvl.width);
-                filtered[bb] = GetAverage9(x, y, Lvl);
+                ReportProgress(5, "Processing: Adding caves");
+                for (int i1 = 0; i1 < 36 * args.caveDensity; i1++)
+                    AddSingleCave(rand, map, (byte)bBedrock, (byte)Block.air, 30, 0.05 * args.caveSize);
+
+                for (int j1 = 0; j1 < 9 * args.caveDensity; j1++)
+                    AddSingleVein(rand, map, (byte)bBedrock, (byte)Block.air, 500, 0.015 * args.caveSize, 1);
+
+                for (int k1 = 0; k1 < 30 * args.caveDensity; k1++)
+                    AddSingleVein(rand, map, (byte)bBedrock, (byte)Block.air, 300, 0.03 * args.caveSize, 1, 20);
+
+
+                if (args.addCaveLava)
+                {
+                    for (int i = 0; i < 8 * args.caveDensity; i++)
+                    {
+                        AddSingleCave(rand, map, (byte)bBedrock, (byte)Block.lava, 30, 0.05 * args.caveSize);
+                    }
+                    for (int j = 0; j < 3 * args.caveDensity; j++)
+                    {
+                        AddSingleVein(rand, map, (byte)bBedrock, (byte)Block.lava, 1000, 0.015 * args.caveSize, 1);
+                    }
+                }
+
+
+                if (args.addCaveWater)
+                {
+                    for (int k = 0; k < 8 * args.caveDensity; k++)
+                    {
+                        AddSingleCave(rand, map, (byte)bBedrock, (byte)Block.water, 30, 0.05 * args.caveSize);
+                    }
+                    for (int l = 0; l < 3 * args.caveDensity; l++)
+                    {
+                        AddSingleVein(rand, map, (byte)bBedrock, (byte)Block.water, 1000, 0.015 * args.caveSize, 1);
+                    }
+                }
+
+                SealLiquids(map, (byte)bBedrock);
             }
 
-            for (int bb = 0; bb < terrain.Length; bb++)
+
+            if (args.addOre)
             {
-                terrain[bb] = filtered[bb];
+                ReportProgress(3, "Processing: Adding ore");
+                for (int l1 = 0; l1 < 12 * args.caveDensity; l1++)
+                {
+                    AddSingleCave(rand, map, (byte)bBedrock, (byte)Block.coal, 500, 0.03);
+                }
+
+                for (int i2 = 0; i2 < 32 * args.caveDensity; i2++)
+                {
+                    AddSingleVein(rand, map, (byte)bBedrock, (byte)Block.coal, 200, 0.015, 1);
+                    AddSingleCave(rand, map, (byte)bBedrock, (byte)Block.ironrock, 500, 0.02);
+                }
+
+                for (int k2 = 0; k2 < 8 * args.caveDensity; k2++)
+                {
+                    AddSingleVein(rand, map, (byte)bBedrock, (byte)Block.ironrock, 200, 0.015, 1);
+                    AddSingleVein(rand, map, (byte)bBedrock, (byte)Block.goldrock, 200, 0.0145, 1);
+                }
+
+                for (int l2 = 0; l2 < 20 * args.caveDensity; l2++)
+                {
+                    AddSingleCave(rand, map, (byte)bBedrock, (byte)Block.goldrock, 400, 0.0175);
+                }
             }
         }
 
-        //Averages over 5 points
-        float GetAverage5(ushort x, ushort y, Level Lvl)
+        #endregion
+
+        void AddBeaches(Level map)
         {
-            divide = 0.0f;
-            float temp = GetPixel(x, y, Lvl);
-            temp += GetPixel((ushort)(x + 1), y, Lvl);
-            temp += GetPixel((ushort)(x - 1), y, Lvl);
-            temp += GetPixel(x, (ushort)(y + 1), Lvl);
-            temp += GetPixel(x, (ushort)(y - 1), Lvl);
-
-            return temp / divide;
-        }
-        //Averages over 9 points
-        float GetAverage9(ushort x, ushort y, Level Lvl)
-        {
-            divide = 0.0f;
-            float temp = GetPixel(x, y, Lvl);
-            temp += GetPixel((ushort)(x + 1), y, Lvl);
-            temp += GetPixel((ushort)(x - 1), y, Lvl);
-            temp += GetPixel(x, (ushort)(y + 1), Lvl);
-            temp += GetPixel(x, (ushort)(y - 1), Lvl);
-
-            temp += GetPixel((ushort)(x + 1), (ushort)(y + 1), Lvl);
-            temp += GetPixel((ushort)(x - 1), (ushort)(y + 1), Lvl);
-            temp += GetPixel((ushort)(x + 1), (ushort)(y - 1), Lvl);
-            temp += GetPixel((ushort)(x - 1), (ushort)(y - 1), Lvl);
-
-            return temp / divide;
-        }
-
-        //returns the valve of a x,y terrain coordinate
-        float GetPixel(ushort x, ushort y, Level Lvl)
-        {
-            if (x < 0) { return 0.0f; }
-            if (x >= Lvl.width) { return 0.0f; }
-            if (y < 0) { return 0.0f; }
-            if (y >= Lvl.height) { return 0.0f; }
-            divide += 1.0f;
-            return terrain[x + y * Lvl.width];
-        }
-
-        //converts the height into a range
-        float Range(float input, float low, float high)
-        {
-            if (high <= low) { return low; }
-            return low + (input * (high - low));
-        }
-
-        //Forces the edge of a map to slope lower for island map types
-        float NegateEdge(ushort x, ushort y, Level Lvl)
-        {
-            float tempx = 0.0f, tempy = 0.0f;
-            float temp;
-            if (x != 0) { tempx = ((float)x / (float)Lvl.width) * 0.5f; }
-            if (y != 0) { tempy = ((float)y / (float)Lvl.height) * 0.5f; }
-            tempx = Math.Abs(tempx - 0.25f);
-            tempy = Math.Abs(tempy - 0.25f);
-            if (tempx > tempy)
+            int beachExtentSqr = (args.beachExtent + 1) * (args.beachExtent + 1);
+            for (int x = 0; x < map.width; x++)
             {
-                temp = tempx - 0.15f;
+                for (int y = 0; y < map.depth; y++)
+                {
+                    for (int h = args.waterLevel; h <= args.waterLevel + args.beachHeight; h++)
+                    {
+                        if (map.GetTile(x, y, h) != (byte)bGroundSurface) continue;
+                        bool found = false;
+                        for (int dx = -args.beachExtent; !found && dx <= args.beachExtent; dx++)
+                        {
+                            for (int dy = -args.beachExtent; !found && dy <= args.beachExtent; dy++)
+                            {
+                                for (int dh = -args.beachHeight; !found && dh <= 0; dh++)
+                                {
+                                    if (dx * dx + dy * dy + dh * dh > beachExtentSqr) continue;
+                                    int xx = x + dx;
+                                    int yy = y + dy;
+                                    int hh = h + dh;
+                                    if (xx < 0 || xx >= map.width || yy < 0 || yy >= map.depth || hh < 0 || hh >= map.height) continue;
+                                    byte block = map.GetTile(xx, yy, hh);
+                                    if (block == (byte)bWater || block == (byte)bWaterSurface)
+                                    {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (found)
+                        {
+                            map.SetTile(x, y, h, bSeaFloor);
+                            if (h > 0 && map.GetTile(x, y, h - 1) == (byte)bGround) map.SetTile(x, y, h - 1, bSeaFloor);
+                        }
+                    }
+                }
             }
-            else
-            {
-                temp = tempy - 0.15f;
-            }
-
-            //s.Log("temp = " + temp.ToString());
-            if (temp > 0.0f) { return temp; }
-            return 0.0f;
         }
+
+        public void GenerateTrees(Level map)
+        {
+            int MinHeight = args.treeHeightMin;
+            int MaxHeight = args.treeHeightMax;
+            int MinTrunkPadding = args.treeSpacingMin;
+            int MaxTrunkPadding = args.treeSpacingMax;
+            int TopLayers = 2;
+            double Odds = 0.618;
+            bool OnlyAir = true;
+
+            Random rn = new Random();
+            int nx, ny, nz, nh;
+            int radius;
+
+            map.CalculateShadows();
+
+            for (int x = 0; x < map.width; x += rn.Next(MinTrunkPadding, MaxTrunkPadding + 1))
+            {
+                for (int y = 0; y < map.depth; y += rn.Next(MinTrunkPadding, MaxTrunkPadding + 1))
+                {
+                    nx = x + rn.Next(-(MinTrunkPadding / 2), (MaxTrunkPadding / 2) + 1);
+                    ny = y + rn.Next(-(MinTrunkPadding / 2), (MaxTrunkPadding / 2) + 1);
+                    if (nx < 0 || nx >= map.width || ny < 0 || ny >= map.depth) continue;
+                    nz = map.shadows[nx, ny];
+
+                    if ((map.GetTile(nx, ny, nz) == (byte)bGroundSurface) && slopemap[nx, ny] < .5)
+                    {
+                        // Pick a random height for the tree between Min and Max,
+                        // discarding this tree if it would breach the top of the map
+                        if ((nh = rn.Next(MinHeight, MaxHeight + 1)) + nz + nh / 2 > map.height)
+                            continue;
+
+                        // Generate the trunk of the tree
+                        for (int z = 1; z <= nh; z++)
+                            map.SetTile(nx, ny, nz + z, Block.trunk);
+
+                        for (int i = -1; i < nh / 2; i++)
+                        {
+                            // Should we draw thin (2x2) or thicker (4x4) foliage
+                            radius = (i >= (nh / 2) - TopLayers) ? 1 : 2;
+                            // Draw the foliage
+                            for (int xoff = -radius; xoff < radius + 1; xoff++)
+                            {
+                                for (int yoff = -radius; yoff < radius + 1; yoff++)
+                                {
+                                    // Drop random leaves from the edges
+                                    if (rn.NextDouble() > Odds && Math.Abs(xoff) == Math.Abs(yoff) && Math.Abs(xoff) == radius)
+                                        continue;
+                                    // By default only replace an existing block if its air
+                                    if (OnlyAir != true || map.GetTile(nx + xoff, ny + yoff, nz + nh + i) == (byte)Block.air)
+                                        map.SetTile(nx + xoff, ny + yoff, nz + nh + i, Block.leaf);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Themes / Templates
+
+        public void ApplyTheme(MapGenTheme theme)
+        {
+            args.theme = theme;
+            switch (theme)
+            {
+                case MapGenTheme.Arctic:
+                    bWaterSurface = Block.glass;
+                    bDeepWaterSurface = Block.water;
+                    bGroundSurface = Block.white;
+                    bWater = Block.water;
+                    bGround = Block.white;
+                    bSeaFloor = Block.white;
+                    bBedrock = Block.rock;
+                    bCliff = Block.rock;
+                    groundThickness = 1;
+                    break;
+                case MapGenTheme.Desert:
+                    bWaterSurface = Block.water;
+                    bDeepWaterSurface = Block.water;
+                    bGroundSurface = Block.sand;
+                    bWater = Block.water;
+                    bGround = Block.sand;
+                    bSeaFloor = Block.sand;
+                    bBedrock = Block.rock;
+                    bCliff = Block.gravel;
+                    break;
+                case MapGenTheme.Hell:
+                    bWaterSurface = Block.lava;
+                    bDeepWaterSurface = Block.lava;
+                    bGroundSurface = Block.obsidian;
+                    bWater = Block.lava;
+                    bGround = Block.rock;
+                    bSeaFloor = Block.obsidian;
+                    bBedrock = Block.rock;
+                    bCliff = Block.stone;
+                    break;
+                case MapGenTheme.Forest:
+                    bWaterSurface = Block.water;
+                    bDeepWaterSurface = Block.water;
+                    bGroundSurface = Block.grass;
+                    bWater = Block.water;
+                    bGround = Block.dirt;
+                    bSeaFloor = Block.sand;
+                    bBedrock = Block.rock;
+                    bCliff = Block.stone;
+                    break;
+                case MapGenTheme.Swamp:
+                    bWaterSurface = Block.water;
+                    bDeepWaterSurface = Block.water;
+                    bGroundSurface = Block.dirt;
+                    bWater = Block.water;
+                    bGround = Block.dirt;
+                    bSeaFloor = Block.leaf;
+                    bBedrock = Block.rock;
+                    bCliff = Block.rock;
+                    break;
+            }
+        }
+
+        public static MapGeneratorArgs MakeTemplate(MapGenTemplate template)
+        {
+            switch (template)
+            {
+                case MapGenTemplate.Archipelago:
+                    return new MapGeneratorArgs
+                    {
+                        maxHeight = 8,
+                        maxDepth = 20,
+                        featureScale = 3,
+                        roughness = .46f,
+                        matchWaterCoverage = true,
+                        waterCoverage = .85f
+                    };
+
+                case MapGenTemplate.Atoll:
+                    return new MapGeneratorArgs
+                    {
+                        theme = MapGenTheme.Desert,
+                        maxHeight = 2,
+                        maxDepth = 39,
+                        useBias = true,
+                        bias = .9f,
+                        midPoint = 1,
+                        loweredCorners = 4,
+                        featureScale = 2,
+                        detailScale = 5,
+                        marbledHeightmap = true,
+                        invertHeightmap = true,
+                        matchWaterCoverage = true,
+                        waterCoverage = .95f
+                    };
+
+                case MapGenTemplate.Bay:
+                    return new MapGeneratorArgs
+                    {
+                        maxHeight = 22,
+                        maxDepth = 12,
+                        useBias = true,
+                        bias = 1,
+                        midPoint = -1,
+                        raisedCorners = 3,
+                        loweredCorners = 1,
+                        treeSpacingMax = 12,
+                        treeSpacingMin = 6,
+                        marbledHeightmap = true,
+                        delayBias = true
+                    };
+
+                case MapGenTemplate.Default:
+                    return new MapGeneratorArgs();
+
+                case MapGenTemplate.Dunes:
+                    return new MapGeneratorArgs
+                    {
+                        addTrees = false,
+                        addWater = false,
+                        theme = MapGenTheme.Desert,
+                        maxHeight = 12,
+                        maxDepth = 7,
+                        featureScale = 2,
+                        detailScale = 3,
+                        roughness = .44f,
+                        marbledHeightmap = true,
+                        invertHeightmap = true
+                    };
+
+                case MapGenTemplate.Hills:
+                    return new MapGeneratorArgs
+                    {
+                        addWater = false,
+                        maxHeight = 8,
+                        maxDepth = 8,
+                        featureScale = 2,
+                        treeSpacingMin = 7,
+                        treeSpacingMax = 13
+                    };
+
+                case MapGenTemplate.Ice:
+                    return new MapGeneratorArgs
+                    {
+                        addTrees = false,
+                        theme = MapGenTheme.Arctic,
+                        maxHeight = 2,
+                        maxDepth = 2032,
+                        featureScale = 2,
+                        detailScale = 7,
+                        roughness = .64f,
+                        marbledHeightmap = true,
+                        matchWaterCoverage = true,
+                        waterCoverage = .3f,
+                        maxHeightVariation = 0
+                    };
+
+                case MapGenTemplate.Island:
+                    return new MapGeneratorArgs
+                    {
+                        maxHeight = 16,
+                        maxDepth = 39,
+                        useBias = true,
+                        bias = .7f,
+                        midPoint = 1,
+                        loweredCorners = 4,
+                        featureScale = 3,
+                        detailScale = 7,
+                        marbledHeightmap = true,
+                        delayBias = true
+                    };
+
+                case MapGenTemplate.Lake:
+                    return new MapGeneratorArgs
+                    {
+                        maxHeight = 14,
+                        maxDepth = 20,
+                        useBias = true,
+                        bias = .65f,
+                        midPoint = -1,
+                        raisedCorners = 4,
+                        featureScale = 2,
+                        roughness = .56f,
+                        matchWaterCoverage = true,
+                        waterCoverage = .3f
+                    };
+
+                case MapGenTemplate.Mountains:
+                    return new MapGeneratorArgs
+                    {
+                        addWater = false,
+                        maxHeight = 40,
+                        maxDepth = 10,
+                        featureScale = 1,
+                        detailScale = 7,
+                        marbledHeightmap = true
+                    };
+
+                case MapGenTemplate.River:
+                    return new MapGeneratorArgs
+                    {
+                        maxHeight = 22,
+                        maxDepth = 8,
+                        featureScale = 0,
+                        detailScale = 6,
+                        marbledHeightmap = true,
+                        matchWaterCoverage = true,
+                        waterCoverage = .31f
+                    };
+
+                case MapGenTemplate.Streams:
+                    return new MapGeneratorArgs
+                    {
+                        maxHeight = 5,
+                        maxDepth = 4,
+                        featureScale = 2,
+                        detailScale = 7,
+                        roughness = .55f,
+                        marbledHeightmap = true,
+                        matchWaterCoverage = true,
+                        waterCoverage = .25f,
+                        treeSpacingMin = 8,
+                        treeSpacingMax = 14
+                    };
+
+                case MapGenTemplate.Peninsula:
+                    return new MapGeneratorArgs
+                    {
+                        maxHeight = 22,
+                        maxDepth = 12,
+                        useBias = true,
+                        bias = .5f,
+                        midPoint = -1,
+                        raisedCorners = 3,
+                        loweredCorners = 1,
+                        treeSpacingMax = 12,
+                        treeSpacingMin = 6,
+                        invertHeightmap = true,
+                        waterCoverage = .5f
+                    };
+
+                case MapGenTemplate.Flat:
+                    return new MapGeneratorArgs
+                    {
+                        maxHeight = 0,
+                        maxDepth = 0,
+                        maxHeightVariation = 0,
+                        addWater = false,
+                        detailScale = 0,
+                        featureScale = 0,
+                        addCliffs = false
+                    };
+            }
+            return null; // can never happen
+        }
+
+        #endregion
     }
 }

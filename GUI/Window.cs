@@ -11,6 +11,7 @@ using MCLawl.Gui;
 using MCDek;
 using MCLawl;
 using System.Threading;
+using MCDek.Gui.MapEditor;
 
 namespace MCDek.Gui
 {
@@ -510,8 +511,8 @@ Server.s.Log("Lists updated!");
 
         private void btnProperties_Click_1(object sender, EventArgs e)
         {
-            if (!prevLoaded) { MapViewerForm = new Form3(); prevLoaded = true; }
-            MapViewerForm.Show();
+            if (!prevLoaded) { AddWorldPopupForm = new AddWorldPopup(); prevLoaded = true; }
+            AddWorldPopupForm.Show();
         }
 
         public static bool prevLoaded = false;
@@ -1825,12 +1826,12 @@ Server.s.Log("Lists updated!");
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (!previousLoaded) { MapViewerForm = new PropertyWindow(); previousLoaded = true; }
-            MapViewerForm.Show();
+            if (!previousLoaded) { AddWorldPopupForm = new PropertyWindow(); previousLoaded = true; }
+            AddWorldPopupForm.Show();
         }
 
         public static bool previousLoaded = false;
-        Form MapViewerForm;
+        Form AddWorldPopupForm;
 
     }
 }

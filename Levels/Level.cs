@@ -18,10 +18,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Data;
 using System.Threading;
-using MySql.Data.MySqlClient;
-using MySql.Data.Types;
 using MCDek;
-
+using System.Linq;
 
 
 namespace MCLawl
@@ -66,14 +64,13 @@ namespace MCLawl
         
         public int id;
         public string name;
-        public ushort width; // x
-        public ushort depth; // y       THIS IS STUPID, SHOULD HAVE BEEN Z
-        public ushort height; // z      THIS IS STUPID, SHOULD HAVE BEEN Y
+        public int width; // x
+        public int depth; // y       THIS IS STUPID, SHOULD HAVE BEEN Z
+        public int height; // z      THIS IS STUPID, SHOULD HAVE BEEN Y
 
         public int currentUndo = 0;
         public List<UndoPos> UndoBuffer = new List<UndoPos>();
         public struct UndoPos { public int location; public byte oldType, newType; public DateTime timePerformed; }
-
 
         //Block change recording
         public struct BlockPos { public ushort x, y, z; public byte type; public DateTime TimePerformed; public bool deleted; public string name; }
@@ -112,7 +109,7 @@ namespace MCLawl
         public bool GrassGrow = true;
         public bool worldChat = true;
         public bool fishstill = false;
-
+        public ushort[,] shadows;
         public int speedPhysics = 250;
         public int overload = 1500;
 
@@ -137,7 +134,7 @@ namespace MCLawl
 
         public bool changed = false;
         public bool backedup = false;
-        public Level(string n, ushort x, ushort y, ushort z, string type)
+        public Level(string n, int x, int y, int z, string type)
         {
             width = x; depth = y; height = z;
             if (width < 16) { width = 16; }
@@ -147,9 +144,15 @@ namespace MCLawl
             name = n;
             blocks = new byte[width * depth * height];
             ZoneList = new List<Zone>();
-
+            MapGenTemplate temp = MapGenTemplate.Default;
+            MapGenTheme theme = MapGenTheme.Forest;
             switch (type)
             {
+                case "island":
+                case "mountains":
+                case "ocean":
+                case "forest":
+                case "desert":
                 case "flat":
                 case "pixel":
                     ushort half = (ushort)(depth / 2);
@@ -187,24 +190,255 @@ namespace MCLawl
                     }
                     break;
 
-                case "island":
-                case "mountains":
-                case "ocean":
-                case "forest":
-                case "desert":
-                    Server.MapGen.GenerateMap(this, type);
+
+
+                    switch (type)
+                    {
+                        case "island":
+                            temp = MapGenTemplate.Island;
+                            theme = MapGenTheme.Forest;
+                            break;
+                        case "mountains":
+                            temp = MapGenTemplate.Mountains;
+                            theme = MapGenTheme.Forest;
+                            break;
+                        case "ocean":
+                            temp = MapGenTemplate.Bay;
+                            theme = MapGenTheme.Forest;
+                            break;
+                        case "forest":
+                            temp = MapGenTemplate.Default;
+                            theme = MapGenTheme.Forest;
+                            break;
+                        case "desert":
+                            temp = MapGenTemplate.Default;
+                            theme = MapGenTheme.Desert;
+                            break;
+                    }
+
+                    MapGeneratorArgs args = MapGenerator.MakeTemplate(temp);
+                    MapGenerator gen = new MapGenerator(args);
+                    gen.ApplyTheme(theme);
+                    gen.GenerateMap(this);
                     break;
 
                 default:
                     break;
             }
 
-            spawnx = (ushort)(width / 2);
-            spawny = (ushort)(depth * 0.75f);
-            spawnz = (ushort)(height / 2);
-            rotx = 0; roty = 0;
+            this.ResetSpawn();
+            
+        
         }
 
+        public static Level LoadHeaderOnly(string givenName)
+        {
+            string path = "levels/" + givenName + ".lvl";
+            if (File.Exists(path))
+            {
+                FileStream fs = File.OpenRead(path);
+                try
+                {
+                    GZipStream gs = new GZipStream(fs, CompressionMode.Decompress);
+                    byte[] ver = new byte[2];
+                    gs.Read(ver, 0, ver.Length);
+                    ushort version = BitConverter.ToUInt16(ver, 0);
+                    Level level;
+                    if (version == 1874)
+                    {
+                        byte[] header = new byte[16]; gs.Read(header, 0, header.Length);
+                        ushort width = BitConverter.ToUInt16(header, 0);
+                        ushort height = BitConverter.ToUInt16(header, 2);
+                        ushort depth = BitConverter.ToUInt16(header, 4);
+                        level = new Level("temp", width, depth, height, "empty");
+                        level.spawnx = BitConverter.ToUInt16(header, 6);
+                        level.spawnz = BitConverter.ToUInt16(header, 8);
+                        level.spawny = BitConverter.ToUInt16(header, 10);
+                        level.rotx = header[12]; level.roty = header[13];
+                        //level.permissionvisit = (LevelPermission)header[14];
+                        //level.permissionbuild = (LevelPermission)header[15];
+                    }
+                    else
+                    {
+                        byte[] header = new byte[12]; gs.Read(header, 0, header.Length);
+                        ushort width = version;
+                        ushort height = BitConverter.ToUInt16(header, 0);
+                        ushort depth = BitConverter.ToUInt16(header, 2);
+                        level = new Level("temp", width, depth, height, "grass");
+                        level.spawnx = BitConverter.ToUInt16(header, 4);
+                        level.spawnz = BitConverter.ToUInt16(header, 6);
+                        level.spawny = BitConverter.ToUInt16(header, 8);
+                        level.rotx = header[10]; level.roty = header[11];
+                    }
+                    level.permissionbuild = (LevelPermission)11;
+
+                    level.name = givenName;
+
+                    gs.Close();
+
+                    return level;
+                }
+                catch (Exception ex) { }
+                finally { fs.Close(); }
+            }
+
+            return null;
+        }
+        public bool InBounds(Vector3i vec)
+        {
+            return (((((vec.x < this.width) && (vec.z < this.depth)) && ((vec.y < this.height) && (vec.x >= 0))) && (vec.z >= 0)) && (vec.y >= 0));
+        }
+
+        public bool InBounds(int x, int y, int h)
+        {
+            return (((((x < this.width) && (y < this.depth)) && ((h < this.height) && (x >= 0))) && (y >= 0)) && (h >= 0));
+        }
+
+        public int SearchColumn(int x, int y, byte blockType)
+        {
+            return this.SearchColumn(x, y, blockType, this.height - 1);
+        }
+
+        public int SearchColumn(int x, int y, byte blockType, int startH)
+        {
+            for (int i = startH; i > 0; i--)
+            {
+                if (this.GetTile(x, y, i) == id)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public void SetTile(int x, int y, int h, byte type)
+        {
+            // TODO: I am lazy
+            //this.SetTile((ushort)x, (ushort)z, (ushort)y, type);
+            int index = FCPosToInt(x, y, h);
+            blocks[index] = type;
+        }
+
+        public void SetTile(Vector3i vec, byte type)
+        {
+            if ((((vec.x < this.width) && (vec.z < this.depth)) && ((vec.y < this.height) && (vec.x >= 0))) && (((vec.z >= 0) && (vec.y >= 0)) && (type < 50)))
+            {
+                this.blocks[this.FCPosToInt(vec.x, vec.z, vec.y)] = type;
+            }
+        }
+
+        public int PosToInt(int x, int y, int z)
+        {
+            if (x < 0) { return -1; }
+            if (x >= width) { return -1; }
+            if (y < 0) { return -1; }
+            if (y >= depth) { return -1; }
+            if (z < 0) { return -1; }
+            if (z >= height) { return -1; }
+            return x + (z * width) + (y * width * height);
+            //alternate method: (h * widthY + y) * widthX + x;
+        }
+        public int FCPosToInt(int x, int y, int z)
+        {
+            //return (h * widthY + y) * widthX + x;
+            //return (z * depth + y) * width + x;
+
+            // This makes it sliced
+            //return (z * depth + y) * width + x;
+
+            // Lawl makes it sideways
+            //return x + (z * width) + (y * width * height);
+            // Lawl, but with depth instead of height
+            //return x + (z * width) + (y * width * depth);
+
+            // we try flipping h and y, get weirdness
+            //return x + (y * width) + (z * width * height);
+
+            return x + (y * width) + (z * width * depth);
+
+        }
+        public void IntToPos(int pos, out ushort x, out ushort y, out ushort z)
+        {
+            y = (ushort)(pos / width / height); pos -= y * width * height;
+            z = (ushort)(pos / width); pos -= z * width; x = (ushort)pos;
+        }
+
+        public static void GenerationTask(object task)
+        {
+            ((MCDek.MapGenerator)task).Generate();
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized);
+        }
+
+        public static void GenerateFlatgrass(Level map)
+        {
+            for (int i = 0; i < map.width; i++)
+            {
+                for (int j = 0; j < map.depth; j++)
+                {
+                    for (int k = 0; k < ((map.height / 2) - 1); k++)
+                    {
+                        if (k < ((map.height / 2) - 5))
+                        {
+                            map.SetTile(i, j, k, Block.rock);
+                        }
+                        else
+                        {
+                            map.SetTile(i, j, k, Block.dirt);
+                        }
+                    }
+                    map.SetTile(i, j, (map.height / 2) - 1, Block.grass);
+                }
+            }
+        }
+        public void CalculateShadows()
+        {
+            if (shadows != null) return;
+            else shadows = new ushort[width, depth];
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < depth; y++)
+                {
+                    for (int h = height; h >= 0; h--)
+                    {
+                        if (GetTile(x, y, h) > 0)
+                        {
+                            shadows[x, y] = (ushort)h;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+                public void MakeFloodBarrier()
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < depth; y++)
+                {
+                    SetTile(x, y, 0, Block.blackrock);
+                }
+            }
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int h = 0; h < height / 2; h++)
+                {
+                    SetTile(x, 0, h, Block.blackrock);
+                    SetTile(x, depth - 1, h, Block.blackrock);
+                }
+            }
+
+            for (int y = 0; y < depth; y++)
+            {
+                for (int h = 0; h < height / 2; h++)
+                {
+                    SetTile(0, y, h, Block.blackrock);
+                    SetTile(width - 1, y, h, Block.blackrock);
+                }
+            }
+        }
+
+    
         public void CopyBlocks(byte[] source, int offset)
         {
             blocks = new byte[width * depth * height];
@@ -265,23 +499,32 @@ namespace MCLawl
             tempCache.Clear();
         }
 
-        public byte GetTile(ushort x, ushort y, ushort z)
-        {
-            //if (PosToInt(x, y, z) >= blocks.Length) { return null; }
-            //Avoid internal overflow
-            if (x < 0) { return Block.Zero; }
-            if (x >= width) { return Block.Zero; }
-            if (y < 0) { return Block.Zero; }
-            if (y >= depth) { return Block.Zero; }
-            if (z < 0) { return Block.Zero; }
-            if (z >= height) { return Block.Zero; }
-            return blocks[PosToInt(x, y, z)];
-        }
         public byte GetTile(int b)
         {
             ushort x = 0, y = 0, z = 0;
             IntToPos(b, out x, out y, out z);
             return GetTile(x, y, z);
+        }
+        public byte GetTile(int x, int y, int h)
+        {
+            // TODO: I am lazy
+            return this.GetTile((ushort)x, (ushort)h, (ushort)y);
+            if (x < 0) { return Block.Zero; }
+            if (x >= width) { return Block.Zero; }
+            if (y < 0) { return Block.Zero; }
+            if (y >= depth) { return Block.Zero; }
+            if (h < 0) { return Block.Zero; }
+            if (h >= height) { return Block.Zero; }
+            return blocks[FCPosToInt(x, y, h)];
+        }
+
+        public byte GetTile(Vector3i vec)
+        {
+            if ((((vec.x < this.width) && (vec.z < this.depth)) && ((vec.y < this.height) && (vec.x >= 0))) && ((vec.z >= 0) && (vec.y >= 0)))
+            {
+                return this.blocks[this.FCPosToInt(vec.x, vec.z, vec.y)];
+            }
+            return 0;
         }
         public void SetTile(ushort x, ushort y, ushort z, byte type)
         {
@@ -311,9 +554,15 @@ namespace MCLawl
         {
             return Server.levels.Find(lvl => levelName.ToLower() == lvl.name.ToLower());
         }
-
+        public void ResetSpawn()
+        {
+            spawnx = (ushort)(width / 2);
+            spawny = (ushort)(depth * 0.75f);
+            spawnz = (ushort)(height / 2);
+            rotx = 0; roty = 0;
+        }
         public void Blockchange(Player p, ushort x, ushort y, ushort z, byte type) { Blockchange(p, x, y, z, type, true); }
-        public void Blockchange(Player p, ushort x, ushort y, ushort z, byte type, bool addaction)
+        public void Blockchange(Player p, int x, int y, int z, byte type, bool addaction)
         {
             string errorLocation = "start";
     retry:  try
@@ -446,7 +695,7 @@ namespace MCLawl
                 SetTile(x, y, z, type);               //Updates server level blocks
 
                 errorLocation = "Growing grass";
-                if (GetTile(x, (ushort)(y - 1), z) == Block.grass && GrassDestroy && !Block.LightPass(type)) { Blockchange(p, x, (ushort)(y - 1), z, Block.dirt); }
+                if (GetTile(x, (ushort)(y - 1), z) == Block.grass && GrassDestroy && !Block.LightPass(type)) { Blockchange(p, (ushort)x, (ushort)(y - 1), (ushort)z, Block.dirt); }
 
                 errorLocation = "Adding physics";
                 if (physics > 0) if (Block.Physics(type)) AddCheck(PosToInt(x, y, z));
@@ -479,7 +728,7 @@ namespace MCLawl
             //    b.lastaction.Add(foo); edits.Add(foo); p.actions.Add(foo);
             //} b.type = type;
         }
-        public void Blockchange(ushort x, ushort y, ushort z, byte type, bool overRide = false, string extraInfo = "")    //Block change made by physics
+        public void Blockchange(int x, int y, int z, byte type, bool overRide = false, string extraInfo = "")    //Block change made by physics
         {
             if (x < 0 || y < 0 || z < 0) return;
             if (x >= width || y >= depth || z >= height) return;
@@ -533,7 +782,7 @@ namespace MCLawl
             }
         }
 
-        public void skipChange(ushort x, ushort y, ushort z, byte type)
+        public void skipChange(int x, int y, int z, byte type)
         {
             if (x < 0 || y < 0 || z < 0) return;
             if (x >= width || y >= depth || z >= height) return;
@@ -920,12 +1169,7 @@ namespace MCLawl
             return x + (z * width) + (y * width * height);
             //alternate method: (h * widthY + y) * widthX + x;
         }
-        public void IntToPos(int pos, out ushort x, out ushort y, out ushort z)
-        {
-            y = (ushort)(pos / width / height); pos -= y * width * height;
-            z = (ushort)(pos / width); pos -= z * width; x = (ushort)pos;
-        }
-        public int IntOffset(int pos, int x, int y, int z)
+        public int IntOffset(int pos, int x, int y, int z) //Blah
         {
             return pos + x + z * width + y * width * height;
         }

@@ -14,3 +14,5 @@ C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdek
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Release\GenerateResource.write.1.tlog
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Release\mcdektest2.exe
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Release\mcdektest2.pdb
+C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Release\MCDek.Gui.MapEditor.AddWorldPopup.resources
+C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Release\mcdektest2.Resources.Resources.resources

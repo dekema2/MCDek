@@ -35,7 +35,7 @@ namespace MCLawl
                 message = "";
                 string message2 = "";
                 bool Once = false;
-                Server.levels.ForEach(delegate(Level level)
+                Server.levels.ForEach(delegate(MCLawl.Level level)
                 {
                     if (level.permissionvisit <= p.group.Permission)
                     {

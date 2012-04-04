@@ -1,0 +1,32 @@
+----4/3/2012 10:49:50 AM ----
+Type: SocketException
+Source: System
+Message: Only one usage of each socket address (protocol/network address/port) is normally permitted
+Target: DoBind
+Trace:    at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at MCDek.Server.Setup() in C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\Server.cs:line 765
+
+-------------------------
+----4/3/2012 11:34:51 AM ----
+Type: ObjectDisposedException
+Source: System.Windows.Forms
+Message: Cannot access a disposed object.
+Object name: 'TextBox'.
+Target: CreateHandle
+Trace:    at System.Windows.Forms.Control.CreateHandle()
+   at System.Windows.Forms.TextBoxBase.CreateHandle()
+   at System.Windows.Forms.TextBoxBase.SetSelectedTextInternal(String text, Boolean clearUndo)
+   at System.Windows.Forms.TextBoxBase.set_SelectedText(String value)
+   at System.Windows.Forms.TextBoxBase.AppendText(String text)
+   at MCDek.Gui.Window.WriteLine(String s) in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\GUI\Window.cs:line 236
+   at MCDek.Server.Log(String message, Boolean systemMsg) in C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\Server.cs:line 872
+   at MCDek.Server.<Start>b__9() in C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\Server.cs:line 742
+   at MonoTorrent.Client.MainLoop.DelegateTask.Execute() in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Queue\MainLoop.cs:line 125
+   at MonoTorrent.Client.MainLoop.Loop() in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Queue\MainLoop.cs:line 176
+   at System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean ignoreSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.ThreadHelper.ThreadStart()
+
+-------------------------

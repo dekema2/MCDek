@@ -30,7 +30,7 @@ namespace MCLawl
 
             for (ushort xx = currentX; xx <= 1000; xx++)
             {
-                if (!Block.Walkthrough(p.level.GetTile(currentY, xx, currentZ)) && p.level.GetTile(currentY, xx, currentZ) != Block.Zero)
+                if (!Block.Walkthrough(p.level.GetTile(xx, currentY, currentZ)) && p.level.GetTile(xx, currentY, currentZ) != Block.Zero)
                 {
                     foundX = (ushort)(xx - 1);
                     who.level.ChatLevel(who.color + who.name + Server.DefaultColor + " was slapped into the wall by " + p.color + p.name);

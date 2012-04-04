@@ -205,6 +205,7 @@ namespace MCLawl
             all.Add(new CmdFastHouse());
             all.Add(new CmdVote());
             all.Add(new CmdConverse());
+            all.Add(new CmdXhide());
 
             core.commands = new List<Command>(all.commands);
 

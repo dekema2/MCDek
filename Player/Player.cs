@@ -141,7 +141,7 @@ namespace MCLawl
         public ushort[] copystart = new ushort[3] { 0, 0, 0 };
 
         //Undo
-        public struct UndoPos { public ushort x, y, z; public byte type, newtype; public string mapName; public DateTime timePlaced; }
+        public struct UndoPos { public int x, y, z; public byte type, newtype; public string mapName; public DateTime timePlaced; }
         public List<UndoPos> UndoBuffer = new List<UndoPos>();
         public List<UndoPos> RedoBuffer = new List<UndoPos>();
         
@@ -1917,7 +1917,7 @@ namespace MCLawl
         }
         //TODO: Figure a way to SendPos without changing rotation
         public void SendDie(byte id) { SendRaw(0x0C, new byte[1] { id }); }
-        public void SendBlockchange(ushort x, ushort y, ushort z, byte type)
+        public void SendBlockchange(int x, int y, int z, byte type)
         {
             if (x < 0 || y < 0 || z < 0) return;
             if (x >= level.width || y >= level.depth || z >= level.height) return;
@@ -2050,7 +2050,7 @@ namespace MCLawl
         }
         #endregion
         #region == GLOBAL MESSAGES ==
-        public static void GlobalBlockchange(Level level, ushort x, ushort y, ushort z, byte type)
+        public static void GlobalBlockchange(Level level, int x, int y, int z, byte type)
         {
             players.ForEach(delegate(Player p) { if (p.level == level) { p.SendBlockchange(x, y, z, type); } });
         }
@@ -2419,7 +2419,7 @@ namespace MCLawl
         }
         #endregion
         #region == Host <> Network ==
-        public static byte[] HTNO(ushort x)
+        public static byte[] HTNO(int x)
         {
             byte[] y = BitConverter.GetBytes(x); Array.Reverse(y); return y;
         }

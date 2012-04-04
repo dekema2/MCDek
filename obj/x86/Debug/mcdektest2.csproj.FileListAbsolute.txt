@@ -22,6 +22,6 @@ C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdek
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\bin\Debug\MySql.Data.dll
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\mcdektest2.exe
 C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\mcdektest2.pdb
-C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\MCDek.Gui.Form2.resources
-C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\MCDek.Gui.Form3.resources
 C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\MCDek.Gui.PropertyWindow.resources
+C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\MCDek.Gui.MapEditor.AddWorldPopup.resources
+C:\Documents and Settings\mcraner\my documents\visual studio 2010\Projects\mcdektest2\mcdektest2\obj\x86\Debug\mcdektest2.Resources.Resources.resources

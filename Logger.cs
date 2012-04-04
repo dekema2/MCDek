@@ -17,9 +17,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Threading;
-using MCLawl.Gui;
-using MCDek;
-namespace MCLawl
+using MCDek.Gui;
+
+namespace MCDek
 {
     public static class Logger
     {
@@ -133,7 +133,9 @@ namespace MCLawl
 
                     NeedRestart = false;
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 File.AppendAllText("ErrorLogError.log", getErrorText(e));
                 Server.s.Log("There was an error in the error logger!");
             }

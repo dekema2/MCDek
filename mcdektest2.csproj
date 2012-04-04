@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -33,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Meebey.SmartIrc4net, Version=0.4.0.34161, Culture=neutral">
@@ -275,6 +277,7 @@
     <Compile Include="Commands\CmdWhois.cs" />
     <Compile Include="Commands\CmdWhowas.cs" />
     <Compile Include="Commands\CmdWrite.cs" />
+    <Compile Include="Commands\CmdXhide.cs" />
     <Compile Include="Commands\CmdZone.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandList.cs" />
@@ -283,18 +286,16 @@
     <Compile Include="CTFGame.cs" />
     <Compile Include="FindReference.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="GUI\Form2.cs">
+    <Compile Include="GUI\Mapviewer\AddWorldPopup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\Form2.designer.cs">
-      <DependentUpon>Form2.cs</DependentUpon>
+    <Compile Include="GUI\Mapviewer\AddWorldPopup.designer.cs">
+      <DependentUpon>AddWorldPopup.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\MapViewer.cs">
-      <SubType>Form</SubType>
+    <Compile Include="GUI\CustomPictureBox.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="GUI\MapViewer.Designer.cs">
-      <DependentUpon>MapViewer.cs</DependentUpon>
-    </Compile>
+    <Compile Include="GUI\Mapviewer\Forester.cs" />
     <Compile Include="GUI\Program.cs" />
     <Compile Include="GUI\Properties.cs" />
     <Compile Include="GUI\PropertyWindow.cs">
@@ -315,13 +316,19 @@
     <Compile Include="GUI\Window.Designer.cs">
       <DependentUpon>Window.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Mapviewer\WorldListEntry.cs" />
     <Compile Include="Heartbeat.cs" />
     <Compile Include="IRCBot.cs" />
+    <Compile Include="JetBrains.Annotations.cs" />
+    <Compile Include="Util\IsoCat.cs" />
     <Compile Include="Levels\ConvertDAT.cs" />
     <Compile Include="Levels\Level.cs" />
     <Compile Include="Levels\LevelCollection.cs" />
     <Compile Include="Levels\MapGenerator.cs" />
+    <Compile Include="Levels\MapGeneratorArgs.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="LogSource.cs" />
+    <Compile Include="LogType.cs" />
     <Compile Include="Misc.cs" />
     <Compile Include="MySQL.cs" />
     <Compile Include="Permalink.cs" />
@@ -341,10 +348,13 @@
     <Compile Include="Queue\ICacheable.cs" />
     <Compile Include="Queue\MainLoop.cs" />
     <Compile Include="Queue\TorrentException.cs" />
+    <Compile Include="Resources\Resources.Designer.cs" />
     <Compile Include="Scripting.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="ServerSettings.cs" />
     <Compile Include="Updater.cs" />
+    <Compile Include="Util\Noise.cs" />
+    <Compile Include="Vector.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -362,6 +372,7 @@
     <None Include="obj\x86\Debug\ResGen.write.1.tlog" />
     <None Include="obj\x86\Debug\ResolveAssemblyReference.cache" />
     <None Include="readme.md" />
+    <None Include="Resources\Thumbs.db" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Changelog.txt" />
@@ -386,15 +397,14 @@
     <Content Include="obj\x86\Debug\MCLawl_.dll" />
     <Content Include="obj\x86\Debug\MCLawl_.pdb" />
     <Content Include="obj\x86\Debug\Starter.csproj.FileListAbsolute.txt" />
+    <Content Include="Resources\Tileset.png" />
+    <Content Include="Resources\TilesetShadowed.png" />
     <Content Include="ScriptSupport.csproj" />
     <Content Include="Starter.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="GUI\Form2.resx">
-      <DependentUpon>Form2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\MapViewer.resx">
-      <DependentUpon>MapViewer.cs</DependentUpon>
+    <EmbeddedResource Include="GUI\Mapviewer\AddWorldPopup.resx">
+      <DependentUpon>AddWorldPopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\PropertyWindow.resx">
       <DependentUpon>PropertyWindow.cs</DependentUpon>
@@ -411,7 +421,9 @@
     <EmbeddedResource Include="obj\x86\Debug\MCLawl.GUI.Form2.resources" />
     <EmbeddedResource Include="obj\x86\Debug\MCLawl.Gui.UpdateWindow.resources" />
     <EmbeddedResource Include="obj\x86\Debug\MCLawl.Gui.Window.resources" />
+    <EmbeddedResource Include="Resources\Resources.resx" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

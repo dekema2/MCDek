@@ -1,0 +1,7 @@
+#This is a full list of awards. The server will load these and they can be awarded as you please
+#Format is:
+# awardName : Description of award goes after the colon
+
+Gotta Start Somewhere : Built your first house
+Climbing The Ladder : Earned a rank advancement
+Do You Live Here? : Joined the server a huge bunch of times

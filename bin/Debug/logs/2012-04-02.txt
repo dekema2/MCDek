@@ -1,0 +1,56 @@
+(19:38:24) Starting Server
+(19:38:24) Global settings updated!
+(19:38:24) custom$s.txt does not exist, creating
+(19:38:24) CREATED NEW: ranks/banned.txt
+(19:38:25) CREATED NEW: ranks/guest.txt
+(19:38:25) CREATED NEW: ranks/builders.txt
+(19:38:25) CREATED NEW: ranks/advbuilders.txt
+(19:38:25) CREATED NEW: ranks/operators.txt
+(19:38:25) CREATED NEW: ranks/uberOps.txt
+(19:38:25) mainlevel not found
+(19:38:25) SAVED: Level "main". (0/0/12)
+(19:38:25) CREATED NEW: ranks/banned-ip.txt
+(19:38:25) CREATED NEW: ranks/IRC_Controllers.txt
+(19:38:25) CREATED NEW: ranks/muted.txt
+(19:38:25) CREATED NEW: ranks/nobody.txt
+(19:38:25) autoload.txt does not exist
+(19:38:25) Creating listening socket on port 25565... 
+(19:38:29) Finished setting up server
+(19:40:06) Starting Server
+(19:40:06) Global settings updated!
+(19:48:22) Starting Server
+(19:48:22) Global settings updated!
+(19:48:23) Level "main" loaded.
+(19:48:23) autoload.txt does not exist
+(19:48:23) Creating listening socket on port 25565... 
+(19:48:26) Finished setting up server
+(19:55:20) Starting Server
+(19:55:20) Global settings updated!
+(19:55:21) Level "main" loaded.
+(19:55:21) autoload.txt does not exist
+(19:55:21) Creating listening socket on port 25565... 
+(20:05:03) Starting Server
+(20:05:03) Global settings updated!
+(20:05:04) Level "main" loaded.
+(20:05:04) autoload.txt does not exist
+(20:05:04) Creating listening socket on port 25565... 
+(20:05:07) Finished setting up server
+(20:46:03) Starting Server
+(20:46:03) Global settings updated!
+(20:52:46) Starting Server
+(20:52:46) Global settings updated!
+(20:52:47) Level "main" loaded.
+(20:52:47) autoload.txt does not exist
+(20:52:47) Creating listening socket on port 25565... 
+(21:07:24) Starting Server
+(21:07:24) Global settings updated!
+(21:07:24) Level "main" loaded.
+(21:07:24) autoload.txt does not exist
+(21:07:24) Creating listening socket on port 25565... 
+(21:07:28) Finished setting up server
+(21:14:33) Starting Server
+(21:14:33) Global settings updated!
+(21:14:33) Level "main" loaded.
+(21:14:33) autoload.txt does not exist
+(21:14:33) Creating listening socket on port 25565... 
+(21:14:37) Finished setting up server

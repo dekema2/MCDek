@@ -1,0 +1,48 @@
+(10:16:55) Starting Server
+(10:16:55) Global settings updated!
+(10:16:56) Level "main" loaded.
+(10:16:56) autoload.txt does not exist
+(10:16:56) Creating listening socket on port 25565... 
+(10:16:59) Finished setting up server
+(10:26:54) Starting Server
+(10:26:54) Global settings updated!
+(10:26:55) Level "main" loaded.
+(10:26:55) autoload.txt does not exist
+(10:26:55) Creating listening socket on port 25565... 
+(10:26:58) Finished setting up server
+(10:40:56) Starting Server
+(10:40:56) Global settings updated!
+(10:40:57) Level "main" loaded.
+(10:40:57) autoload.txt does not exist
+(10:40:57) Creating listening socket on port 25565... 
+(10:41:00) Finished setting up server
+(10:49:49) Starting Server
+(10:49:49) Global settings updated!
+(10:49:49) Level "main" loaded.
+(10:49:49) autoload.txt does not exist
+(10:49:49) Creating listening socket on port 25565... 
+(10:49:50) !!!Error! See logs/errors/2012-04-03error.log for more information.
+(10:49:50) Error Creating listener, socket shutting down
+(10:49:53) Finished setting up server
+(10:54:33) Starting Server
+(10:54:33) Global settings updated!
+(10:54:34) Level "main" loaded.
+(10:54:34) autoload.txt does not exist
+(10:54:34) Creating listening socket on port 25565... 
+(10:54:38) Finished setting up server
+(11:20:22) Starting Server
+(11:20:22) Global settings updated!
+(11:20:22) Level "main" loaded.
+(11:20:23) autoload.txt does not exist
+(11:20:23) Creating listening socket on port 25565... 
+(11:25:25) Starting Server
+(11:25:25) Global settings updated!
+(11:25:26) Level "main" loaded.
+(11:25:26) autoload.txt does not exist
+(11:25:26) Creating listening socket on port 25565... 
+(11:25:29) Finished setting up server
+(11:34:48) Starting Server
+(11:34:48) Global settings updated!
+(11:34:48) Level "main" loaded.
+(11:34:48) autoload.txt does not exist
+(11:34:48) Creating listening socket on port 25565... 

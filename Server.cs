@@ -21,6 +21,7 @@ using MySql.Data.Types;
 
 using MonoTorrent.Client;
 using MCLawl;
+using MCDek;
 
 namespace MCDek
 {
@@ -88,7 +89,6 @@ namespace MCDek
         public static List<TempBan> tempBans = new List<TempBan>();
         public struct TempBan { public string name; public DateTime allowedJoin; }
 
-        public static MapGenerator MapGen;
 
         public static PerformanceCounter PCCounter = null;
         public static PerformanceCounter ProcessCounter = null;
@@ -136,7 +136,7 @@ namespace MCDek
         //Global VoteKick In Progress Flag
         public static bool voteKickInProgress = false;
         public static int voteKickVotesNeeded = 0;
-
+        readonly MapGeneratorArgs args;
 
         //WoM Direct
         public static string Server_ALT = "";
@@ -299,6 +299,7 @@ namespace MCDek
                 ConsoleCommand(cmd, message);
             return cancelcommand;
         }
+
         public void Start()
         {
 
@@ -473,7 +474,7 @@ namespace MCDek
                 try
                 {
                     levels = new List<Level>(maps);
-                    MapGen = new MapGenerator();
+                    Random random = new Random();
 
                     if (File.Exists("levels/" + level + ".lvl"))
                     {
@@ -732,7 +733,7 @@ namespace MCDek
                 try
                 {
                     using (WebClient web = new WebClient())
-                        IP = web.DownloadString("http://www.mcforge.net/serverdata/ip.php");
+                        IP = web.DownloadString("http://dynupdate.no-ip.com/ip.php");
                 }
                 catch { }
 #if DEBUG
@@ -990,6 +991,14 @@ namespace MCDek
         public static bool gcmodhasprotection(string name)
         {
             return gcmods.Contains(name) && gcmodprotection.Where(line => line.Contains(name)).Any(line => line.Split('*')[1] == "1");
+        }
+        public static bool LevelExists(string givenName)
+        {
+            if (File.Exists("levels/" + givenName + ".lvl"))
+            {
+                return true;
+            }
+            else return false;
         }
     }
 }

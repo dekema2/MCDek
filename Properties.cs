@@ -20,6 +20,13 @@ namespace MCLawl
 {
     public static class Properties
     {
+        public static byte MaxPlayers = 12;
+        public static byte MaxMaps = 5;
+        public static int ServerPort = 25565;
+        public static bool PublicServer = true;
+        public static bool VerifyNames = true;
+        public static string ServerName = "[MCDek] Server";
+        public static bool DebugEnabled = false;
         public static void Load(string givenPath, bool skipsalt = false)
         {
             if (!skipsalt)

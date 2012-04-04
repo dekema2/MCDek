@@ -1,0 +1,6 @@
+// This is used to create custom $s
+// If you start the line with a // it wont be used
+// It should be formatted like this:
+// $website:dekemaserv.com
+// That would replace '$website' in any message to 'dekemaserv.com'
+// It must not start with a // and it must not have a space between the 2 sides and the colon (:)

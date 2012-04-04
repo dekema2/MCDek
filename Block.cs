@@ -212,6 +212,7 @@ namespace MCLawl
         public const byte door12_air = (byte)215;
         public const byte door13_air = (byte)216;
         public const byte door14_air = (byte)217;
+        public const byte opdoor_air = (byte)218;
 
         public const byte door_iron = (byte)220;
         public const byte door_dirt = (byte)221;
@@ -1785,6 +1786,7 @@ namespace MCLawl
                 case door_grass: return door_grass_air;
                 case door_blue: return door_blue_air;
                 case door_book: return door_book_air;
+                case opdoor: return opdoor_air;
                 default: return 0;
             }
         }

@@ -84,7 +84,6 @@ namespace MCLawl
 
             if (!cpos.vertical)
             {
-                /* Courtesy of fCraft's awesome Open-Source'ness :D */
 
                 // find start/end coordinates
                 int sx = Math.Min(cpos.x, x);

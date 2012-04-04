@@ -1,0 +1,18 @@
+----4/4/2012 10:26:12 AM ----
+Type: NullReferenceException
+Source: mcdektest2
+Message: Object reference not set to an instance of an object.
+Target: .ctor
+Trace:    at MCDek.MapGenerator..ctor(MapGeneratorArgs _args) in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Levels\MapGenerator.cs:line 54
+   at MCDek.Server.<Start>b__2() in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Server.cs:line 478
+
+-------------------------
+----4/4/2012 10:27:18 AM ----
+Type: NullReferenceException
+Source: mcdektest2
+Message: Object reference not set to an instance of an object.
+Target: .ctor
+Trace:    at MCDek.MapGenerator..ctor(MapGeneratorArgs _args) in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Levels\MapGenerator.cs:line 54
+   at MCDek.Server.<Start>b__2() in C:\Documents and Settings\mcraner\My Documents\Visual Studio 2010\Projects\mcdektest2\mcdektest2\Server.cs:line 478
+
+-------------------------

@@ -1,7 +1,10 @@
-
-(4/2/12)-v0.3.2.0: Added Commands
+(4/3/12)-v0.3.7.0: Worked on Mapviewer GUI is now cleaner almost working :D
+(4/2/12)-v0.3.2.0- v0.3.4.0: Added Commands
                    - Converse
+				   - Xhide = requested by Capierian
 				   - Vote
+				   Fixed URL errors
+				   Major Debugging 
 (4/1/12)-v0.3.2.0: Added Commands
 				   - FastHouse
 				   - Push
