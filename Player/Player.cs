@@ -56,7 +56,7 @@ namespace MCLawl
         byte[] buffer = new byte[0];
         byte[] tempbuffer = new byte[0xFF];
         public bool disconnected = false;
-
+        public int passtries = 0;
         public string name;
         public string realName;
         public byte id;
@@ -119,7 +119,7 @@ namespace MCLawl
         public bool isFlying = false;
 
         public bool joker = false;
-
+        public bool adminpen = false;
         public bool voice = false;
         public string voicestring = "";
 
@@ -141,7 +141,7 @@ namespace MCLawl
         public ushort[] copystart = new ushort[3] { 0, 0, 0 };
 
         //Undo
-        public struct UndoPos { public int x, y, z; public byte type, newtype; public string mapName; public DateTime timePlaced; }
+        public struct UndoPos { public ushort x, y, z; public byte type, newtype; public string mapName; public DateTime timePlaced; }
         public List<UndoPos> UndoBuffer = new List<UndoPos>();
         public List<UndoPos> RedoBuffer = new List<UndoPos>();
         
@@ -313,7 +313,7 @@ namespace MCLawl
             }
             catch (Exception e) { Kick("Login failed!"); Server.ErrorLog(e); }
         }
-
+       
         public void save()
         {
             string commandString =
@@ -710,8 +710,28 @@ namespace MCLawl
             }
 
             Loading = false;
-
+            if (Server.verifyadmins == true)
+            {
+                if (this.group.Permission >= Server.verifyadminsrank)
+                {
+                    adminpen = true;
+                }
+            }
             if (emoteList.Contains(name)) parseSmiley = false;
+            if (Server.verifyadmins == true)
+            {
+                if (this.group.Permission >= Server.verifyadminsrank)
+                {
+                    if (!Directory.Exists("extra/passwords") || !File.Exists("extra/passwords/" + this.name + ".xml"))
+                    {
+                        this.SendMessage("&cPlease set your admin verification password with &a/setpass [Password]!");
+                    }
+                    else
+                    {
+                        this.SendMessage("&cPlease complete admin verification with &a/pass [Password]!");
+                    }
+                }
+            }
             GlobalChat(null, "&a+ " + this.color + this.prefix + this.name + Server.DefaultColor + " has joined the game.", false);
             Server.s.Log(name + " [" + ip + "] has joined the server.");
         }
@@ -769,7 +789,15 @@ namespace MCLawl
                 string info = level.foundInfo(x, y, z);
                 if (info.Contains("wait")) { return; }
             }
-
+            if (Server.verifyadmins == true)
+            {
+                if (this.adminpen == true)
+                {
+                    SendBlockchange(x, y, z, b);
+                    this.SendMessage("&cYou must use &a/pass [Password]&c to verify!");
+                    return;
+                }
+            }
             if (!canBuild)
             {
                 SendBlockchange(x, y, z, b);
@@ -1517,6 +1545,29 @@ namespace MCLawl
         {
             try
             {
+                if (Server.verifyadmins)
+                {
+                    if (cmd.ToLower() == "setpass")
+                    {
+                        Command.all.Find(cmd).Use(this, message);
+                        Server.s.CommandUsed(this.name + " used /setpass");
+                        return;
+                    }
+                    if (cmd.ToLower() == "pass")
+                    {
+                        Command.all.Find(cmd).Use(this, message);
+                        Server.s.CommandUsed(this.name + " used /pass");
+                        return;
+                    }
+                }
+                if (Server.verifyadmins)
+                {
+                    if (this.adminpen)
+                    {
+                        this.SendMessage("&cYou must use &a/pass [Password]&c to verify!");
+                        return;
+                    }
+                }
                 if (cmd == "") { SendMessage("No command entered."); return; }
                 if (jailed) { SendMessage("You cannot use any commands while jailed."); return; }
                 if (cmd.ToLower() == "care") { SendMessage("Corneria now loves you with all his heart."); return; }
@@ -1548,6 +1599,10 @@ namespace MCLawl
                                 SendMessage("Cannot use this command while in a museum!");
                                 return;
                             }
+                        }
+                        if (cmd.ToLower() != "setpass" || cmd.ToLower() != "pass")
+                        {
+                            Server.s.CommandUsed(name + " used /" + cmd + " " + message);
                         }
                         if (this.joker == true || this.muted == true)
                         {
@@ -1917,7 +1972,7 @@ namespace MCLawl
         }
         //TODO: Figure a way to SendPos without changing rotation
         public void SendDie(byte id) { SendRaw(0x0C, new byte[1] { id }); }
-        public void SendBlockchange(int x, int y, int z, byte type)
+        public void SendBlockchange(ushort x, ushort y, ushort z, byte type)
         {
             if (x < 0 || y < 0 || z < 0) return;
             if (x >= level.width || y >= level.depth || z >= level.height) return;
@@ -2050,7 +2105,7 @@ namespace MCLawl
         }
         #endregion
         #region == GLOBAL MESSAGES ==
-        public static void GlobalBlockchange(Level level, int x, int y, int z, byte type)
+        public static void GlobalBlockchange(Level level, ushort x, ushort y, ushort z, byte type)
         {
             players.ForEach(delegate(Player p) { if (p.level == level) { p.SendBlockchange(x, y, z, type); } });
         }
@@ -2419,7 +2474,7 @@ namespace MCLawl
         }
         #endregion
         #region == Host <> Network ==
-        public static byte[] HTNO(int x)
+        public static byte[] HTNO(ushort x)
         {
             byte[] y = BitConverter.GetBytes(x); Array.Reverse(y); return y;
         }

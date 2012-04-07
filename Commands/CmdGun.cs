@@ -110,7 +110,7 @@ namespace MCLawl
                             if (!buffer.Contains(cP))
                             {
                                 buffer.Add(cP);
-                                p.SendBlockchange(cP.x, cP.y, cP.z, Block.glass);
+                                p.SendBlockchange(cP.x, cP.y, cP.z, Block.air);
                             }
                         }
 
@@ -175,14 +175,14 @@ namespace MCLawl
                         {
                             if (bp.ending == 1)
                             {
-                                if ((!Block.LavaKill(by) && !Block.NeedRestart(by)) && by != Block.glass)
+                                if ((!Block.LavaKill(by) && !Block.NeedRestart(by)) && by != Block.air)
                                 {
                                     break;
                                 }
                             }
                             else if (p.level.physics >= 3)
                             {
-                                if (by != Block.glass)
+                                if (by != Block.air)
                                 {
                                     p.level.MakeExplosion(pos.x, pos.y, pos.z, 1);
                                     break;

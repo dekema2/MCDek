@@ -106,7 +106,6 @@ this.Window_Minimize(this, EventArgs.Empty);
             this.openConsole = new System.Windows.Forms.ToolStripMenuItem();
             this.shutdownServer = new System.Windows.Forms.ToolStripMenuItem();
             this.restartServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnProperties = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.Restart = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -630,18 +629,6 @@ this.Window_Minimize(this, EventArgs.Empty);
             this.restartServerToolStripMenuItem.Text = "Restart Server";
             this.restartServerToolStripMenuItem.Click += new System.EventHandler(this.restartServerToolStripMenuItem_Click);
             // 
-            // btnProperties
-            // 
-            this.btnProperties.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnProperties.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnProperties.Location = new System.Drawing.Point(447, 7);
-            this.btnProperties.Name = "btnProperties";
-            this.btnProperties.Size = new System.Drawing.Size(246, 23);
-            this.btnProperties.TabIndex = 34;
-            this.btnProperties.Text = "Map Viewer";
-            this.btnProperties.UseVisualStyleBackColor = true;
-            this.btnProperties.Click += new System.EventHandler(this.btnProperties_Click_1);
-            // 
             // btnClose
             // 
             this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -787,7 +774,6 @@ this.Window_Minimize(this, EventArgs.Empty);
             this.tabPage1.Controls.Add(this.gBCommands);
             this.tabPage1.Controls.Add(this.btnClose);
             this.tabPage1.Controls.Add(this.dgvMaps);
-            this.tabPage1.Controls.Add(this.btnProperties);
             this.tabPage1.Controls.Add(this.gBChat);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.txtCommands);
@@ -943,17 +929,9 @@ this.Window_Minimize(this, EventArgs.Empty);
             this.txtInput.Size = new System.Drawing.Size(375, 21);
             this.txtInput.TabIndex = 27;
             this.txtInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtInput_KeyDown);
-            //
-            //
-            //
-            //
-            // HERE SOCCER THIS IS WHERE THE URL IS 
-            // txtUrl
-            //
-            //
-            //
             // 
-            //
+            // txtUrl
+            // 
             this.txtUrl.Cursor = System.Windows.Forms.Cursors.Default;
             this.txtUrl.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtUrl.Location = new System.Drawing.Point(13, 7);
@@ -971,13 +949,13 @@ this.Window_Minimize(this, EventArgs.Empty);
             this.dgvPlayers.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dgvPlayers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvPlayers.ContextMenuStrip = this.playerStrip;
-            this.dgvPlayers.Location = new System.Drawing.Point(447, 33);
+            this.dgvPlayers.Location = new System.Drawing.Point(447, 7);
             this.dgvPlayers.MultiSelect = false;
             this.dgvPlayers.Name = "dgvPlayers";
             this.dgvPlayers.ReadOnly = true;
             this.dgvPlayers.RowHeadersVisible = false;
             this.dgvPlayers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvPlayers.Size = new System.Drawing.Size(246, 190);
+            this.dgvPlayers.Size = new System.Drawing.Size(246, 216);
             this.dgvPlayers.TabIndex = 37;
             this.dgvPlayers.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPlayers_CellContentClick);
             this.dgvPlayers.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dgvPlayers_RowPrePaint);
@@ -2191,7 +2169,6 @@ this.Window_Minimize(this, EventArgs.Empty);
 
         #endregion
 
-        private Button btnProperties;
         private Button btnClose;
         private ContextMenuStrip iconContext;
         private ToolStripMenuItem openConsole;

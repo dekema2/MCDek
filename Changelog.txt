@@ -1,4 +1,7 @@
 (4/3/12)-v0.3.7.0: Worked on Mapviewer GUI is now cleaner almost working :D
+                   - /gun now doesnt have that annoying glass just shoot = requested by Capierian
+				   - Admin Verification
+				   - Moved Mapviewer to a seperate .exe to reduce lag
 (4/2/12)-v0.3.2.0- v0.3.4.0: Added Commands
                    - Converse
 				   - Xhide = requested by Capierian

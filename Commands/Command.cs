@@ -206,6 +206,10 @@ namespace MCLawl
             all.Add(new CmdVote());
             all.Add(new CmdConverse());
             all.Add(new CmdXhide());
+            all.Add(new CmdPass());
+            all.Add(new CmdSetPass());
+            all.Add(new CmdResetPass());
+
 
             core.commands = new List<Command>(all.commands);
 

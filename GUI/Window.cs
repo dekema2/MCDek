@@ -11,7 +11,8 @@ using MCLawl.Gui;
 using MCDek;
 using MCLawl;
 using System.Threading;
-using MCDek.Gui.MapEditor;
+using System.Net.Sockets;
+using System.Net;
 
 namespace MCDek.Gui
 {
@@ -51,7 +52,6 @@ namespace MCDek.Gui
 
         private void Window_Load(object sender, EventArgs e)
         {
-            btnProperties.Enabled = false;
             //thisWindow = this;
             MaximizeBox = false;
             this.Text = "Starting MCDek...";
@@ -83,8 +83,6 @@ namespace MCDek.Gui
                 Level.LevelLoaded += Level_LevelLoaded;
                 Level.LevelUnload += Level_LevelUnload;
 
-
-                RunOnUiThread(() => btnProperties.Enabled = true);
 
             }).Start();
 
@@ -509,11 +507,6 @@ Server.s.Log("Lists updated!");
             }
         }
 
-        private void btnProperties_Click_1(object sender, EventArgs e)
-        {
-            if (!prevLoaded) { AddWorldPopupForm = new AddWorldPopup(); prevLoaded = true; }
-            AddWorldPopupForm.Show();
-        }
 
         public static bool prevLoaded = false;
         Form PropertyForm;

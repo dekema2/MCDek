@@ -88,7 +88,9 @@ namespace MCDek
 
         public static List<TempBan> tempBans = new List<TempBan>();
         public struct TempBan { public string name; public DateTime allowedJoin; }
-
+        
+        public static bool verifyadmins = true;
+        public static LevelPermission verifyadminsrank = LevelPermission.Operator;
 
         public static PerformanceCounter PCCounter = null;
         public static PerformanceCounter ProcessCounter = null;
@@ -130,13 +132,12 @@ namespace MCDek
         public static string selectedrevision = "";
         public static bool autorestart;
         public static DateTime restarttime;
-
+        public static MapGenerator MapGen;
         public static bool chatmod = false;
 
         //Global VoteKick In Progress Flag
         public static bool voteKickInProgress = false;
         public static int voteKickVotesNeeded = 0;
-        readonly MapGeneratorArgs args;
 
         //WoM Direct
         public static string Server_ALT = "";
@@ -186,7 +187,6 @@ namespace MCDek
         public static string ircOpChannel = "#changethistoo";
         public static bool ircIdentify = false;
         public static string ircPassword = "";
-        public static bool verifyadmins = true;
 
         public static bool restartOnError = true;
 
@@ -473,8 +473,8 @@ namespace MCDek
             {
                 try
                 {
-                    levels = new List<Level>(maps);
-                    Random random = new Random();
+                    levels = new List<Level>(Server.maps);
+                    MapGen = new MapGenerator();
 
                     if (File.Exists("levels/" + level + ".lvl"))
                     {

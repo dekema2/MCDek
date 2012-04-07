@@ -18,8 +18,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Data;
 using System.Threading;
+using MySql.Data.MySqlClient;
+using MySql.Data.Types;
 using MCDek;
-using System.Linq;
+
 
 
 namespace MCLawl
@@ -52,25 +54,26 @@ namespace MCLawl
         public delegate void OnPhysicsUpdate(ushort x, ushort y, ushort z, byte time, string extraInfo, Level l);
         #endregion
         public static event OnLevelUnload LevelUnload = null;
-        [Obsolete("Please use OnLevelSaveEvent.Register()")]
+[Obsolete("Please use OnLevelSaveEvent.Register()")]
         public static event OnLevelSave LevelSave = null;
         //public static event OnLevelSave onLevelSave = null;
-        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
+[Obsolete("Please use OnLevelUnloadEvent.Register()")]
         public event OnLevelUnload onLevelUnload = null;
-        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
+[Obsolete("Please use OnLevelUnloadEvent.Register()")]
         public static event OnLevelLoad LevelLoad = null;
-        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
-        public static event OnLevelLoaded LevelLoaded;        
+[Obsolete("Please use OnLevelUnloadEvent.Register()")]
+        public static event OnLevelLoaded LevelLoaded;
         
         public int id;
         public string name;
-        public int width; // x
-        public int depth; // y       THIS IS STUPID, SHOULD HAVE BEEN Z
-        public int height; // z      THIS IS STUPID, SHOULD HAVE BEEN Y
+        public ushort width; // x
+        public ushort depth; // y THIS IS STUPID, SHOULD HAVE BEEN Z
+        public ushort height; // z THIS IS STUPID, SHOULD HAVE BEEN Y
 
         public int currentUndo = 0;
         public List<UndoPos> UndoBuffer = new List<UndoPos>();
         public struct UndoPos { public int location; public byte oldType, newType; public DateTime timePerformed; }
+
 
         //Block change recording
         public struct BlockPos { public ushort x, y, z; public byte type; public DateTime TimePerformed; public bool deleted; public string name; }
@@ -109,7 +112,7 @@ namespace MCLawl
         public bool GrassGrow = true;
         public bool worldChat = true;
         public bool fishstill = false;
-        public ushort[,] shadows;
+
         public int speedPhysics = 250;
         public int overload = 1500;
 
@@ -122,8 +125,8 @@ namespace MCLawl
         public struct Zone { public ushort smallX, smallY, smallZ, bigX, bigY, bigZ; public string Owner; }
         public List<Zone> ZoneList;
 
-        List<Check> ListCheck = new List<Check>();  //A list of blocks that need to be updated
-        List<Update> ListUpdate = new List<Update>();  //A list of block to change after calculation
+        List<Check> ListCheck = new List<Check>(); //A list of blocks that need to be updated
+        List<Update> ListUpdate = new List<Update>(); //A list of block to change after calculation
 
         //CTF STUFF
         public CTFGame ctfgame = new CTFGame();
@@ -134,7 +137,7 @@ namespace MCLawl
 
         public bool changed = false;
         public bool backedup = false;
-        public Level(string n, int x, int y, int z, string type)
+        public Level(string n, ushort x, ushort y, ushort z, string type)
         {
             width = x; depth = y; height = z;
             if (width < 16) { width = 16; }
@@ -144,15 +147,9 @@ namespace MCLawl
             name = n;
             blocks = new byte[width * depth * height];
             ZoneList = new List<Zone>();
-            MapGenTemplate temp = MapGenTemplate.Default;
-            MapGenTheme theme = MapGenTheme.Forest;
+
             switch (type)
             {
-                case "island":
-                case "mountains":
-                case "ocean":
-                case "forest":
-                case "desert":
                 case "flat":
                 case "pixel":
                     ushort half = (ushort)(depth / 2);
@@ -190,255 +187,24 @@ namespace MCLawl
                     }
                     break;
 
-
-
-                    switch (type)
-                    {
-                        case "island":
-                            temp = MapGenTemplate.Island;
-                            theme = MapGenTheme.Forest;
-                            break;
-                        case "mountains":
-                            temp = MapGenTemplate.Mountains;
-                            theme = MapGenTheme.Forest;
-                            break;
-                        case "ocean":
-                            temp = MapGenTemplate.Bay;
-                            theme = MapGenTheme.Forest;
-                            break;
-                        case "forest":
-                            temp = MapGenTemplate.Default;
-                            theme = MapGenTheme.Forest;
-                            break;
-                        case "desert":
-                            temp = MapGenTemplate.Default;
-                            theme = MapGenTheme.Desert;
-                            break;
-                    }
-
-                    MapGeneratorArgs args = MapGenerator.MakeTemplate(temp);
-                    MapGenerator gen = new MapGenerator(args);
-                    gen.ApplyTheme(theme);
-                    gen.GenerateMap(this);
+                case "island":
+                case "mountains":
+                case "ocean":
+                case "forest":
+                case "desert":
+                    Server.MapGen.GenerateMap(this, type);
                     break;
 
                 default:
                     break;
             }
 
-            this.ResetSpawn();
-            
-        
+            spawnx = (ushort)(width / 2);
+            spawny = (ushort)(depth * 0.75f);
+            spawnz = (ushort)(height / 2);
+            rotx = 0; roty = 0;
         }
 
-        public static Level LoadHeaderOnly(string givenName)
-        {
-            string path = "levels/" + givenName + ".lvl";
-            if (File.Exists(path))
-            {
-                FileStream fs = File.OpenRead(path);
-                try
-                {
-                    GZipStream gs = new GZipStream(fs, CompressionMode.Decompress);
-                    byte[] ver = new byte[2];
-                    gs.Read(ver, 0, ver.Length);
-                    ushort version = BitConverter.ToUInt16(ver, 0);
-                    Level level;
-                    if (version == 1874)
-                    {
-                        byte[] header = new byte[16]; gs.Read(header, 0, header.Length);
-                        ushort width = BitConverter.ToUInt16(header, 0);
-                        ushort height = BitConverter.ToUInt16(header, 2);
-                        ushort depth = BitConverter.ToUInt16(header, 4);
-                        level = new Level("temp", width, depth, height, "empty");
-                        level.spawnx = BitConverter.ToUInt16(header, 6);
-                        level.spawnz = BitConverter.ToUInt16(header, 8);
-                        level.spawny = BitConverter.ToUInt16(header, 10);
-                        level.rotx = header[12]; level.roty = header[13];
-                        //level.permissionvisit = (LevelPermission)header[14];
-                        //level.permissionbuild = (LevelPermission)header[15];
-                    }
-                    else
-                    {
-                        byte[] header = new byte[12]; gs.Read(header, 0, header.Length);
-                        ushort width = version;
-                        ushort height = BitConverter.ToUInt16(header, 0);
-                        ushort depth = BitConverter.ToUInt16(header, 2);
-                        level = new Level("temp", width, depth, height, "grass");
-                        level.spawnx = BitConverter.ToUInt16(header, 4);
-                        level.spawnz = BitConverter.ToUInt16(header, 6);
-                        level.spawny = BitConverter.ToUInt16(header, 8);
-                        level.rotx = header[10]; level.roty = header[11];
-                    }
-                    level.permissionbuild = (LevelPermission)11;
-
-                    level.name = givenName;
-
-                    gs.Close();
-
-                    return level;
-                }
-                catch (Exception ex) { }
-                finally { fs.Close(); }
-            }
-
-            return null;
-        }
-        public bool InBounds(Vector3i vec)
-        {
-            return (((((vec.x < this.width) && (vec.z < this.depth)) && ((vec.y < this.height) && (vec.x >= 0))) && (vec.z >= 0)) && (vec.y >= 0));
-        }
-
-        public bool InBounds(int x, int y, int h)
-        {
-            return (((((x < this.width) && (y < this.depth)) && ((h < this.height) && (x >= 0))) && (y >= 0)) && (h >= 0));
-        }
-
-        public int SearchColumn(int x, int y, byte blockType)
-        {
-            return this.SearchColumn(x, y, blockType, this.height - 1);
-        }
-
-        public int SearchColumn(int x, int y, byte blockType, int startH)
-        {
-            for (int i = startH; i > 0; i--)
-            {
-                if (this.GetTile(x, y, i) == id)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        public void SetTile(int x, int y, int h, byte type)
-        {
-            // TODO: I am lazy
-            //this.SetTile((ushort)x, (ushort)z, (ushort)y, type);
-            int index = FCPosToInt(x, y, h);
-            blocks[index] = type;
-        }
-
-        public void SetTile(Vector3i vec, byte type)
-        {
-            if ((((vec.x < this.width) && (vec.z < this.depth)) && ((vec.y < this.height) && (vec.x >= 0))) && (((vec.z >= 0) && (vec.y >= 0)) && (type < 50)))
-            {
-                this.blocks[this.FCPosToInt(vec.x, vec.z, vec.y)] = type;
-            }
-        }
-
-        public int PosToInt(int x, int y, int z)
-        {
-            if (x < 0) { return -1; }
-            if (x >= width) { return -1; }
-            if (y < 0) { return -1; }
-            if (y >= depth) { return -1; }
-            if (z < 0) { return -1; }
-            if (z >= height) { return -1; }
-            return x + (z * width) + (y * width * height);
-            //alternate method: (h * widthY + y) * widthX + x;
-        }
-        public int FCPosToInt(int x, int y, int z)
-        {
-            //return (h * widthY + y) * widthX + x;
-            //return (z * depth + y) * width + x;
-
-            // This makes it sliced
-            //return (z * depth + y) * width + x;
-
-            // Lawl makes it sideways
-            //return x + (z * width) + (y * width * height);
-            // Lawl, but with depth instead of height
-            //return x + (z * width) + (y * width * depth);
-
-            // we try flipping h and y, get weirdness
-            //return x + (y * width) + (z * width * height);
-
-            return x + (y * width) + (z * width * depth);
-
-        }
-        public void IntToPos(int pos, out ushort x, out ushort y, out ushort z)
-        {
-            y = (ushort)(pos / width / height); pos -= y * width * height;
-            z = (ushort)(pos / width); pos -= z * width; x = (ushort)pos;
-        }
-
-        public static void GenerationTask(object task)
-        {
-            ((MCDek.MapGenerator)task).Generate();
-            GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized);
-        }
-
-        public static void GenerateFlatgrass(Level map)
-        {
-            for (int i = 0; i < map.width; i++)
-            {
-                for (int j = 0; j < map.depth; j++)
-                {
-                    for (int k = 0; k < ((map.height / 2) - 1); k++)
-                    {
-                        if (k < ((map.height / 2) - 5))
-                        {
-                            map.SetTile(i, j, k, Block.rock);
-                        }
-                        else
-                        {
-                            map.SetTile(i, j, k, Block.dirt);
-                        }
-                    }
-                    map.SetTile(i, j, (map.height / 2) - 1, Block.grass);
-                }
-            }
-        }
-        public void CalculateShadows()
-        {
-            if (shadows != null) return;
-            else shadows = new ushort[width, depth];
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < depth; y++)
-                {
-                    for (int h = height; h >= 0; h--)
-                    {
-                        if (GetTile(x, y, h) > 0)
-                        {
-                            shadows[x, y] = (ushort)h;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-                public void MakeFloodBarrier()
-        {
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < depth; y++)
-                {
-                    SetTile(x, y, 0, Block.blackrock);
-                }
-            }
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int h = 0; h < height / 2; h++)
-                {
-                    SetTile(x, 0, h, Block.blackrock);
-                    SetTile(x, depth - 1, h, Block.blackrock);
-                }
-            }
-
-            for (int y = 0; y < depth; y++)
-            {
-                for (int h = 0; h < height / 2; h++)
-                {
-                    SetTile(0, y, h, Block.blackrock);
-                    SetTile(width - 1, y, h, Block.blackrock);
-                }
-            }
-        }
-
-    
         public void CopyBlocks(byte[] source, int offset)
         {
             blocks = new byte[width * depth * height];
@@ -499,32 +265,23 @@ namespace MCLawl
             tempCache.Clear();
         }
 
+        public byte GetTile(ushort x, ushort y, ushort z)
+        {
+            //if (PosToInt(x, y, z) >= blocks.Length) { return null; }
+            //Avoid internal overflow
+            if (x < 0) { return Block.Zero; }
+            if (x >= width) { return Block.Zero; }
+            if (y < 0) { return Block.Zero; }
+            if (y >= depth) { return Block.Zero; }
+            if (z < 0) { return Block.Zero; }
+            if (z >= height) { return Block.Zero; }
+            return blocks[PosToInt(x, y, z)];
+        }
         public byte GetTile(int b)
         {
             ushort x = 0, y = 0, z = 0;
             IntToPos(b, out x, out y, out z);
             return GetTile(x, y, z);
-        }
-        public byte GetTile(int x, int y, int h)
-        {
-            // TODO: I am lazy
-            return this.GetTile((ushort)x, (ushort)h, (ushort)y);
-            if (x < 0) { return Block.Zero; }
-            if (x >= width) { return Block.Zero; }
-            if (y < 0) { return Block.Zero; }
-            if (y >= depth) { return Block.Zero; }
-            if (h < 0) { return Block.Zero; }
-            if (h >= height) { return Block.Zero; }
-            return blocks[FCPosToInt(x, y, h)];
-        }
-
-        public byte GetTile(Vector3i vec)
-        {
-            if ((((vec.x < this.width) && (vec.z < this.depth)) && ((vec.y < this.height) && (vec.x >= 0))) && ((vec.z >= 0) && (vec.y >= 0)))
-            {
-                return this.blocks[this.FCPosToInt(vec.x, vec.z, vec.y)];
-            }
-            return 0;
         }
         public void SetTile(ushort x, ushort y, ushort z, byte type)
         {
@@ -554,18 +311,12 @@ namespace MCLawl
         {
             return Server.levels.Find(lvl => levelName.ToLower() == lvl.name.ToLower());
         }
-        public void ResetSpawn()
-        {
-            spawnx = (ushort)(width / 2);
-            spawny = (ushort)(depth * 0.75f);
-            spawnz = (ushort)(height / 2);
-            rotx = 0; roty = 0;
-        }
+
         public void Blockchange(Player p, ushort x, ushort y, ushort z, byte type) { Blockchange(p, x, y, z, type, true); }
-        public void Blockchange(Player p, int x, int y, int z, byte type, bool addaction)
+        public void Blockchange(Player p, ushort x, ushort y, ushort z, byte type, bool addaction)
         {
             string errorLocation = "start";
-    retry:  try
+    retry: try
             {
                 if (x < 0 || y < 0 || z < 0) return;
                 if (x >= width || y >= depth || z >= height) return;
@@ -690,12 +441,12 @@ namespace MCLawl
                 p.UndoBuffer.Add(Pos);
 
                 errorLocation = "Setting tile";
-                p.loginBlocks++; 
+                p.loginBlocks++;
                 p.overallBlocks++;
-                SetTile(x, y, z, type);               //Updates server level blocks
+                SetTile(x, y, z, type); //Updates server level blocks
 
                 errorLocation = "Growing grass";
-                if (GetTile(x, (ushort)(y - 1), z) == Block.grass && GrassDestroy && !Block.LightPass(type)) { Blockchange(p, (ushort)x, (ushort)(y - 1), (ushort)z, Block.dirt); }
+                if (GetTile(x, (ushort)(y - 1), z) == Block.grass && GrassDestroy && !Block.LightPass(type)) { Blockchange(p, x, (ushort)(y - 1), z, Block.dirt); }
 
                 errorLocation = "Adding physics";
                 if (physics > 0) if (Block.Physics(type)) AddCheck(PosToInt(x, y, z));
@@ -720,15 +471,15 @@ namespace MCLawl
 
             //if (addaction)
             //{
-            //    if (edits.Count == edits.Capacity) { edits.Capacity += 1024; }
-            //    if (p.actions.Count == p.actions.Capacity) { p.actions.Capacity += 128; }
-            //    if (b.lastaction.Count == 5) { b.lastaction.RemoveAt(0); }
-            //    Edit foo = new Edit(this); foo.block = b; foo.from = p.name;
-            //    foo.before = b.type; foo.after = type;
-            //    b.lastaction.Add(foo); edits.Add(foo); p.actions.Add(foo);
+            // if (edits.Count == edits.Capacity) { edits.Capacity += 1024; }
+            // if (p.actions.Count == p.actions.Capacity) { p.actions.Capacity += 128; }
+            // if (b.lastaction.Count == 5) { b.lastaction.RemoveAt(0); }
+            // Edit foo = new Edit(this); foo.block = b; foo.from = p.name;
+            // foo.before = b.type; foo.after = type;
+            // b.lastaction.Add(foo); edits.Add(foo); p.actions.Add(foo);
             //} b.type = type;
         }
-        public void Blockchange(int x, int y, int z, byte type, bool overRide = false, string extraInfo = "")    //Block change made by physics
+        public void Blockchange(ushort x, ushort y, ushort z, byte type, bool overRide = false, string extraInfo = "") //Block change made by physics
         {
             if (x < 0 || y < 0 || z < 0) return;
             if (x >= width || y >= depth || z >= height) return;
@@ -739,7 +490,7 @@ namespace MCLawl
                 if (!overRide)
                     if (Block.OPBlocks(b) || Block.OPBlocks(type)) return;
 
-                if (Block.Convert(b) != Block.Convert(type))    //Should save bandwidth sending identical looking blocks, like air/op_air changes.
+                if (Block.Convert(b) != Block.Convert(type)) //Should save bandwidth sending identical looking blocks, like air/op_air changes.
                     Player.GlobalBlockchange(this, x, y, z, type);
 
                 if (b == Block.sponge && physics > 0 && type != Block.sponge)
@@ -771,7 +522,7 @@ namespace MCLawl
                 }
                 catch { }
 
-                SetTile(x, y, z, type);               //Updates server level blocks
+                SetTile(x, y, z, type); //Updates server level blocks
 
                 if (physics > 0)
                     if (Block.Physics(type) || extraInfo != "") AddCheck(PosToInt(x, y, z), extraInfo);
@@ -782,7 +533,7 @@ namespace MCLawl
             }
         }
 
-        public void skipChange(int x, int y, int z, byte type)
+        public void skipChange(ushort x, ushort y, ushort z, byte type)
         {
             if (x < 0 || y < 0 || z < 0) return;
             if (x >= width || y >= depth || z >= height) return;
@@ -859,7 +610,7 @@ namespace MCLawl
                     SW.Flush();
                     SW.Close();
 
-                    Server.s.Log("SAVED: Level \"" + name + "\". (" + players.Count + "/" + Player.players.Count  + "/" + Server.players + ")");
+                    Server.s.Log("SAVED: Level \"" + name + "\". (" + players.Count + "/" + Player.players.Count + "/" + Server.players + ")");
                     changed = false;
                     
                     fs.Dispose();
@@ -1169,7 +920,12 @@ namespace MCLawl
             return x + (z * width) + (y * width * height);
             //alternate method: (h * widthY + y) * widthX + x;
         }
-        public int IntOffset(int pos, int x, int y, int z) //Blah
+        public void IntToPos(int pos, out ushort x, out ushort y, out ushort z)
+        {
+            y = (ushort)(pos / width / height); pos -= y * width * height;
+            z = (ushort)(pos / width); pos -= z * width; x = (ushort)pos;
+        }
+        public int IntOffset(int pos, int x, int y, int z)
         {
             return pos + x + z * width + y * width * height;
         }
@@ -1351,13 +1107,13 @@ namespace MCLawl
                             {
                                 switch (blocks[C.b])
                                 {
-                                    case Block.air:         //Placed air
+                                    case Block.air: //Placed air
                                         //initialy checks if block is valid
                                         PhysAir(PosToInt((ushort)(x + 1), y, z));
                                         PhysAir(PosToInt((ushort)(x - 1), y, z));
                                         PhysAir(PosToInt(x, y, (ushort)(z + 1)));
                                         PhysAir(PosToInt(x, y, (ushort)(z - 1)));
-                                        PhysAir(PosToInt(x, (ushort)(y + 1), z));  //Check block above the air
+                                        PhysAir(PosToInt(x, (ushort)(y + 1), z)); //Check block above the air
 
                                         //Edge of map water
                                         if (edgeWater == true)
@@ -1374,7 +1130,7 @@ namespace MCLawl
                                         if (!C.extraInfo.Contains("wait")) C.time = 255;
                                         break;
 
-                                    case Block.dirt:     //Dirt
+                                    case Block.dirt: //Dirt
                                         if (!GrassGrow) { C.time = 255; break; }
 
                                         if (C.time > 20)
@@ -1391,7 +1147,7 @@ namespace MCLawl
                                         }
                                         break;
 
-                                    case Block.water:         //Active_water
+                                    case Block.water: //Active_water
                                     case Block.activedeathwater:
                                         //initialy checks if block is valid
                                         if (!finite)
@@ -1407,7 +1163,7 @@ namespace MCLawl
                                             }
                                             else
                                             {
-                                                AddUpdate(C.b, Block.air);  //was placed near sponge
+                                                AddUpdate(C.b, Block.air); //was placed near sponge
                                             }
 
                                             if (C.extraInfo.IndexOf("wait") == -1) C.time = 255;
@@ -1502,7 +1258,7 @@ namespace MCLawl
                                         }
                                         break;
 
-                                    case Block.lava:         //Active_lava
+                                    case Block.lava: //Active_lava
                                     case Block.activedeathlava:
                                         //initialy checks if block is valid
                                         if (C.time < 4) { C.time++; break; }
@@ -1743,52 +1499,52 @@ namespace MCLawl
 
                                         break;
 
-                                    case Block.sand:    //Sand
+                                    case Block.sand: //Sand
                                         if (PhysSand(C.b, Block.sand))
                                         {
                                             PhysAir(PosToInt((ushort)(x + 1), y, z));
                                             PhysAir(PosToInt((ushort)(x - 1), y, z));
                                             PhysAir(PosToInt(x, y, (ushort)(z + 1)));
                                             PhysAir(PosToInt(x, y, (ushort)(z - 1)));
-                                            PhysAir(PosToInt(x, (ushort)(y + 1), z));   //Check block above
+                                            PhysAir(PosToInt(x, (ushort)(y + 1), z)); //Check block above
                                         }
                                         C.time = 255;
                                         break;
 
-                                    case Block.gravel:    //Gravel
+                                    case Block.gravel: //Gravel
                                         if (PhysSand(C.b, Block.gravel))
                                         {
                                             PhysAir(PosToInt((ushort)(x + 1), y, z));
                                             PhysAir(PosToInt((ushort)(x - 1), y, z));
                                             PhysAir(PosToInt(x, y, (ushort)(z + 1)));
                                             PhysAir(PosToInt(x, y, (ushort)(z - 1)));
-                                            PhysAir(PosToInt(x, (ushort)(y + 1), z));   //Check block above
+                                            PhysAir(PosToInt(x, (ushort)(y + 1), z)); //Check block above
                                         }
                                         C.time = 255;
                                         break;
 
-                                    case Block.sponge:    //SPONGE
+                                    case Block.sponge: //SPONGE
                                         PhysSponge(C.b);
                                         C.time = 255;
                                         break;
 
                                     //Adv physics updating anything placed next to water or lava
-                                    case Block.wood:     //Wood to die in lava
-                                    case Block.shrub:     //Tree and plants follow
-                                    case Block.trunk:    //Wood to die in lava
-                                    case Block.leaf:    //Bushes die in lava
+                                    case Block.wood: //Wood to die in lava
+                                    case Block.shrub: //Tree and plants follow
+                                    case Block.trunk: //Wood to die in lava
+                                    case Block.leaf: //Bushes die in lava
                                     case Block.yellowflower:
                                     case Block.redflower:
                                     case Block.mushroom:
                                     case Block.redmushroom:
-                                    case Block.bookcase:    //bookcase
-                                        if (physics > 1)   //Adv physics kills flowers and mushroos in water/lava
+                                    case Block.bookcase: //bookcase
+                                        if (physics > 1) //Adv physics kills flowers and mushroos in water/lava
                                         {
                                             PhysAir(PosToInt((ushort)(x + 1), y, z));
                                             PhysAir(PosToInt((ushort)(x - 1), y, z));
                                             PhysAir(PosToInt(x, y, (ushort)(z + 1)));
                                             PhysAir(PosToInt(x, y, (ushort)(z - 1)));
-                                            PhysAir(PosToInt(x, (ushort)(y + 1), z));   //Check block above
+                                            PhysAir(PosToInt(x, (ushort)(y + 1), z)); //Check block above
                                         }
                                         C.time = 255;
                                         break;
@@ -1798,12 +1554,12 @@ namespace MCLawl
                                         C.time = 255;
                                         break;
 
-                                    case Block.wood_float:   //wood_float
+                                    case Block.wood_float: //wood_float
                                         PhysFloatwood(C.b);
                                         C.time = 255;
                                         break;
 
-                                    case Block.lava_fast:         //lava_fast
+                                    case Block.lava_fast: //lava_fast
                                         //initialy checks if block is valid
                                         PhysLava(PosToInt((ushort)(x + 1), y, z), Block.lava_fast);
                                         PhysLava(PosToInt((ushort)(x - 1), y, z), Block.lava_fast);
@@ -1814,7 +1570,7 @@ namespace MCLawl
                                         break;
 
                                     //Special blocks that are not saved
-                                    case Block.air_flood:   //air_flood
+                                    case Block.air_flood: //air_flood
                                         if (C.time < 1)
                                         {
                                             PhysAirFlood(PosToInt((ushort)(x + 1), y, z), Block.air_flood);
@@ -1828,20 +1584,20 @@ namespace MCLawl
                                         }
                                         else
                                         {
-                                            AddUpdate(C.b, 0);    //Turn back into normal air
+                                            AddUpdate(C.b, 0); //Turn back into normal air
                                             C.time = 255;
                                         }
                                         break;
 
-                                    case Block.door_air:   //door_air         Change any door blocks nearby into door_air
-                                    case Block.door2_air:   //door_air         Change any door blocks nearby into door_air
-                                    case Block.door3_air:   //door_air         Change any door blocks nearby into door_air
-                                    case Block.door4_air:   //door_air         Change any door blocks nearby into door_air
-                                    case Block.door5_air:   //door_air         Change any door blocks nearby into door_air
-                                    case Block.door6_air:   //door_air         Change any door blocks nearby into door_air
-                                    case Block.door7_air:   //door_air         Change any door blocks nearby into door_air
-                                    case Block.door8_air:   //door_air         Change any door blocks nearby into door_air
-                                    case Block.door10_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door2_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door3_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door4_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door5_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door6_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door7_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door8_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door10_air: //door_air Change any door blocks nearby into door_air
                                     case Block.door12_air:
                                     case Block.door13_air:
                                     case Block.door_iron_air:
@@ -1853,7 +1609,7 @@ namespace MCLawl
                                     case Block.door11_air:
                                     case Block.door14_air:
                                         AnyDoor(C, x, y, z, 4, true); break;
-                                    case Block.door9_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door9_air: //door_air Change any door blocks nearby into door_air
                                         AnyDoor(C, x, y, z, 4); break;
 
                                     case Block.odoor1_air:
@@ -1883,7 +1639,7 @@ namespace MCLawl
                                     case Block.odoor12:
                                         odoor(C); break;
 
-                                    case Block.air_flood_layer:   //air_flood_layer
+                                    case Block.air_flood_layer: //air_flood_layer
                                         if (C.time < 1)
                                         {
                                             PhysAirFlood(PosToInt((ushort)(x + 1), y, z), Block.air_flood_layer);
@@ -1895,12 +1651,12 @@ namespace MCLawl
                                         }
                                         else
                                         {
-                                            AddUpdate(C.b, 0);    //Turn back into normal air
+                                            AddUpdate(C.b, 0); //Turn back into normal air
                                             C.time = 255;
                                         }
                                         break;
 
-                                    case Block.air_flood_down:   //air_flood_down
+                                    case Block.air_flood_down: //air_flood_down
                                         if (C.time < 1)
                                         {
                                             PhysAirFlood(PosToInt((ushort)(x + 1), y, z), Block.air_flood_down);
@@ -1913,12 +1669,12 @@ namespace MCLawl
                                         }
                                         else
                                         {
-                                            AddUpdate(C.b, 0);    //Turn back into normal air
+                                            AddUpdate(C.b, 0); //Turn back into normal air
                                             C.time = 255;
                                         }
                                         break;
 
-                                    case Block.air_flood_up:   //air_flood_up
+                                    case Block.air_flood_up: //air_flood_up
                                         if (C.time < 1)
                                         {
                                             PhysAirFlood(PosToInt((ushort)(x + 1), y, z), Block.air_flood_up);
@@ -1931,7 +1687,7 @@ namespace MCLawl
                                         }
                                         else
                                         {
-                                            AddUpdate(C.b, 0);    //Turn back into normal air
+                                            AddUpdate(C.b, 0); //Turn back into normal air
                                             C.time = 255;
                                         }
                                         break;
@@ -3001,7 +2757,7 @@ namespace MCLawl
                                         }
                                         break;
                                         #endregion
-                                    default:    //non special blocks are then ignored, maybe it would be better to avoid getting here and cutting down the list
+                                    default: //non special blocks are then ignored, maybe it would be better to avoid getting here and cutting down the list
                                         if (!C.extraInfo.Contains("wait")) C.time = 255;
                                         break;
                                 }
@@ -3015,7 +2771,7 @@ namespace MCLawl
 
                     });
 
-                    ListCheck.RemoveAll(Check => Check.time == 255);  //Remove all that are finished with 255 time
+                    ListCheck.RemoveAll(Check => Check.time == 255); //Remove all that are finished with 255 time
 
                     lastUpdate = ListUpdate.Count;
                     ListUpdate.ForEach(delegate(Update C)
@@ -3046,7 +2802,7 @@ namespace MCLawl
             {
                 if (!ListCheck.Exists(Check => Check.b == b))
                 {
-                    ListCheck.Add(new Check(b, extraInfo));    //Adds block to list to be updated
+                    ListCheck.Add(new Check(b, extraInfo)); //Adds block to list to be updated
                 }
                 else
                 {
@@ -3066,7 +2822,7 @@ namespace MCLawl
             catch
             {
                 //s.Log("Warning-PhysicsCheck");
-                //ListCheck.Add(new Check(b));    //Lousy back up plan
+                //ListCheck.Add(new Check(b)); //Lousy back up plan
             }
         }
         private bool AddUpdate(int b, int type, bool overRide = false, string extraInfo = "")
@@ -3101,7 +2857,7 @@ namespace MCLawl
             catch
             {
                 //s.Log("Warning-PhysicsUpdate");
-                //ListUpdate.Add(new Update(b, (byte)type));    //Lousy back up plan
+                //ListUpdate.Add(new Update(b, (byte)type)); //Lousy back up plan
                 return false;
             }
         }
@@ -3176,8 +2932,8 @@ namespace MCLawl
                     }
                     break;
 
-                case 10:    //hit active_lava
-                case 112:    //hit lava_fast
+                case 10: //hit active_lava
+                case 112: //hit lava_fast
                     if (!PhysSpongeCheck(b)) { AddUpdate(b, 1); }
                     break;
 
@@ -3186,15 +2942,15 @@ namespace MCLawl
                 case 38:
                 case 39:
                 case 40:
-                    if (physics > 1)   //Adv physics kills flowers and mushrooms in water
+                    if (physics > 1) //Adv physics kills flowers and mushrooms in water
                     {
                         if (!PhysSpongeCheck(b)) { AddUpdate(b, 0); }
                     }
                     break;
 
-                case 12:    //sand
-                case 13:    //gravel
-                case 110:   //woodfloat
+                case 12: //sand
+                case 13: //gravel
+                case 110: //woodfloat
                     AddCheck(b);
                     break;
 
@@ -3212,12 +2968,12 @@ namespace MCLawl
                     AddUpdate(b, type);
                     break;
 
-                case 8:    //hit active_water
+                case 8: //hit active_water
                     AddUpdate(b, 1);
                     break;
 
-                case 12:    //sand
-                    if (physics > 1)   //Adv physics changes sand to glass next to lava
+                case 12: //sand
+                    if (physics > 1) //Adv physics changes sand to glass next to lava
                     {
                         AddUpdate(b, 20);
                     }
@@ -3227,7 +2983,7 @@ namespace MCLawl
                     }
                     break;
 
-                case 13:    //gravel
+                case 13: //gravel
                     AddCheck(b);
                     break;
 
@@ -3239,7 +2995,7 @@ namespace MCLawl
                 case 38:
                 case 39:
                 case 40:
-                    if (physics > 1)   //Adv physics kills flowers and mushrooms plus wood in lava
+                    if (physics > 1) //Adv physics kills flowers and mushrooms plus wood in lava
                     {
                         AddUpdate(b, 0);
                     }
@@ -3257,18 +3013,18 @@ namespace MCLawl
 
             switch (blocks[b])
             {
-                //case 8:     //active water
-                //case 10:    //active_lava
-                case 12:    //sand
-                case 13:    //gravel
-                case 110:   //wood_float
-                    /*case 112:   //lava_fast
-                    case Block.WaterDown:
-                    case Block.LavaDown:
-                    case Block.deathlava:
-                    case Block.deathwater:
-                    case Block.geyser:
-                    case Block.magma:*/
+                //case 8: //active water
+                //case 10: //active_lava
+                case 12: //sand
+                case 13: //gravel
+                case 110: //wood_float
+                    /*case 112: //lava_fast
+case Block.WaterDown:
+case Block.LavaDown:
+case Block.deathlava:
+case Block.deathwater:
+case Block.geyser:
+case Block.magma:*/
                     AddCheck(b);
                     break;
 
@@ -3277,7 +3033,7 @@ namespace MCLawl
             }
         }
         //================================================================================================================
-        private bool PhysSand(int b, byte type)   //also does gravel
+        private bool PhysSand(int b, byte type) //also does gravel
         {
             if (b == -1 || physics == 0) return false;
 
@@ -3287,12 +3043,12 @@ namespace MCLawl
 
             do
             {
-                tempb = IntOffset(tempb, 0, -1, 0);     //Get block below each loop
+                tempb = IntOffset(tempb, 0, -1, 0); //Get block below each loop
                 if (GetTile(tempb) != Block.Zero)
                 {
                     switch (blocks[tempb])
                     {
-                        case 0:         //air lava water
+                        case 0: //air lava water
                         case 8:
                         case 10:
                             moved = true;
@@ -3303,7 +3059,7 @@ namespace MCLawl
                         case 38:
                         case 39:
                         case 40:
-                            if (physics > 1)   //Adv physics crushes plants with sand
+                            if (physics > 1) //Adv physics crushes plants with sand
                             { moved = true; }
                             else
                             { blocked = true; }
@@ -3332,14 +3088,14 @@ namespace MCLawl
             return moved;
         }
 
-        private void PhysSandCheck(int b)   //also does gravel
+        private void PhysSandCheck(int b) //also does gravel
         {
             if (b == -1) { return; }
             switch (blocks[b])
             {
-                case 12:    //sand
-                case 13:    //gravel
-                case 110:   //wood_float
+                case 12: //sand
+                case 13: //gravel
+                case 110: //wood_float
                     AddCheck(b);
                     break;
 
@@ -3350,7 +3106,7 @@ namespace MCLawl
         //================================================================================================================
         private void PhysStair(int b)
         {
-            int tempb = IntOffset(b, 0, -1, 0);     //Get block below
+            int tempb = IntOffset(b, 0, -1, 0); //Get block below
             if (GetTile(tempb) != Block.Zero)
             {
                 if (GetTile(tempb) == Block.staircasestep)
@@ -3361,7 +3117,7 @@ namespace MCLawl
             }
         }
         //================================================================================================================
-        private bool PhysSpongeCheck(int b)         //return true if sponge is near
+        private bool PhysSpongeCheck(int b) //return true if sponge is near
         {
             int temp = 0;
             for (int x = -2; x <= +2; ++x)
@@ -3381,7 +3137,7 @@ namespace MCLawl
             return false;
         }
         //================================================================================================================
-        private void PhysSponge(int b)         //turn near water into air when placed
+        private void PhysSponge(int b) //turn near water into air when placed
         {
             int temp = 0;
             for (int x = -2; x <= +2; ++x)
@@ -3401,7 +3157,7 @@ namespace MCLawl
 
         }
         //================================================================================================================
-        public void PhysSpongeRemoved(int b)         //Reactivates near water
+        public void PhysSpongeRemoved(int b) //Reactivates near water
         {
             //TODO Calc only edge
             int temp = 0;
@@ -3424,7 +3180,7 @@ namespace MCLawl
         //================================================================================================================
         private void PhysFloatwood(int b)
         {
-            int tempb = IntOffset(b, 0, -1, 0);     //Get block below
+            int tempb = IntOffset(b, 0, -1, 0); //Get block below
             if (GetTile(tempb) != Block.Zero)
             {
                 if (GetTile(tempb) == 0)
@@ -3435,7 +3191,7 @@ namespace MCLawl
                 }
             }
 
-            tempb = IntOffset(b, 0, 1, 0);     //Get block above
+            tempb = IntOffset(b, 0, 1, 0); //Get block above
             if (GetTile(tempb) != Block.Zero)
             {
                 if (GetTile(tempb) == 8)
@@ -3476,7 +3232,7 @@ namespace MCLawl
             }
         }
         //================================================================================================================
-        private void PhysReplace(int b, byte typeA, byte typeB)     //replace any typeA with typeB
+        private void PhysReplace(int b, byte typeA, byte typeB) //replace any typeA with typeB
         {
             if (b == -1) { return; }
             if (blocks[b] == typeA)
@@ -3566,7 +3322,7 @@ namespace MCLawl
             if (C.time < timer) C.time++;
             else
             {
-                AddUpdate(C.b, Block.SaveConvert(blocks[C.b]));    //turn back into door
+                AddUpdate(C.b, Block.SaveConvert(blocks[C.b])); //turn back into door
                 C.time = 255;
             }
         }
