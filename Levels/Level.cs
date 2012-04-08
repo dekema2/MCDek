@@ -1735,7 +1735,6 @@ namespace MCLawl
                                         }
                                         else { this.Blockchange(x, y, z, Block.air); }
                                         break;
-
                                     case Block.tntexplosion:
                                         if (rand.Next(1, 11) <= 7) AddUpdate(C.b, Block.air);
                                         break;

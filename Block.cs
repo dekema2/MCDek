@@ -176,8 +176,10 @@ namespace MCLawl
         public const byte smalltnt = (byte)182;
         public const byte bigtnt = (byte)183;
         public const byte tntexplosion = (byte)184;
+        public const byte claymore = (byte)185;
 
-        public const byte fire = (byte)185;
+
+        public const byte fire = (byte)186;
 
         public const byte rocketstart = (byte)187;
         public const byte rockethead = (byte)188;
@@ -302,6 +304,7 @@ namespace MCLawl
                     case bigtnt:
                     case rocketstart:
                     case rockethead:
+                    case claymore:
 
                     case creeper:
                     case zombiebody:
@@ -601,6 +604,7 @@ namespace MCLawl
                 case mushroom:
                 case redmushroom:
                 case shrub:
+                case claymore:
                     return true;
             }
             return false;
@@ -765,6 +769,7 @@ namespace MCLawl
                 case Block.deathair:
                 case activedeathlava:
                 case activedeathwater:
+                case claymore:
 
                 case Block.magma:
                 case Block.geyser:
@@ -887,6 +892,7 @@ namespace MCLawl
                 case Block.mushroom:
                 case Block.redmushroom:
                 case Block.shrub:
+                case Block.claymore:
                     return true;
 
                 default:
@@ -1473,6 +1479,7 @@ namespace MCLawl
                 case "small_tnt": return 182;
                 case "big_tnt": return 183;
                 case "tnt_explosion": return 184;
+                case "claymore": return 185;
 
                 case "fire": return fire;
 
@@ -1634,6 +1641,7 @@ namespace MCLawl
                 case 182: return (byte)46;//smalltnt
                 case 183: return (byte)46;//bigtnt
                 case 184: return (byte)10;//explosion
+                case 185: return (byte)1;//claymore
 
                 case fire: return lava;
 

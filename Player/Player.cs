@@ -1105,8 +1105,11 @@ namespace MCLawl
                 case 13:    //Small TNT
                     level.Blockchange(this, x, y, z, Block.smalltnt);
                     break;
-                case 14:    //Small TNT
+                case 14:    
                     level.Blockchange(this, x, y, z, Block.bigtnt);
+                    break;
+                case 15:
+                    level.Blockchange(this, x, y, z, Block.claymore);
                     break;
                 default:
                     Server.s.Log(name + " is breaking something");
@@ -1279,6 +1282,7 @@ namespace MCLawl
                         case Block.rockethead: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " was &cin a fiery explosion.", false); level.MakeExplosion(x, y, z, 0); break;
                         case Block.zombiebody: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " died due to lack of &5brain.", false); break;
                         case Block.creeper: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " was killed &cb-SSSSSSSSSSSSSS", false); level.MakeExplosion(x, y, z, 1); break;
+                        case Block.claymore: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " was blown up by a mine!", false); level.MakeExplosion(x, y, z, 2); break;
                         case Block.air: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " hit the floor &chard.", false); break;
                         case Block.water: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " &cdrowned.", false); break;
                         case Block.Zero: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " was &cterminated", false); break;

@@ -1,0 +1,24 @@
+(20:53:26) Starting Server
+(20:53:26) Global settings updated!
+(20:53:26) custom$s.txt does not exist, creating
+(20:53:26) CREATED NEW: ranks/banned.txt
+(20:53:26) CREATED NEW: ranks/guest.txt
+(20:53:26) CREATED NEW: ranks/builders.txt
+(20:53:26) CREATED NEW: ranks/advbuilders.txt
+(20:53:26) CREATED NEW: ranks/operators.txt
+(20:53:26) CREATED NEW: ranks/uberOps.txt
+(20:53:27) mainlevel not found
+(20:53:27) SAVED: Level "main". (0/0/12)
+(20:53:27) CREATED NEW: ranks/banned-ip.txt
+(20:53:27) CREATED NEW: ranks/IRC_Controllers.txt
+(20:53:27) CREATED NEW: ranks/muted.txt
+(20:53:27) CREATED NEW: ranks/nobody.txt
+(20:53:27) autoload.txt does not exist
+(20:53:27) Creating listening socket on port 25565... 
+(20:53:31) Finished setting up server
+(20:53:51) Starting Server
+(20:53:51) Global settings updated!
+(20:53:52) Level "main" loaded.
+(20:53:52) autoload.txt does not exist
+(20:53:52) Creating listening socket on port 25565... 
+(20:53:55) Finished setting up server

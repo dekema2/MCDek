@@ -192,6 +192,7 @@
     <Compile Include="Commands\CmdMegaboid.cs" />
     <Compile Include="Commands\CmdMessageBlock.cs" />
     <Compile Include="Commands\CmdMimic.cs" />
+    <Compile Include="Commands\CmdMine.cs" />
     <Compile Include="Commands\CmdMissile.cs" />
     <Compile Include="Commands\CmdMode.cs" />
     <Compile Include="Commands\CmdModerate.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Commands\CmdRetrieve.cs" />
     <Compile Include="Commands\CmdReveal.cs" />
     <Compile Include="Commands\CmdRide.cs" />
+    <Compile Include="Commands\CmdRob.cs" />
     <Compile Include="Commands\CmdRoll.cs" />
     <Compile Include="Commands\CmdRules.cs" />
     <Compile Include="Commands\CmdSave.cs" />
