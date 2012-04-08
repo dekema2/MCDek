@@ -4,3 +4,11 @@
 (08:15:38) autoload.txt does not exist
 (08:15:38) Creating listening socket on port 25565... 
 (08:15:41) Finished setting up server
+(14:32:59) Starting Server
+(14:32:59) Global settings updated!
+(14:34:55) Starting Server
+(14:34:55) Global settings updated!
+(14:34:56) Level "main" loaded.
+(14:34:56) autoload.txt does not exist
+(14:34:56) Creating listening socket on port 25565... 
+(14:35:00) Finished setting up server

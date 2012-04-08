@@ -209,6 +209,7 @@ namespace MCLawl
             all.Add(new CmdPass());
             all.Add(new CmdSetPass());
             all.Add(new CmdResetPass());
+            all.Add(new CmdRob());
 
 
             core.commands = new List<Command>(all.commands);

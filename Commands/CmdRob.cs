@@ -1,12 +1,4 @@
-﻿/*
-   Auto-generated command skeleton class.
-
-   Use this as a basis for custom commands implemented via the MCForge scripting framework.
-   File and class should be named a specific way.  For example, /update is named 'CmdUpdate.cs' for the file, and 'CmdUpdate' for the class.
-*/
-
-// Add any other using statements you need up here, of course.
-// As a note, MCForge is designed for .NET 3.5.
+﻿//Copyrights goto ballock1
 using System;
 using MCLawl;
 
@@ -29,17 +21,17 @@ namespace MCDek
             Player who = Player.Find(message.Split(' ')[0]);
             if (who == null) { Player.SendMessage(p, "Could not find player specified"); return; }
             if (who == p) { Player.SendMessage(p, "Sorry. You cant rob yourself"); return; }
+            if (p.group.Permission < who.group.Permission) { p.SendMessage("You cannot rob your superiors!"); return; }
             else
             {
                 int rob2;
                 try { rob2 = int.Parse(message.Split(' ')[1]);}
                 catch { Player.SendMessage(p, "Invalid amount"); return; }
+                if (p.money + rob2 > 16777215) { p.SendMessage("You cant steal that much You cannot have over 16777215 " + Server.moneys + "."); return; }
                 Random RandomNumber = new Random();
                 int rob1 = RandomNumber.Next(0, rob2);
-
-
                 if (who.money < rob2) { Player.SendMessage(p, who.color + who.name + "doesnt have" + rob2 + Server.moneys); return; }
-
+                if (rob2 < 150) { p.SendMessage("You cannot steal less than 150 " + Server.moneys + "."); return; }
                 if (rob1 <= 25)
                 {
                     Player.SendMessage(p, "%3You stole %a" + rob2 + Server.moneys + "from" + who.color + who.name);
@@ -51,7 +43,7 @@ namespace MCDek
                     Player.SendMessage(p, "%cYou have failed, you have been fined you paid bail" + " %4-" + rob2 + "and were kicked");
                     p.money = p.money - (rob2);
                     if (p.money < 1) { p.money = 0; }
-                    Command.all.Find("kick").Use(p, p.name + "Your robbing failed");
+                    p.Kick("You tried to rob someone but failed!");
 
                 }
             }
