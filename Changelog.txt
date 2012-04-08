@@ -1,6 +1,7 @@
-(4/3/12)-v0.3.8.0: - Added Command:
-                     /rob 
-					 /mine
+(4/3/12)-v0.3.8.0: Added Command:
+                     -/rob 
+				   Added Block:
+				     - mine
 (4/3/12)-v0.3.7.0: Worked on Mapviewer GUI is now cleaner almost working :D
                    - /gun now doesnt have that annoying glass just shoot = requested by Capierian
 				   - Admin Verification

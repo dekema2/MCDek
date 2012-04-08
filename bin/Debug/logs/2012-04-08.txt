@@ -1,0 +1,6 @@
+(08:15:37) Starting Server
+(08:15:37) Global settings updated!
+(08:15:38) Level "main" loaded.
+(08:15:38) autoload.txt does not exist
+(08:15:38) Creating listening socket on port 25565... 
+(08:15:41) Finished setting up server
