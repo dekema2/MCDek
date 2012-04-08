@@ -42,3 +42,12 @@
 (17:19:38) autoload.txt does not exist
 (17:19:38) Creating listening socket on port 25565... 
 (17:19:42) Finished setting up server
+(18:10:25) Starting Server
+(18:10:25) Global settings updated!
+(18:10:26) Incorrect command name: pass
+(18:10:26) Incorrect command name: setpass
+(18:10:26) Incorrect command name: resetpass
+(18:10:26) Level "main" loaded.
+(18:10:26) autoload.txt does not exist
+(18:10:26) Creating listening socket on port 25565... 
+(18:10:29) Finished setting up server

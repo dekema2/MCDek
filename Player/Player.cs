@@ -1574,8 +1574,6 @@ namespace MCLawl
                 }
                 if (cmd == "") { SendMessage("No command entered."); return; }
                 if (jailed) { SendMessage("You cannot use any commands while jailed."); return; }
-                if (cmd.ToLower() == "care") { SendMessage("Corneria now loves you with all his heart."); return; }
-                if (cmd.ToLower() == "facepalm") { SendMessage("Lawlcat's bot army just simultaneously facepalm'd at your use of this command."); return; }
                 
                 string foundShortcut = Command.all.FindShort(cmd);
                 if (foundShortcut != "") cmd = foundShortcut;

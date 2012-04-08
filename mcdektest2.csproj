@@ -204,7 +204,6 @@
     <Compile Include="Commands\CmdOpTest.cs" />
     <Compile Include="Commands\CmdOutline.cs" />
     <Compile Include="Commands\CmdPaint.cs" />
-    <Compile Include="Commands\CmdPass.cs" />
     <Compile Include="Commands\CmdPaste.cs" />
     <Compile Include="Commands\CmdPause.cs" />
     <Compile Include="Commands\CmdPay.cs" />
@@ -226,7 +225,6 @@
     <Compile Include="Commands\CmdReplaceAll.cs" />
     <Compile Include="Commands\CmdReplaceNot.cs" />
     <Compile Include="Commands\CmdResetBot.cs" />
-    <Compile Include="Commands\CmdResetPass.cs" />
     <Compile Include="Commands\cmdRestart.cs" />
     <Compile Include="Commands\CmdRestartPhysics.cs" />
     <Compile Include="Commands\CmdRestore.cs" />
@@ -240,7 +238,6 @@
     <Compile Include="Commands\CmdSay.cs" />
     <Compile Include="Commands\CmdSend.cs" />
     <Compile Include="Commands\CmdServerReport.cs" />
-    <Compile Include="Commands\CmdSetPass.cs" />
     <Compile Include="Commands\CmdSetRank.cs" />
     <Compile Include="Commands\CmdSetspawn.cs" />
     <Compile Include="Commands\CmdSlap.cs" />
