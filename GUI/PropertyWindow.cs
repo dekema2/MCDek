@@ -10,6 +10,8 @@ using System.IO;
 using MCLawl.Gui;
 using MCDek;
 using MCLawl;
+using System.Net;
+using System.Threading;
 
 namespace MCDek.Gui
 {
@@ -37,16 +39,34 @@ namespace MCDek.Gui
             cmbColor.Items.AddRange(colors);
 
             string opchatperm = "";
+            string verifyadminsperm = "";
             foreach (Group grp in Group.GroupList)
             {
                 cmbDefaultRank.Items.Add(grp.name);
+                cmbVerificationRank.Items.Add(grp.name);
                 cmbOpChat.Items.Add(grp.name);
                 if (grp.Permission == Server.opchatperm)
                 {
                     opchatperm = grp.name;
                 }
+                if (grp.Permission == Server.verifyadminsrank)
+                {
+                    verifyadminsperm = grp.name;
+                }
+                            listPasswords.Items.Clear();
+                            if (Directory.Exists("extra/passwords"))
+                            {
+                                DirectoryInfo di = new DirectoryInfo("extra/passwords/");
+                                FileInfo[] fi = di.GetFiles("*.xml");
+                                Thread.Sleep(10);
+                                foreach (FileInfo file in fi)
+                                {
+                                    listPasswords.Items.Add(file.Name.Replace(".xml", ""));
+                                }
+                            }
             }
             cmbDefaultRank.SelectedIndex = 1;
+            cmbVerificationRank.SelectedIndex = (verifyadminsperm != "") ? cmbVerificationRank.Items.IndexOf(verifyadminsperm) : 1;
             cmbOpChat.SelectedIndex = (opchatperm != "") ? cmbOpChat.Items.IndexOf(opchatperm) : 1;
 
             //Load server stuff
@@ -224,7 +244,35 @@ namespace MCDek.Gui
                             case "max-depth":
                                 txtDepth.Text= value;
                                 break;
-
+                            case "server-owner":
+                                txtServerOwner.Text = value;
+                                break;
+                            case "admin-verification":
+                                chkEnableVerification.Checked = (value.ToLower() == "true") ? true : false;
+                                break;
+                            case "usemysql":
+                                chkUseSQL.Checked = (value.ToLower() == "true") ? true : false;
+                                break;
+                            case "username":
+                                if (value != "") txtSQLUsername.Text = value;
+                                break;
+                            case "password":
+                                if (value != "") txtSQLPassword.Text = value;
+                                break;
+                            case "databasename":
+                                if (value != "") txtSQLDatabase.Text = value;
+                                break;
+                            case "host":
+                                try
+                                {
+                                    IPAddress.Parse(value);
+                                    txtSQLHost.Text = value;
+                                }
+                                catch
+                                {
+                                    txtSQLHost.Text = "127.0.0.1";
+                                }
+                                break;
                             case "rplimit":
                                 try { txtRP.Text = value; } catch { txtRP.Text = "500"; }
                                 break;
@@ -411,7 +459,8 @@ namespace MCDek.Gui
                     w.WriteLine("restarttime = " + txtRestartTime.Text);
                     w.WriteLine("restart-on-error = " + chkRestart.Checked);
                     if (Player.ValidName(txtMain.Text)) w.WriteLine("main-name = " + txtMain.Text);
-                    else w.WriteLine("main-name = main");
+                    else w.WriteLine("main-name = main");                    
+
                     w.WriteLine();
                     w.WriteLine("# irc bot options");
                     w.WriteLine("irc = " + chkIRC.Checked.ToString());
@@ -440,6 +489,13 @@ namespace MCDek.Gui
                     w.WriteLine("force-cuboid = " + chkForceCuboid.Checked.ToString().ToLower());
                     w.WriteLine("repeat-messages = " + chkRepeatMessages.Checked.ToString());
                     w.WriteLine("host-state = " + txtHost.Text.ToString());
+                    w.WriteLine("# admin-verification\t=\tDetermines whether admins have to verify on entry to the server. Default true.");
+                    w.WriteLine("# verify-admin-perm\t=\tThe minimum rank required for admin verification to occur.");
+                    w.WriteLine("# server-owner\t=\tThe minecraft name, of the owner of the server.");
+                    w.WriteLine();
+                    w.WriteLine("#Admin Verification");
+                    w.WriteLine("admin-verification = " + chkEnableVerification.Checked.ToString().ToLower());
+                    w.WriteLine("verify-admin-perm = " + ((sbyte)Group.GroupList.Find(grp => grp.name == cmbVerificationRank.Items[cmbVerificationRank.SelectedIndex].ToString()).Permission).ToString());
                     w.WriteLine();
                     w.WriteLine("# backup options");
                     w.WriteLine("backup-time = " + txtBackup.Text);
@@ -464,6 +520,7 @@ namespace MCDek.Gui
                     w.WriteLine("#Running on mono?");
                     w.WriteLine("mono = " + chkMono.Checked.ToString().ToLower());
                     w.WriteLine();
+
                     w.WriteLine("#Custom Messages");
                     w.WriteLine("custom-ban = " + chkBanMessage.Checked.ToString().ToLower());
                     w.WriteLine("custom-ban-message = " + txtBanMessage.Text);
@@ -684,37 +741,13 @@ namespace MCDek.Gui
 
             if (Group.findPerm(allowVar.lowestRank) == null) allowVar.lowestRank = cmd.defaultRank;
             txtCmdLowest.Text = (int)allowVar.lowestRank + "";
-
-            bool foundOne = false;
-            txtCmdDisallow.Text = "";
-            foreach (LevelPermission perm in allowVar.disallow)
-            {
-                foundOne = true;
-                txtCmdDisallow.Text += "," + (int)perm;
-            }
-            if (foundOne) txtCmdDisallow.Text = txtCmdDisallow.Text.Remove(0, 1);
-            
-            foundOne = false;
-            txtCmdAllow.Text = "";
-            foreach (LevelPermission perm in allowVar.allow)
-            {
-                foundOne = true;
-                txtCmdAllow.Text += "," + (int)perm;
-            }
-            if (foundOne) txtCmdAllow.Text = txtCmdAllow.Text.Remove(0, 1);
         }
+
         private void txtCmdLowest_TextChanged(object sender, EventArgs e)
         {
             fillLowest(ref txtCmdLowest, ref storedCommands[listCommands.SelectedIndex].lowestRank);
         }
-        private void txtCmdDisallow_TextChanged(object sender, EventArgs e)
-        {
-            fillAllowance(ref txtCmdDisallow, ref storedCommands[listCommands.SelectedIndex].disallow);
-        }
-        private void txtCmdAllow_TextChanged(object sender, EventArgs e)
-        {
-            fillAllowance(ref txtCmdAllow, ref storedCommands[listCommands.SelectedIndex].allow);
-        }
+
 #endregion
 
 #region BlockTab
@@ -724,37 +757,13 @@ namespace MCDek.Gui
             Block.Blocks bs = storedBlocks.Find(bS => bS.type == b);
 
             txtBlLowest.Text = (int)bs.lowestRank + "";
-
-            bool foundOne = false;
-            txtBlDisallow.Text = "";
-            foreach (LevelPermission perm in bs.disallow)
-            {
-                foundOne = true;
-                txtBlDisallow.Text += "," + (int)perm;
-            }
-            if (foundOne) txtBlDisallow.Text = txtBlDisallow.Text.Remove(0, 1);
-
-            foundOne = false;
-            txtBlAllow.Text = "";
-            foreach (LevelPermission perm in bs.allow)
-            {
-                foundOne = true;
-                txtBlAllow.Text += "," + (int)perm;
-            }
-            if (foundOne) txtBlAllow.Text = txtBlAllow.Text.Remove(0, 1);
         }
+
         private void txtBlLowest_TextChanged(object sender, EventArgs e)
         {
             fillLowest(ref txtBlLowest, ref storedBlocks[listBlocks.SelectedIndex].lowestRank);
         }
-        private void txtBlDisallow_TextChanged(object sender, EventArgs e)
-        {
-            fillAllowance(ref txtBlDisallow, ref storedBlocks[listBlocks.SelectedIndex].disallow);
-        }
-        private void txtBlAllow_TextChanged(object sender, EventArgs e)
-        {
-            fillAllowance(ref txtBlAllow, ref storedBlocks[listBlocks.SelectedIndex].allow);
-        }
+        
 #endregion
         private void fillAllowance(ref TextBox txtBox, ref List<LevelPermission> addTo)
         {

@@ -12,3 +12,33 @@
 (14:34:56) autoload.txt does not exist
 (14:34:56) Creating listening socket on port 25565... 
 (14:35:00) Finished setting up server
+(16:41:40) Starting Server
+(16:41:40) Global settings updated!
+(16:41:40) Level "main" loaded.
+(16:41:40) autoload.txt does not exist
+(16:41:40) Creating listening socket on port 25565... 
+(16:41:44) Finished setting up server
+(16:46:27) Starting Server
+(16:46:27) Global settings updated!
+(16:46:28) Level "main" loaded.
+(16:46:28) autoload.txt does not exist
+(16:46:28) Creating listening socket on port 25565... 
+(16:46:31) Finished setting up server
+(16:58:00) Starting Server
+(16:58:00) Global settings updated!
+(16:58:01) Level "main" loaded.
+(16:58:01) autoload.txt does not exist
+(16:58:01) Creating listening socket on port 25565... 
+(16:58:04) Finished setting up server
+(17:05:34) Starting Server
+(17:05:34) Global settings updated!
+(17:05:35) Level "main" loaded.
+(17:05:35) autoload.txt does not exist
+(17:05:35) Creating listening socket on port 25565... 
+(17:05:38) Finished setting up server
+(17:19:38) Starting Server
+(17:19:38) Global settings updated!
+(17:19:38) Level "main" loaded.
+(17:19:38) autoload.txt does not exist
+(17:19:38) Creating listening socket on port 25565... 
+(17:19:42) Finished setting up server

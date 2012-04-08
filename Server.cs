@@ -233,7 +233,6 @@ namespace MCDek
         public static string GlobalChatNick = "MCF" + new Random().Next();
         public static string GlobalChatColor = "&6";
 
-
         public static int afkminutes = 10;
         public static int afkkick = 45;
         public static LevelPermission afkkickperm = LevelPermission.AdvBuilder;
@@ -259,7 +258,7 @@ namespace MCDek
         public static bool logbeat = false;
         public static bool adminsjoinsilent = false;
         public static bool mono { get { return (Type.GetType("Mono.Runtime") != null); } }
-        public static string server_owner = "Notch";
+        public static string server_owner = "Jeb";
         public static bool WomDirect = true;
         public static bool UseSeasons = false;
         public static bool guestLimitNotify = false;
@@ -272,7 +271,7 @@ namespace MCDek
         public static bool restarting = false;
 
         public static bool hackrank_kick = true;
-        public static int hackrank_kick_time = 5; //seconds, it converts it to milliseconds in the command.
+        public static int hackrank_kick_time = 5; 
 
         //reviewoptions intitialize
         public static int reviewcooldown = 600;

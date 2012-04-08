@@ -321,7 +321,7 @@ namespace MCDek_.Gui
                 if (!oldrevision)
                 {
                     WebClient client = new WebClient();
-                    MCDek.Server.selectedrevision = client.DownloadString("http://www.dekemaserv.com/ChangeLog.txt");
+                    MCDek.Server.selectedrevision = client.DownloadString("http://www.dekemaserv.com/Changelog.txt");
                     client.Dispose();
                 }
                 verscheck = MCDek.Server.selectedrevision.TrimStart('r');

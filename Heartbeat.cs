@@ -25,11 +25,11 @@ namespace MCDek
 
         //static BackgroundWorker worker;
         static HttpWebRequest request;
-        static Random lawlBeatSeed = new Random(Process.GetCurrentProcess().Id);
+        static Random dekBeatSeed = new Random(Process.GetCurrentProcess().Id);
         static StreamWriter beatlogger;
 
         static System.Timers.Timer heartbeatTimer = new System.Timers.Timer(500);
-        static System.Timers.Timer lawlBeatTimer;
+        static System.Timers.Timer dekBeatTimer;
 
         public static void Init()
         {
@@ -40,7 +40,7 @@ namespace MCDek
                     File.Create("heartbeat.log").Close();
                 }
             }
-            lawlBeatTimer = new System.Timers.Timer(1000 + lawlBeatSeed.Next(0, 2500));
+            dekBeatTimer = new System.Timers.Timer(1000 + dekBeatSeed.Next(0, 2500));
             staticVars = "port=" + Server.port +
                             "&max=" + Server.players +
                             "&name=" + UrlEncode(Server.name) +
@@ -61,9 +61,9 @@ namespace MCDek
                 };
                 heartbeatTimer.Start();
 
-                lawlBeatTimer.Elapsed += delegate
+                dekBeatTimer.Elapsed += delegate
                 {
-                    lawlBeatTimer.Interval = 300000;
+                    dekBeatTimer.Interval = 300000;
                     try
                     {
                         Pump(Beat.MCDek); ;
@@ -73,7 +73,7 @@ namespace MCDek
                         Server.ErrorLog(e);
                     }
                 };
-                lawlBeatTimer.Start();
+                dekBeatTimer.Start();
             }));
             backupThread.Start();
         }
@@ -131,7 +131,7 @@ namespace MCDek
 
                         postVars += "&motd=" + UrlEncode(Server.motd) +
                                 "&lvlcount=" + (byte)Server.levels.Count +
-                                "&lawlversion=" + Server.Version.Replace(".0", "") +
+                                "&dekversion=" + Server.Version.Replace(".0", "") +
                                 "&hash=" + hash;
 
                         goto default;
@@ -141,7 +141,6 @@ namespace MCDek
 
                         url = "http://minecraft.tchalo.com/announce.php";
 
-                        // build list of current players in server
                         if (Player.number > 0)
                         {
                             players = "";
@@ -234,7 +233,7 @@ namespace MCDek
                             hash = line.Substring(line.LastIndexOf('=') + 1);
                             serverURL = line;
 
-                            Server.URL = "http://" + serverURL.Substring(serverURL.IndexOf('.') + 1);
+                            //serverURL = "http://" + serverURL.Substring(serverURL.IndexOf('.') + 1);
                             Server.s.UpdateUrl(serverURL);
                             File.WriteAllText("text/externalurl.txt", serverURL);
                             Server.s.Log("URL found: " + serverURL);

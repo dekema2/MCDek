@@ -25,7 +25,7 @@
 				   - ChristmasTree
 				   - Mimic
 				   - GriefPatrol
-(3/?/12)-v0.3.0.0: Created /converse, a new pre-defined chat messaging system
+(3/30/12)-v0.3.0.0: Created /converse, a new pre-defined chat messaging system
 (3/01/12)-v0.2.6.0: Added the commands /home, /killserv, and /airraid. All of these need substansial work 
 (2/25/12)-v0.2.0.0: Updated jkush321's MapViewer to allow non-square maps, added [commands], courtesy of ballock1
 (2/21/12)-v0.1.2.0: Added a MapViewer to the GUI courtesy of jkush321, fully customized with blocks

@@ -2478,7 +2478,7 @@ namespace MCLawl
         }
         #endregion
         #region == Host <> Network ==
-        public static byte[] HTNO(ushort x)
+        public static byte[] HTNO(int x)
         {
             byte[] y = BitConverter.GetBytes(x); Array.Reverse(y); return y;
         }
