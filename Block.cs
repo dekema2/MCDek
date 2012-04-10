@@ -175,6 +175,8 @@ namespace MCLawl
         //Explosions
         public const byte smalltnt = (byte)182;
         public const byte bigtnt = (byte)183;
+        public const byte nuke = (byte)197;
+        public const byte supernuke = (byte)198;
         public const byte tntexplosion = (byte)184;
         public const byte claymore = (byte)185;
 
@@ -189,6 +191,7 @@ namespace MCLawl
         public const byte deathlava = (byte)190;
         public const byte deathwater = (byte)191;
         public const byte deathair = (byte)192;
+        public const byte radiation = (byte)199;
 
         public const byte activedeathwater = (byte)193;
         public const byte activedeathlava = (byte)194;
@@ -302,6 +305,8 @@ namespace MCLawl
                     case air_flood_up:
 
                     case bigtnt:
+                    case nuke:
+                    case supernuke:
                     case rocketstart:
                     case rockethead:
                     case claymore:
@@ -389,6 +394,7 @@ namespace MCLawl
                     case deathlava:
                     case deathwater:
                     case deathair:
+                    case radiation:
                     case activedeathwater:
                     case activedeathlava:
                     case fire:
@@ -693,6 +699,8 @@ namespace MCLawl
 
                 case Block.smalltnt:
                 case Block.bigtnt:
+                case Block.nuke:
+                case Block.supernuke:
                 case Block.rocketstart:
                 case Block.firework:
 
@@ -767,6 +775,7 @@ namespace MCLawl
                 case Block.deathwater:
                 case Block.deathlava:
                 case Block.deathair:
+                case Block.radiation:
                 case activedeathlava:
                 case activedeathwater:
                 case claymore:
@@ -1057,6 +1066,7 @@ namespace MCLawl
                 case Block.water_portal:
                 case Block.lava_portal:
 
+                case Block.radiation:
                 case Block.deathair:
                 case Block.deathlava:
                 case Block.deathwater:
@@ -1222,6 +1232,7 @@ namespace MCLawl
                 case 182: return "small_tnt";
                 case 183: return "big_tnt";
                 case 184: return "tnt_explosion";
+                case 197: return "nuke";
 
                 case fire: return "fire";
 
@@ -1480,6 +1491,7 @@ namespace MCLawl
                 case "big_tnt": return 183;
                 case "tnt_explosion": return 184;
                 case "claymore": return 185;
+                case "nuke": return 197;
 
                 case "fire": return fire;
 
@@ -1642,6 +1654,7 @@ namespace MCLawl
                 case 183: return (byte)46;//bigtnt
                 case 184: return (byte)10;//explosion
                 case 185: return (byte)1;//claymore
+                case 197: return (byte)46;//nuke
 
                 case fire: return lava;
 
@@ -1651,6 +1664,7 @@ namespace MCLawl
 
                 case Block.deathwater: return waterstill;
                 case Block.deathlava: return lavastill;
+                case Block.radiation: return (byte)0;
                 case Block.deathair: return (byte)0;
                 case activedeathwater: return water;
                 case activedeathlava: return lava;

@@ -74,6 +74,9 @@ namespace MCDek
 
         public static List<string> Chatrooms = new List<string>();
 
+        public static int count = 0;
+        public static bool gungameon = false;
+
         public static bool higherranktp = true;
         public static bool agreetorulesonentry = false;
         public static bool UseCTF = false;
@@ -85,6 +88,7 @@ namespace MCDek
         public static PlayerList ignored;
         internal static readonly List<string> devs = new List<string>(new string[] { "dekema2, 303i, ballock1, MinedroidFTW" });
         public static List<string> Devs { get { return new List<string>(devs); } }
+        public static bool gameon = false;
 
         public static List<TempBan> tempBans = new List<TempBan>();
         public struct TempBan { public string name; public DateTime allowedJoin; }

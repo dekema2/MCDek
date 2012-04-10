@@ -207,6 +207,7 @@ namespace MCLawl
             all.Add(new CmdConverse());
             all.Add(new CmdXhide());
             all.Add(new CmdRob());
+            all.Add(new CmdRPS());
 
 
             core.commands = new List<Command>(all.commands);

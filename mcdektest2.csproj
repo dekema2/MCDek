@@ -161,6 +161,7 @@
     <Compile Include="Commands\CmdGoto.cs" />
     <Compile Include="Commands\CmdGriefPatrol.cs" />
     <Compile Include="Commands\CmdGun.cs" />
+    <Compile Include="Commands\CmdGunWar.cs" />
     <Compile Include="Commands\CmdHacks.cs" />
     <Compile Include="Commands\CmdHasirc.cs" />
     <Compile Include="Commands\CmdHelp.cs" />
@@ -233,6 +234,7 @@
     <Compile Include="Commands\CmdRide.cs" />
     <Compile Include="Commands\CmdRob.cs" />
     <Compile Include="Commands\CmdRoll.cs" />
+    <Compile Include="Commands\CmdRPS.cs" />
     <Compile Include="Commands\CmdRules.cs" />
     <Compile Include="Commands\CmdSave.cs" />
     <Compile Include="Commands\CmdSay.cs" />
@@ -244,6 +246,7 @@
     <Compile Include="Commands\CmdSpawn.cs" />
     <Compile Include="Commands\CmdSpheroid.cs" />
     <Compile Include="Commands\CmdSpin.cs" />
+    <Compile Include="Commands\CmdSpleef.cs" />
     <Compile Include="Commands\CmdStairs.cs" />
     <Compile Include="Commands\CmdStatic.cs" />
     <Compile Include="Commands\CmdStore.cs" />

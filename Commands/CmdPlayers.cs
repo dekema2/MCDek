@@ -50,7 +50,7 @@ namespace MCLawl
                 int totalPlayers = 0;
                 foreach (Player pl in Player.players)
                 {
-                    if (!pl.hidden || p.group.Permission > LevelPermission.AdvBuilder || Server.devs.Contains(p.name.ToLower()))
+                    if (!pl.hidden || p.group.Permission > LevelPermission.AdvBuilder || Server.Devs.Contains(p.name.ToLower()))
                     {
                         totalPlayers++;
                         string foundName = pl.name;
@@ -60,7 +60,7 @@ namespace MCLawl
                             foundName = pl.name + "-afk";
                         }
 
-                        if (Server.devs.Contains(pl.name.ToLower()))
+                        if (Server.Devs.Contains(pl.name.ToLower()))
                         {
                             if (pl.voice)
                                 devs += " " + "&f+" + Server.DefaultColor + foundName + " (" + pl.level.name + "),";

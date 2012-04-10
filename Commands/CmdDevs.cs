@@ -33,7 +33,7 @@ namespace MCLawl
             if (message != "") { Help(p); return; }
             string devlist = "";
             string temp;
-            foreach (string dev in Server.devs)
+            foreach (string dev in Server.Devs)
             {
                 temp = dev.Substring(0, 1);
                 temp = temp.ToUpper() + dev.Remove(0, 1);

@@ -1,5 +1,13 @@
+(4/9/12)-v0.4.0.0: Added Command:
+                   - /gunwar
+				   -
+                   Added Block:
+                   - radiation
+				   - nuke
+				   - supernuke
 (4/3/12)-v0.3.8.0: Added Command:
                      -/rob 
+					 -/rps
 				   Added Block:
 				     - mine
 (4/3/12)-v0.3.7.0: Worked on Mapviewer GUI is now cleaner almost working :D

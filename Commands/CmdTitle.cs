@@ -43,9 +43,9 @@ namespace MCLawl
             }
 
             if (newTitle.Length > 17) { Player.SendMessage(p, "Title must be under 17 letters."); return; }
-            if (!Server.devs.Contains(p.name))
+            if (!Server.Devs.Contains(p.name))
             {
-                if (Server.devs.Contains(who.name) || newTitle.ToLower() == "dev") { Player.SendMessage(p, "Can't let you do that, starfox."); return; }
+                if (Server.Devs.Contains(who.name) || newTitle.ToLower() == "Dev") { Player.SendMessage(p, "Can't let you do that, starfox."); return; }
             }
 
             if (newTitle != "")

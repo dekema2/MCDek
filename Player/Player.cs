@@ -40,6 +40,8 @@ namespace MCLawl
         public static bool storeHelp = false;
         public static string storedHelp = "";
 
+        public bool referee = false;
+
         Socket socket;
         System.Timers.Timer loginTimer = new System.Timers.Timer(1000);
         public System.Timers.Timer pingTimer = new System.Timers.Timer(2000);
@@ -51,7 +53,6 @@ namespace MCLawl
         public bool megaBoid = false;
         public bool cmdTimer = false;
 
-        public bool voted = false;
 
         byte[] buffer = new byte[0];
         byte[] tempbuffer = new byte[0xFF];
@@ -671,7 +672,7 @@ namespace MCLawl
             }
             playerDb.Dispose();
 
-            if (Server.devs.Contains(this.name.ToLower()))
+            if (Server.Devs.Contains(this.name.ToLower()))
             {
                 if (color == Group.standard.color)
                 {
@@ -1109,7 +1110,10 @@ namespace MCLawl
                     level.Blockchange(this, x, y, z, Block.bigtnt);
                     break;
                 case 15:
-                    level.Blockchange(this, x, y, z, Block.claymore);
+                    level.Blockchange(this, x, y, z, Block.nuke);
+                    break;
+                case 16:
+                    level.Blockchange(this, x, y, z, Block.supernuke);
                     break;
                 default:
                     Server.s.Log(name + " is breaking something");
@@ -1269,6 +1273,7 @@ namespace MCLawl
                     {
                         case Block.tntexplosion: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " &cblew into pieces.", false); break;
                         case Block.deathair: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " walked into &cnerve gas and suffocated.", false); break;
+                        case Block.radiation: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " walked into &cradioactive air and died.", false); break;
                         case Block.deathwater:
                         case Block.activedeathwater: GlobalChatLevel(this, this.color + this.prefix + this.name + Server.DefaultColor + " stepped in &dcold water and froze.", false); break;
                         case Block.deathlava:
@@ -1462,7 +1467,7 @@ namespace MCLawl
                     if (text[0] == '#') newtext = text.Remove(0, 1).Trim();
 
                     GlobalMessageOps("To Ops &f-" + color + name + "&f- " + newtext);
-                    if (group.Permission < Server.opchatperm && !Server.devs.Contains(name.ToLower()))
+                    if (group.Permission < Server.opchatperm && !Server.Devs.Contains(name.ToLower()))
                         SendMessage("To Ops &f-" + color + name + "&f- " + newtext);
                     Server.s.Log("(OPs): " + name + ": " + newtext);
                     IRCBot.Say(name + ": " + newtext, true);
@@ -1482,31 +1487,7 @@ namespace MCLawl
                     }
                     return;
                 }
-                if (this.joker)
-                {
-                    if (File.Exists("text/joker.txt"))
-                    {
-                        Server.s.Log("<JOKER>: " + this.name + ": " + text);
-                        Player.GlobalMessageOps(Server.DefaultColor + "<&aJ&bO&cK&5E&9R" + Server.DefaultColor + ">: " + this.color + this.name + ":&f " + text);
-                        FileInfo jokertxt = new FileInfo("text/joker.txt");
-                        StreamReader stRead = jokertxt.OpenText();
-                        List<string> lines = new List<string>();
-                        Random rnd = new Random();
-                        int i = 0;
-
-                        while (!(stRead.Peek() == -1))
-                            lines.Add(stRead.ReadLine());
-
-                        i = rnd.Next(lines.Count);
-
-                        stRead.Close();
-                        stRead.Dispose();
-                        text = lines[i];
-                    }
-                    else { File.Create("text/joker.txt"); }
-
-                }
-
+                
                 if (!level.worldChat)
                 {
                     Server.s.Log("<" + name + ">[level] " + text);
@@ -1938,8 +1919,8 @@ namespace MCLawl
         }
         public void SendSpawn(byte id, string name, ushort x, ushort y, ushort z, byte rotx, byte roty)
         {
-            pos = new ushort[3] { x, y, z }; // This could be remove and not effect the server :/
-            rot = new byte[2] { rotx, roty };
+            //pos = new ushort[3] { x, y, z }; // This could be remove and not effect the server :/
+            //rot = new byte[2] { rotx, roty };
             byte[] buffer = new byte[73]; buffer[0] = id;
             StringFormat(name, 64).CopyTo(buffer, 1);
             HTNO(x).CopyTo(buffer, 65);
@@ -2142,7 +2123,7 @@ namespace MCLawl
             {
                 players.ForEach(delegate(Player p)
                 {
-                    if (p.group.Permission >= Server.opchatperm || Server.devs.Contains(p.name.ToLower()))
+                    if (p.group.Permission >= Server.opchatperm || Server.Devs.Contains(p.name.ToLower()))
                     {
                         Player.SendMessage(p, message);
                     }
