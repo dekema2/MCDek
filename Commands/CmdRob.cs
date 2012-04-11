@@ -1,4 +1,4 @@
-﻿//Copyrights goto ballock1
+﻿//Copyrights go to ballock1 of MCDek.
 using System;
 using MCLawl;
 
