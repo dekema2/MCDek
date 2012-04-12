@@ -1,6 +1,7 @@
 (4/9/12)-v0.4.0.0: Added Command:
-                   - /gunwar
-				   -
+                   - /gunbattle
+				   - /buy
+				   - /ezone
                    Added Block:
                    - radiation
 				   - nuke

@@ -1,5 +1,8 @@
 ﻿using System;
 using MCLawl;
+using MonoTorrent.Common;
+using System.Collections.Generic;
+using MCDek;
 
 namespace MCLawl
 {
@@ -124,8 +127,6 @@ namespace MCLawl
         /// <summary>
         /// The OnPlayerDeath event is called when...a player dies
         /// </summary>
-        /// <param name="p">The player that died</param>
-        /// <param name="deathblock">The block that killed him (in byte)</param>
         public delegate void OnPlayerDeath(Player p, byte deathblock);
         /// <summary>
         /// This method is called when a player moves on the server
@@ -166,7 +167,7 @@ namespace MCLawl
         /// <summary>
         /// OnDeath is called when the player dies (Player p, byte deathblock)
         /// </summary>
-        [Obsolete("Please use OnPlayerDeathEvent.Register()")]
+        public static event OnPlayerDeath PlayerDeath = null;
         public event OnPlayerDeath OnDeath = null;
         public void ClearPlayerCommand() { OnCommand = null; }
         public void ClearPlayerChat() { OnChat = null; }

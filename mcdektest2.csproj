@@ -127,6 +127,7 @@
     <Compile Include="Commands\CmdBots.cs" />
     <Compile Include="Commands\CmdBotSet.cs" />
     <Compile Include="Commands\CmdBotSummon.cs" />
+    <Compile Include="Commands\CmdBuy.cs" />
     <Compile Include="Commands\CmdChristmasTree.cs" />
     <Compile Include="Commands\CmdClearBlockChanges.cs" />
     <Compile Include="Commands\CmdClick.cs" />
@@ -161,7 +162,7 @@
     <Compile Include="Commands\CmdGoto.cs" />
     <Compile Include="Commands\CmdGriefPatrol.cs" />
     <Compile Include="Commands\CmdGun.cs" />
-    <Compile Include="Commands\CmdGunWar.cs" />
+    <Compile Include="Commands\CmdGunBattle.cs" />
     <Compile Include="Commands\CmdHacks.cs" />
     <Compile Include="Commands\CmdHasirc.cs" />
     <Compile Include="Commands\CmdHelp.cs" />
