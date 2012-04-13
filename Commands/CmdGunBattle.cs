@@ -149,11 +149,6 @@ public class CmdGunBattle : Command
         { 
            title.Use(player, "&5[DEAD]"); 
         }
-        public override void gamePlayer_OnDeath(Player p, byte deathblock)
-        {
-            CheckDeath(null, true);
-
-        }
         public override void Help(Player p)
         {
             Player.SendMessage(p, "/gunbattle <start/stop> - Starts or stops the brawl!");

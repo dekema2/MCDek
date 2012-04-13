@@ -92,7 +92,7 @@ namespace MCLawl
         public bool frozen = false;
         public string following = "";
         public string possess = "";
-        
+        public bool voted = false;
         public bool canBuild = true;
 
         public int money = 0;

@@ -167,7 +167,6 @@ namespace MCLawl
         /// <summary>
         /// OnDeath is called when the player dies (Player p, byte deathblock)
         /// </summary>
-        public static event OnPlayerDeath PlayerDeath = null;
         public event OnPlayerDeath OnDeath = null;
         public void ClearPlayerCommand() { OnCommand = null; }
         public void ClearPlayerChat() { OnChat = null; }
