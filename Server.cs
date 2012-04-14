@@ -139,15 +139,6 @@ namespace MCDek
         public static MapGenerator MapGen;
         public static bool chatmod = false;
 
-        //Global VoteKick In Progress Flag
-        public static bool voteKickInProgress = false;
-        public static int voteKickVotesNeeded = 0;
-
-        //WoM Direct
-        public static string Server_ALT = "";
-        public static string Server_Disc = "";
-        public static string Server_Flag = "";
-
 
         public static Dictionary<string, string> customdollars = new Dictionary<string, string>();
 
@@ -233,9 +224,6 @@ namespace MCDek
         public static string DefaultColor = "&e";
         public static string IRCColour = "&5";
 
-        public static bool UseGlobalChat = true;
-        public static string GlobalChatNick = "MCF" + new Random().Next();
-        public static string GlobalChatColor = "&6";
 
         public static int afkminutes = 10;
         public static int afkkick = 45;
@@ -327,7 +315,6 @@ namespace MCDek
                 catch { }
 
             }
-            UpdateGlobalSettings();
             if (!Directory.Exists("properties")) Directory.CreateDirectory("properties");
             if (!Directory.Exists("levels")) Directory.CreateDirectory("levels");
             if (!Directory.Exists("bots")) Directory.CreateDirectory("bots");
@@ -612,16 +599,6 @@ namespace MCDek
                 //s.Log(Setup() ? "Done." : "Could not create socket connection. Shutting down.");
             });
 
-            ml.Queue(delegate
-            {
-                updateTimer.Elapsed += delegate
-                {
-                    Player.GlobalUpdate();
-                    PlayerBot.GlobalUpdatePosition();
-                };
-
-                updateTimer.Start();
-            });
 
 
             ml.Queue(delegate
@@ -976,20 +953,6 @@ namespace MCDek
                 return grp.color;
             }
             return MCLawl.Group.standard.color;
-        }
-        public static void UpdateGlobalSettings()
-        {
-            try
-            {
-                gcipbans.Clear();
-                gcnamebans.Clear();
-
-                Server.s.Log("Global settings updated!");
-            }
-            catch
-            {
-                Server.s.Log("Could not connect to the DevPanel Server!");
-            }
         }
         public static bool gcmodhasprotection(string name)
         {
