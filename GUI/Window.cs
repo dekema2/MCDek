@@ -1819,12 +1819,12 @@ Server.s.Log("Lists updated!");
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (!previousLoaded) { AddWorldPopupForm = new PropertyWindow(); previousLoaded = true; }
-            AddWorldPopupForm.Show();
+            if (!previousLoaded) { PropertyWindowForm = new PropertyWindow(); previousLoaded = true; }
+            PropertyWindowForm.Show();
         }
 
         public static bool previousLoaded = false;
-        Form AddWorldPopupForm;
+        Form PropertyWindowForm;
 
     }
 }

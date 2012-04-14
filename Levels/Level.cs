@@ -18,10 +18,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Data;
 using System.Threading;
-using MySql.Data.MySqlClient;
-using MySql.Data.Types;
+//using MySql.Data.MySqlClient;
+//using MySql.Data.Types;
 using MCDek;
-
+///WARNING! DO NOT CHANGE THE WAY THE LEVEL IS SAVED/LOADED!
+///You MUST make it able to save and load as a new version other wise you will make old levels incompatible!
 
 
 namespace MCLawl
@@ -40,7 +41,6 @@ namespace MCLawl
 
     public class Level
     {
-
         #region Delegates
 
         public delegate void OnLevelLoad(string level);
@@ -52,23 +52,15 @@ namespace MCLawl
         public delegate void OnLevelUnload(Level l);
 
         public delegate void OnPhysicsUpdate(ushort x, ushort y, ushort z, byte time, string extraInfo, Level l);
+
+
         #endregion
-        public static event OnLevelUnload LevelUnload = null;
-[Obsolete("Please use OnLevelSaveEvent.Register()")]
-        public static event OnLevelSave LevelSave = null;
-        //public static event OnLevelSave onLevelSave = null;
-[Obsolete("Please use OnLevelUnloadEvent.Register()")]
-        public event OnLevelUnload onLevelUnload = null;
-[Obsolete("Please use OnLevelUnloadEvent.Register()")]
-        public static event OnLevelLoad LevelLoad = null;
-[Obsolete("Please use OnLevelUnloadEvent.Register()")]
-        public static event OnLevelLoaded LevelLoaded;
-        
+
         public int id;
         public string name;
         public ushort width; // x
-        public ushort depth; // y THIS IS STUPID, SHOULD HAVE BEEN Z
-        public ushort height; // z THIS IS STUPID, SHOULD HAVE BEEN Y
+        public ushort depth; // y       THIS IS STUPID, SHOULD HAVE BEEN Z
+        public ushort height; // z      THIS IS STUPID, SHOULD HAVE BEEN Y
 
         public int currentUndo = 0;
         public List<UndoPos> UndoBuffer = new List<UndoPos>();
@@ -125,8 +117,8 @@ namespace MCLawl
         public struct Zone { public ushort smallX, smallY, smallZ, bigX, bigY, bigZ; public string Owner; }
         public List<Zone> ZoneList;
 
-        List<Check> ListCheck = new List<Check>(); //A list of blocks that need to be updated
-        List<Update> ListUpdate = new List<Update>(); //A list of block to change after calculation
+        List<Check> ListCheck = new List<Check>();  //A list of blocks that need to be updated
+        List<Update> ListUpdate = new List<Update>();  //A list of block to change after calculation
 
         //CTF STUFF
         public CTFGame ctfgame = new CTFGame();
@@ -204,6 +196,19 @@ namespace MCLawl
             spawnz = (ushort)(height / 2);
             rotx = 0; roty = 0;
         }
+        [Obsolete("Please use OnPhysicsUpdate.Register()")]
+        public event OnPhysicsUpdate PhysicsUpdate = null;
+        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
+        public static event OnLevelUnload LevelUnload = null;
+        [Obsolete("Please use OnLevelSaveEvent.Register()")]
+        public static event OnLevelSave LevelSave = null;
+        //public static event OnLevelSave onLevelSave = null;
+        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
+        public event OnLevelUnload onLevelUnload = null;
+        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
+        public static event OnLevelLoad LevelLoad = null;
+        [Obsolete("Please use OnLevelUnloadEvent.Register()")]
+        public static event OnLevelLoaded LevelLoaded;
 
         public void CopyBlocks(byte[] source, int offset)
         {
@@ -316,7 +321,7 @@ namespace MCLawl
         public void Blockchange(Player p, ushort x, ushort y, ushort z, byte type, bool addaction)
         {
             string errorLocation = "start";
-    retry: try
+    retry:  try
             {
                 if (x < 0 || y < 0 || z < 0) return;
                 if (x >= width || y >= depth || z >= height) return;
@@ -441,9 +446,9 @@ namespace MCLawl
                 p.UndoBuffer.Add(Pos);
 
                 errorLocation = "Setting tile";
-                p.loginBlocks++;
+                p.loginBlocks++; 
                 p.overallBlocks++;
-                SetTile(x, y, z, type); //Updates server level blocks
+                SetTile(x, y, z, type);               //Updates server level blocks
 
                 errorLocation = "Growing grass";
                 if (GetTile(x, (ushort)(y - 1), z) == Block.grass && GrassDestroy && !Block.LightPass(type)) { Blockchange(p, x, (ushort)(y - 1), z, Block.dirt); }
@@ -471,15 +476,15 @@ namespace MCLawl
 
             //if (addaction)
             //{
-            // if (edits.Count == edits.Capacity) { edits.Capacity += 1024; }
-            // if (p.actions.Count == p.actions.Capacity) { p.actions.Capacity += 128; }
-            // if (b.lastaction.Count == 5) { b.lastaction.RemoveAt(0); }
-            // Edit foo = new Edit(this); foo.block = b; foo.from = p.name;
-            // foo.before = b.type; foo.after = type;
-            // b.lastaction.Add(foo); edits.Add(foo); p.actions.Add(foo);
+            //    if (edits.Count == edits.Capacity) { edits.Capacity += 1024; }
+            //    if (p.actions.Count == p.actions.Capacity) { p.actions.Capacity += 128; }
+            //    if (b.lastaction.Count == 5) { b.lastaction.RemoveAt(0); }
+            //    Edit foo = new Edit(this); foo.block = b; foo.from = p.name;
+            //    foo.before = b.type; foo.after = type;
+            //    b.lastaction.Add(foo); edits.Add(foo); p.actions.Add(foo);
             //} b.type = type;
         }
-        public void Blockchange(ushort x, ushort y, ushort z, byte type, bool overRide = false, string extraInfo = "") //Block change made by physics
+        public void Blockchange(ushort x, ushort y, ushort z, byte type, bool overRide = false, string extraInfo = "")    //Block change made by physics
         {
             if (x < 0 || y < 0 || z < 0) return;
             if (x >= width || y >= depth || z >= height) return;
@@ -490,7 +495,7 @@ namespace MCLawl
                 if (!overRide)
                     if (Block.OPBlocks(b) || Block.OPBlocks(type)) return;
 
-                if (Block.Convert(b) != Block.Convert(type)) //Should save bandwidth sending identical looking blocks, like air/op_air changes.
+                if (Block.Convert(b) != Block.Convert(type))    //Should save bandwidth sending identical looking blocks, like air/op_air changes.
                     Player.GlobalBlockchange(this, x, y, z, type);
 
                 if (b == Block.sponge && physics > 0 && type != Block.sponge)
@@ -522,7 +527,7 @@ namespace MCLawl
                 }
                 catch { }
 
-                SetTile(x, y, z, type); //Updates server level blocks
+                SetTile(x, y, z, type);               //Updates server level blocks
 
                 if (physics > 0)
                     if (Block.Physics(type) || extraInfo != "") AddCheck(PosToInt(x, y, z), extraInfo);
@@ -610,7 +615,7 @@ namespace MCLawl
                     SW.Flush();
                     SW.Close();
 
-                    Server.s.Log("SAVED: Level \"" + name + "\". (" + players.Count + "/" + Player.players.Count + "/" + Server.players + ")");
+                    Server.s.Log("SAVED: Level \"" + name + "\". (" + players.Count + "/" + Player.players.Count  + "/" + Server.players + ")");
                     changed = false;
                     
                     fs.Dispose();
@@ -1107,13 +1112,13 @@ namespace MCLawl
                             {
                                 switch (blocks[C.b])
                                 {
-                                    case Block.air: //Placed air
+                                    case Block.air:         //Placed air
                                         //initialy checks if block is valid
                                         PhysAir(PosToInt((ushort)(x + 1), y, z));
                                         PhysAir(PosToInt((ushort)(x - 1), y, z));
                                         PhysAir(PosToInt(x, y, (ushort)(z + 1)));
                                         PhysAir(PosToInt(x, y, (ushort)(z - 1)));
-                                        PhysAir(PosToInt(x, (ushort)(y + 1), z)); //Check block above the air
+                                        PhysAir(PosToInt(x, (ushort)(y + 1), z));  //Check block above the air
 
                                         //Edge of map water
                                         if (edgeWater == true)
@@ -1130,7 +1135,7 @@ namespace MCLawl
                                         if (!C.extraInfo.Contains("wait")) C.time = 255;
                                         break;
 
-                                    case Block.dirt: //Dirt
+                                    case Block.dirt:     //Dirt
                                         if (!GrassGrow) { C.time = 255; break; }
 
                                         if (C.time > 20)
@@ -1147,7 +1152,7 @@ namespace MCLawl
                                         }
                                         break;
 
-                                    case Block.water: //Active_water
+                                    case Block.water:         //Active_water
                                     case Block.activedeathwater:
                                         //initialy checks if block is valid
                                         if (!finite)
@@ -1163,7 +1168,7 @@ namespace MCLawl
                                             }
                                             else
                                             {
-                                                AddUpdate(C.b, Block.air); //was placed near sponge
+                                                AddUpdate(C.b, Block.air);  //was placed near sponge
                                             }
 
                                             if (C.extraInfo.IndexOf("wait") == -1) C.time = 255;
@@ -1258,7 +1263,7 @@ namespace MCLawl
                                         }
                                         break;
 
-                                    case Block.lava: //Active_lava
+                                    case Block.lava:         //Active_lava
                                     case Block.activedeathlava:
                                         //initialy checks if block is valid
                                         if (C.time < 4) { C.time++; break; }
@@ -1499,52 +1504,52 @@ namespace MCLawl
 
                                         break;
 
-                                    case Block.sand: //Sand
+                                    case Block.sand:    //Sand
                                         if (PhysSand(C.b, Block.sand))
                                         {
                                             PhysAir(PosToInt((ushort)(x + 1), y, z));
                                             PhysAir(PosToInt((ushort)(x - 1), y, z));
                                             PhysAir(PosToInt(x, y, (ushort)(z + 1)));
                                             PhysAir(PosToInt(x, y, (ushort)(z - 1)));
-                                            PhysAir(PosToInt(x, (ushort)(y + 1), z)); //Check block above
+                                            PhysAir(PosToInt(x, (ushort)(y + 1), z));   //Check block above
                                         }
                                         C.time = 255;
                                         break;
 
-                                    case Block.gravel: //Gravel
+                                    case Block.gravel:    //Gravel
                                         if (PhysSand(C.b, Block.gravel))
                                         {
                                             PhysAir(PosToInt((ushort)(x + 1), y, z));
                                             PhysAir(PosToInt((ushort)(x - 1), y, z));
                                             PhysAir(PosToInt(x, y, (ushort)(z + 1)));
                                             PhysAir(PosToInt(x, y, (ushort)(z - 1)));
-                                            PhysAir(PosToInt(x, (ushort)(y + 1), z)); //Check block above
+                                            PhysAir(PosToInt(x, (ushort)(y + 1), z));   //Check block above
                                         }
                                         C.time = 255;
                                         break;
 
-                                    case Block.sponge: //SPONGE
+                                    case Block.sponge:    //SPONGE
                                         PhysSponge(C.b);
                                         C.time = 255;
                                         break;
 
                                     //Adv physics updating anything placed next to water or lava
-                                    case Block.wood: //Wood to die in lava
-                                    case Block.shrub: //Tree and plants follow
-                                    case Block.trunk: //Wood to die in lava
-                                    case Block.leaf: //Bushes die in lava
+                                    case Block.wood:     //Wood to die in lava
+                                    case Block.shrub:     //Tree and plants follow
+                                    case Block.trunk:    //Wood to die in lava
+                                    case Block.leaf:    //Bushes die in lava
                                     case Block.yellowflower:
                                     case Block.redflower:
                                     case Block.mushroom:
                                     case Block.redmushroom:
-                                    case Block.bookcase: //bookcase
-                                        if (physics > 1) //Adv physics kills flowers and mushroos in water/lava
+                                    case Block.bookcase:    //bookcase
+                                        if (physics > 1)   //Adv physics kills flowers and mushroos in water/lava
                                         {
                                             PhysAir(PosToInt((ushort)(x + 1), y, z));
                                             PhysAir(PosToInt((ushort)(x - 1), y, z));
                                             PhysAir(PosToInt(x, y, (ushort)(z + 1)));
                                             PhysAir(PosToInt(x, y, (ushort)(z - 1)));
-                                            PhysAir(PosToInt(x, (ushort)(y + 1), z)); //Check block above
+                                            PhysAir(PosToInt(x, (ushort)(y + 1), z));   //Check block above
                                         }
                                         C.time = 255;
                                         break;
@@ -1554,12 +1559,12 @@ namespace MCLawl
                                         C.time = 255;
                                         break;
 
-                                    case Block.wood_float: //wood_float
+                                    case Block.wood_float:   //wood_float
                                         PhysFloatwood(C.b);
                                         C.time = 255;
                                         break;
 
-                                    case Block.lava_fast: //lava_fast
+                                    case Block.lava_fast:         //lava_fast
                                         //initialy checks if block is valid
                                         PhysLava(PosToInt((ushort)(x + 1), y, z), Block.lava_fast);
                                         PhysLava(PosToInt((ushort)(x - 1), y, z), Block.lava_fast);
@@ -1570,7 +1575,7 @@ namespace MCLawl
                                         break;
 
                                     //Special blocks that are not saved
-                                    case Block.air_flood: //air_flood
+                                    case Block.air_flood:   //air_flood
                                         if (C.time < 1)
                                         {
                                             PhysAirFlood(PosToInt((ushort)(x + 1), y, z), Block.air_flood);
@@ -1584,20 +1589,20 @@ namespace MCLawl
                                         }
                                         else
                                         {
-                                            AddUpdate(C.b, 0); //Turn back into normal air
+                                            AddUpdate(C.b, 0);    //Turn back into normal air
                                             C.time = 255;
                                         }
                                         break;
 
-                                    case Block.door_air: //door_air Change any door blocks nearby into door_air
-                                    case Block.door2_air: //door_air Change any door blocks nearby into door_air
-                                    case Block.door3_air: //door_air Change any door blocks nearby into door_air
-                                    case Block.door4_air: //door_air Change any door blocks nearby into door_air
-                                    case Block.door5_air: //door_air Change any door blocks nearby into door_air
-                                    case Block.door6_air: //door_air Change any door blocks nearby into door_air
-                                    case Block.door7_air: //door_air Change any door blocks nearby into door_air
-                                    case Block.door8_air: //door_air Change any door blocks nearby into door_air
-                                    case Block.door10_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door2_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door3_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door4_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door5_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door6_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door7_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door8_air:   //door_air         Change any door blocks nearby into door_air
+                                    case Block.door10_air:   //door_air         Change any door blocks nearby into door_air
                                     case Block.door12_air:
                                     case Block.door13_air:
                                     case Block.door_iron_air:
@@ -1609,7 +1614,7 @@ namespace MCLawl
                                     case Block.door11_air:
                                     case Block.door14_air:
                                         AnyDoor(C, x, y, z, 4, true); break;
-                                    case Block.door9_air: //door_air Change any door blocks nearby into door_air
+                                    case Block.door9_air:   //door_air         Change any door blocks nearby into door_air
                                         AnyDoor(C, x, y, z, 4); break;
 
                                     case Block.odoor1_air:
@@ -1639,7 +1644,7 @@ namespace MCLawl
                                     case Block.odoor12:
                                         odoor(C); break;
 
-                                    case Block.air_flood_layer: //air_flood_layer
+                                    case Block.air_flood_layer:   //air_flood_layer
                                         if (C.time < 1)
                                         {
                                             PhysAirFlood(PosToInt((ushort)(x + 1), y, z), Block.air_flood_layer);
@@ -1651,12 +1656,12 @@ namespace MCLawl
                                         }
                                         else
                                         {
-                                            AddUpdate(C.b, 0); //Turn back into normal air
+                                            AddUpdate(C.b, 0);    //Turn back into normal air
                                             C.time = 255;
                                         }
                                         break;
 
-                                    case Block.air_flood_down: //air_flood_down
+                                    case Block.air_flood_down:   //air_flood_down
                                         if (C.time < 1)
                                         {
                                             PhysAirFlood(PosToInt((ushort)(x + 1), y, z), Block.air_flood_down);
@@ -1669,12 +1674,12 @@ namespace MCLawl
                                         }
                                         else
                                         {
-                                            AddUpdate(C.b, 0); //Turn back into normal air
+                                            AddUpdate(C.b, 0);    //Turn back into normal air
                                             C.time = 255;
                                         }
                                         break;
 
-                                    case Block.air_flood_up: //air_flood_up
+                                    case Block.air_flood_up:   //air_flood_up
                                         if (C.time < 1)
                                         {
                                             PhysAirFlood(PosToInt((ushort)(x + 1), y, z), Block.air_flood_up);
@@ -1687,7 +1692,7 @@ namespace MCLawl
                                         }
                                         else
                                         {
-                                            AddUpdate(C.b, 0); //Turn back into normal air
+                                            AddUpdate(C.b, 0);    //Turn back into normal air
                                             C.time = 255;
                                         }
                                         break;
@@ -1735,58 +1740,28 @@ namespace MCLawl
                                         }
                                         else { this.Blockchange(x, y, z, Block.air); }
                                         break;
-                                    case Block.nuke:
-                                        if (physics < 3) Blockchange(x, y, z, Block.air);
-
-                                        if (physics >= 3)
-                                        {
-                                            rand = new Random();
-
-                                            if (C.time < 5 && physics == 3)
-                                            {
-                                                C.time += 1;
-                                                if (this.GetTile(x, (ushort)(y + 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y + 1), z, Block.air); else this.Blockchange(x, (ushort)(y + 1), z, Block.lavastill);
-                                                if (this.GetTile(x, (ushort)(y - 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y - 1), z, Block.air); else this.Blockchange(x, (ushort)(y - 1), z, Block.lavastill);
-                                                if (this.GetTile((ushort)(x + 1), y, z) == Block.lavastill) this.Blockchange((ushort)(x + 1), y, z, Block.air); else this.Blockchange((ushort)(x + 1), y, z, Block.lavastill);
-                                                if (this.GetTile((ushort)(x - 1), y, z) == Block.lavastill) this.Blockchange((ushort)(x - 1), y, z, Block.air); else this.Blockchange((ushort)(x - 1), y, z, Block.lavastill);
-                                                if (this.GetTile(x, y, (ushort)(z + 1)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z + 1), Block.air); else this.Blockchange(x, y, (ushort)(z + 1), Block.lavastill);
-                                                if (this.GetTile(x, y, (ushort)(z - 1)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z - 1), Block.air); else this.Blockchange(x, y, (ushort)(z - 1), Block.lavastill);
-                                                break;
-                                            }
-
-                                            MakeExplosion(x, y, z, 4);
-                                        }
-                                        else
-                                        {
-                                            Blockchange(x, y, z, Block.air);
-                                        }
-                                        break;
+                                                                         case Block.nuke:                                        if (physics < 3) Blockchange(x, y, z, Block.air);                                        if (physics >= 3)
+                                       {
+                                           rand = new Random();                                            if (C.time < 5 && physics == 3)
+                                           {                                                C.time += 1;                                                if (this.GetTile(x, (ushort)(y + 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y + 1), z, Block.air); else this.Blockchange(x, (ushort)(y + 1), z, Block.lavastill);                                                if (this.GetTile(x, (ushort)(y - 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y - 1), z, Block.air); else this.Blockchange(x, (ushort)(y - 1), z, Block.lavastill);
+                                               if (this.GetTile((ushort)(x + 1), y, z) == Block.lavastill) this.Blockchange((ushort)(x + 1), y, z, Block.air); else this.Blockchange((ushort)(x + 1), y, z, Block.lavastill);
+                                               if (this.GetTile((ushort)(x - 1), y, z) == Block.lavastill) this.Blockchange((ushort)(x - 1), y, z, Block.air); else this.Blockchange((ushort)(x - 1), y, z, Block.lavastill);                                               if (this.GetTile(x, y, (ushort)(z + 1)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z + 1), Block.air); else this.Blockchange(x, y, (ushort)(z + 1), Block.lavastill);                                               if (this.GetTile(x, y, (ushort)(z - 1)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z - 1), Block.air); else this.Blockchange(x, y, (ushort)(z - 1), Block.lavastill);
+                                               break;
+                                          }
+
+                                            MakeExplosion(x, y, z, 4);
+                                       }                                        else                                        {                                            Blockchange(x, y, z, Block.air);                                       }
+                                       break;
                                     case Block.supernuke:
-                                        if (physics < 3) Blockchange(x, y, z, Block.air);
+                                       if (physics < 3) Blockchange(x, y, z, Block.air);
+                                       if (physics >= 3)                                       {
+                                           rand = new Random();                                            if (C.time < 5 && physics == 3)
+                                           {
+                                               C.time += 1;
+                                               if (this.GetTile(x, (ushort)(y + 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y + 1), z, Block.air); else this.Blockchange(x, (ushort)(y + 1), z, Block.lavastill);                                                if (this.GetTile(x, (ushort)(y - 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y - 1), z, Block.air); else this.Blockchange(x, (ushort)(y - 1), z, Block.lavastill);                                                if (this.GetTile((ushort)(x + 2), y, z) == Block.lavastill) this.Blockchange((ushort)(x + 1), y, z, Block.air); else this.Blockchange((ushort)(x + 1), y, z, Block.lavastill);
+                                               if (this.GetTile((ushort)(x - 2), y, z) == Block.lavastill) this.Blockchange((ushort)(x - 1), y, z, Block.air); else this.Blockchange((ushort)(x - 1), y, z, Block.lavastill);                                                if (this.GetTile(x, y, (ushort)(z + 2)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z + 1), Block.air); else this.Blockchange(x, y, (ushort)(z + 1), Block.lavastill);                                                if (this.GetTile(x, y, (ushort)(z - 2)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z - 1), Block.air); else this.Blockchange(x, y, (ushort)(z - 1), Block.lavastill);                                                break;                                            }
+                                             MakeExplosion1(x, y, z, 8);                                        }                                        else                                        {                                            Blockchange(x, y, z, Block.air);                                        }                                        break;
 
-                                        if (physics >= 3)
-                                        {
-                                            rand = new Random();
-
-                                            if (C.time < 5 && physics == 3)
-                                            {
-                                                C.time += 1;
-                                                if (this.GetTile(x, (ushort)(y + 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y + 1), z, Block.air); else this.Blockchange(x, (ushort)(y + 1), z, Block.lavastill);
-                                                if (this.GetTile(x, (ushort)(y - 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y - 1), z, Block.air); else this.Blockchange(x, (ushort)(y - 1), z, Block.lavastill);
-                                                if (this.GetTile((ushort)(x + 2), y, z) == Block.lavastill) this.Blockchange((ushort)(x + 1), y, z, Block.air); else this.Blockchange((ushort)(x + 1), y, z, Block.lavastill);
-                                                if (this.GetTile((ushort)(x - 2), y, z) == Block.lavastill) this.Blockchange((ushort)(x - 1), y, z, Block.air); else this.Blockchange((ushort)(x - 1), y, z, Block.lavastill);
-                                                if (this.GetTile(x, y, (ushort)(z + 2)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z + 1), Block.air); else this.Blockchange(x, y, (ushort)(z + 1), Block.lavastill);
-                                                if (this.GetTile(x, y, (ushort)(z - 2)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z - 1), Block.air); else this.Blockchange(x, y, (ushort)(z - 1), Block.lavastill);
-                                                break;
-                                            }
-
-                                            MakeExplosion1(x, y, z, 8);
-                                        }
-                                        else
-                                        {
-                                            Blockchange(x, y, z, Block.air);
-                                        }
-                                        break;
                                     case Block.tntexplosion:
                                         if (rand.Next(1, 11) <= 7) AddUpdate(C.b, Block.air);
                                         break;
@@ -2808,7 +2783,7 @@ namespace MCLawl
                                         }
                                         break;
                                         #endregion
-                                    default: //non special blocks are then ignored, maybe it would be better to avoid getting here and cutting down the list
+                                    default:    //non special blocks are then ignored, maybe it would be better to avoid getting here and cutting down the list
                                         if (!C.extraInfo.Contains("wait")) C.time = 255;
                                         break;
                                 }
@@ -2822,7 +2797,7 @@ namespace MCLawl
 
                     });
 
-                    ListCheck.RemoveAll(Check => Check.time == 255); //Remove all that are finished with 255 time
+                    ListCheck.RemoveAll(Check => Check.time == 255);  //Remove all that are finished with 255 time
 
                     lastUpdate = ListUpdate.Count;
                     ListUpdate.ForEach(delegate(Update C)
@@ -2853,7 +2828,7 @@ namespace MCLawl
             {
                 if (!ListCheck.Exists(Check => Check.b == b))
                 {
-                    ListCheck.Add(new Check(b, extraInfo)); //Adds block to list to be updated
+                    ListCheck.Add(new Check(b, extraInfo));    //Adds block to list to be updated
                 }
                 else
                 {
@@ -2873,7 +2848,7 @@ namespace MCLawl
             catch
             {
                 //s.Log("Warning-PhysicsCheck");
-                //ListCheck.Add(new Check(b)); //Lousy back up plan
+                //ListCheck.Add(new Check(b));    //Lousy back up plan
             }
         }
         private bool AddUpdate(int b, int type, bool overRide = false, string extraInfo = "")
@@ -2908,7 +2883,7 @@ namespace MCLawl
             catch
             {
                 //s.Log("Warning-PhysicsUpdate");
-                //ListUpdate.Add(new Update(b, (byte)type)); //Lousy back up plan
+                //ListUpdate.Add(new Update(b, (byte)type));    //Lousy back up plan
                 return false;
             }
         }
@@ -2983,8 +2958,8 @@ namespace MCLawl
                     }
                     break;
 
-                case 10: //hit active_lava
-                case 112: //hit lava_fast
+                case 10:    //hit active_lava
+                case 112:    //hit lava_fast
                     if (!PhysSpongeCheck(b)) { AddUpdate(b, 1); }
                     break;
 
@@ -2993,15 +2968,15 @@ namespace MCLawl
                 case 38:
                 case 39:
                 case 40:
-                    if (physics > 1) //Adv physics kills flowers and mushrooms in water
+                    if (physics > 1)   //Adv physics kills flowers and mushrooms in water
                     {
                         if (!PhysSpongeCheck(b)) { AddUpdate(b, 0); }
                     }
                     break;
 
-                case 12: //sand
-                case 13: //gravel
-                case 110: //woodfloat
+                case 12:    //sand
+                case 13:    //gravel
+                case 110:   //woodfloat
                     AddCheck(b);
                     break;
 
@@ -3019,12 +2994,12 @@ namespace MCLawl
                     AddUpdate(b, type);
                     break;
 
-                case 8: //hit active_water
+                case 8:    //hit active_water
                     AddUpdate(b, 1);
                     break;
 
-                case 12: //sand
-                    if (physics > 1) //Adv physics changes sand to glass next to lava
+                case 12:    //sand
+                    if (physics > 1)   //Adv physics changes sand to glass next to lava
                     {
                         AddUpdate(b, 20);
                     }
@@ -3034,7 +3009,7 @@ namespace MCLawl
                     }
                     break;
 
-                case 13: //gravel
+                case 13:    //gravel
                     AddCheck(b);
                     break;
 
@@ -3046,7 +3021,7 @@ namespace MCLawl
                 case 38:
                 case 39:
                 case 40:
-                    if (physics > 1) //Adv physics kills flowers and mushrooms plus wood in lava
+                    if (physics > 1)   //Adv physics kills flowers and mushrooms plus wood in lava
                     {
                         AddUpdate(b, 0);
                     }
@@ -3064,18 +3039,18 @@ namespace MCLawl
 
             switch (blocks[b])
             {
-                //case 8: //active water
-                //case 10: //active_lava
-                case 12: //sand
-                case 13: //gravel
-                case 110: //wood_float
-                    /*case 112: //lava_fast
-case Block.WaterDown:
-case Block.LavaDown:
-case Block.deathlava:
-case Block.deathwater:
-case Block.geyser:
-case Block.magma:*/
+                //case 8:     //active water
+                //case 10:    //active_lava
+                case 12:    //sand
+                case 13:    //gravel
+                case 110:   //wood_float
+                    /*case 112:   //lava_fast
+                    case Block.WaterDown:
+                    case Block.LavaDown:
+                    case Block.deathlava:
+                    case Block.deathwater:
+                    case Block.geyser:
+                    case Block.magma:*/
                     AddCheck(b);
                     break;
 
@@ -3084,7 +3059,7 @@ case Block.magma:*/
             }
         }
         //================================================================================================================
-        private bool PhysSand(int b, byte type) //also does gravel
+        private bool PhysSand(int b, byte type)   //also does gravel
         {
             if (b == -1 || physics == 0) return false;
 
@@ -3094,12 +3069,12 @@ case Block.magma:*/
 
             do
             {
-                tempb = IntOffset(tempb, 0, -1, 0); //Get block below each loop
+                tempb = IntOffset(tempb, 0, -1, 0);     //Get block below each loop
                 if (GetTile(tempb) != Block.Zero)
                 {
                     switch (blocks[tempb])
                     {
-                        case 0: //air lava water
+                        case 0:         //air lava water
                         case 8:
                         case 10:
                             moved = true;
@@ -3110,7 +3085,7 @@ case Block.magma:*/
                         case 38:
                         case 39:
                         case 40:
-                            if (physics > 1) //Adv physics crushes plants with sand
+                            if (physics > 1)   //Adv physics crushes plants with sand
                             { moved = true; }
                             else
                             { blocked = true; }
@@ -3139,14 +3114,14 @@ case Block.magma:*/
             return moved;
         }
 
-        private void PhysSandCheck(int b) //also does gravel
+        private void PhysSandCheck(int b)   //also does gravel
         {
             if (b == -1) { return; }
             switch (blocks[b])
             {
-                case 12: //sand
-                case 13: //gravel
-                case 110: //wood_float
+                case 12:    //sand
+                case 13:    //gravel
+                case 110:   //wood_float
                     AddCheck(b);
                     break;
 
@@ -3157,7 +3132,7 @@ case Block.magma:*/
         //================================================================================================================
         private void PhysStair(int b)
         {
-            int tempb = IntOffset(b, 0, -1, 0); //Get block below
+            int tempb = IntOffset(b, 0, -1, 0);     //Get block below
             if (GetTile(tempb) != Block.Zero)
             {
                 if (GetTile(tempb) == Block.staircasestep)
@@ -3168,7 +3143,7 @@ case Block.magma:*/
             }
         }
         //================================================================================================================
-        private bool PhysSpongeCheck(int b) //return true if sponge is near
+        private bool PhysSpongeCheck(int b)         //return true if sponge is near
         {
             int temp = 0;
             for (int x = -2; x <= +2; ++x)
@@ -3188,7 +3163,7 @@ case Block.magma:*/
             return false;
         }
         //================================================================================================================
-        private void PhysSponge(int b) //turn near water into air when placed
+        private void PhysSponge(int b)         //turn near water into air when placed
         {
             int temp = 0;
             for (int x = -2; x <= +2; ++x)
@@ -3208,7 +3183,7 @@ case Block.magma:*/
 
         }
         //================================================================================================================
-        public void PhysSpongeRemoved(int b) //Reactivates near water
+        public void PhysSpongeRemoved(int b)         //Reactivates near water
         {
             //TODO Calc only edge
             int temp = 0;
@@ -3231,7 +3206,7 @@ case Block.magma:*/
         //================================================================================================================
         private void PhysFloatwood(int b)
         {
-            int tempb = IntOffset(b, 0, -1, 0); //Get block below
+            int tempb = IntOffset(b, 0, -1, 0);     //Get block below
             if (GetTile(tempb) != Block.Zero)
             {
                 if (GetTile(tempb) == 0)
@@ -3242,7 +3217,7 @@ case Block.magma:*/
                 }
             }
 
-            tempb = IntOffset(b, 0, 1, 0); //Get block above
+            tempb = IntOffset(b, 0, 1, 0);     //Get block above
             if (GetTile(tempb) != Block.Zero)
             {
                 if (GetTile(tempb) == 8)
@@ -3283,7 +3258,7 @@ case Block.magma:*/
             }
         }
         //================================================================================================================
-        private void PhysReplace(int b, byte typeA, byte typeB) //replace any typeA with typeB
+        private void PhysReplace(int b, byte typeA, byte typeB)     //replace any typeA with typeB
         {
             if (b == -1) { return; }
             if (blocks[b] == typeA)
@@ -3373,7 +3348,7 @@ case Block.magma:*/
             if (C.time < timer) C.time++;
             else
             {
-                AddUpdate(C.b, Block.SaveConvert(blocks[C.b])); //turn back into door
+                AddUpdate(C.b, Block.SaveConvert(blocks[C.b]));    //turn back into door
                 C.time = 255;
             }
         }
@@ -3415,7 +3390,7 @@ case Block.magma:*/
                             {
                                 AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
                             }
-                            else if (b != Block.smalltnt && b != Block.bigtnt && b != Block.nuke)
+                            else if (b != Block.smalltnt && b != Block.bigtnt && b != Block.nuke)
                             {
                                 if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
                                 else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.air);
@@ -3444,7 +3419,7 @@ case Block.magma:*/
                         {
                             AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
                         }
-                        else if (b == Block.smalltnt || b == Block.bigtnt || b == Block.nuke)
+                        else if (b == Block.smalltnt || b == Block.bigtnt || b == Block.nuke)
                         {
                             AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
                         }
@@ -3466,86 +3441,84 @@ case Block.magma:*/
                         {
                             AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
                         }
-                        else if (b == Block.smalltnt || b == Block.bigtnt || b == Block.nuke)
+                        else if (b == Block.smalltnt || b == Block.bigtnt || b == Block.nuke)
                         {
                             AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
                         }
                     }
         }
-        public void MakeExplosion1(ushort x, ushort y, ushort z, int size)
-        {
-            int xx, yy, zz; Random rand = new Random(); byte b;
-
-            if (physics < 2) return;
-            AddUpdate(PosToInt(x, y, z), Block.tntexplosion, true);
-
-            for (xx = (x - (size + 1)); xx <= (x + (size + 1)); ++xx)
-                for (yy = (y - (size + 1)); yy <= (y + (size + 1)); ++yy)
-                    for (zz = (z - (size + 1)); zz <= (z + (size + 1)); ++zz)
-                        try
-                        {
-                            b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
-                            if (b == Block.tnt)
-                            {
-                                AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
-                            }
-                            else if (b != Block.supernuke)
-                            {
-                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
-                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
-                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
-                            }
-                            else
-                            {
-                                AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
-                            }
-                        }
-                        catch { }
-
-            for (xx = (x - (size + 2)); xx <= (x + (size + 2)); ++xx)
-                for (yy = (y - (size + 2)); yy <= (y + (size + 2)); ++yy)
-                    for (zz = (z - (size + 2)); zz <= (z + (size + 2)); ++zz)
-                    {
-                        b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
-                        if (rand.Next(1, 10) < 7)
-                            if (Block.Convert(b) != Block.tnt)
-                            {
-                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
-                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
-                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
-                            }
-                        if (b == Block.tnt)
-                        {
-                            AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
-                        }
-                        else if (b == Block.supernuke)
-                        {
-                            AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
-                        }
-                    }
-
-            for (xx = (x - (size + 3)); xx <= (x + (size + 3)); ++xx)
-                for (yy = (y - (size + 3)); yy <= (y + (size + 3)); ++yy)
-                    for (zz = (z - (size + 3)); zz <= (z + (size + 3)); ++zz)
-                    {
-                        b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
-                        if (rand.Next(1, 10) < 3)
-                            if (Block.Convert(b) != Block.tnt)
-                            {
-                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
-                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
-                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
-                            }
-                        if (b == Block.tnt)
-                        {
-                            AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
-                        }
-                        else if (b == Block.supernuke)
-                        {
-                            AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
-                        }
-                    }
-        }
+        public void MakeExplosion1(ushort x, ushort y, ushort z, int size)
+        {
+            int xx, yy, zz; Random rand = new Random(); byte b;
+
+            if (physics < 2) return;
+            AddUpdate(PosToInt(x, y, z), Block.tntexplosion, true);
+ 
+            for (xx = (x - (size + 1)); xx <= (x + (size + 1)); ++xx)
+                for (yy = (y - (size + 1)); yy <= (y + (size + 1)); ++yy)
+                    for (zz = (z - (size + 1)); zz <= (z + (size + 1)); ++zz)
+                        try
+                        {
+                            b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);                            if (b == Block.tnt)
+                            {
+                                AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
+                            }
+                            else if (b != Block.supernuke)
+                           {
+                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
+                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
+                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
+                            }
+                            else
+                            {
+                                AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
+                            }
+                        }
+                        catch { }
+
+            for (xx = (x - (size + 2)); xx <= (x + (size + 2)); ++xx)
+                for (yy = (y - (size + 2)); yy <= (y + (size + 2)); ++yy)
+                    for (zz = (z - (size + 2)); zz <= (z + (size + 2)); ++zz)
+                    {
+                        b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
+                        if (rand.Next(1, 10) < 7)
+                            if (Block.Convert(b) != Block.tnt)
+                            {
+                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
+                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
+                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
+                            }
+                        if (b == Block.tnt)
+                        {
+                            AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
+                        }
+                        else if (b == Block.supernuke)
+                        {
+                            AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
+                        }
+                    }
+
+            for (xx = (x - (size + 3)); xx <= (x + (size + 3)); ++xx)
+                for (yy = (y - (size + 3)); yy <= (y + (size + 3)); ++yy)
+                   for (zz = (z - (size + 3)); zz <= (z + (size + 3)); ++zz)
+                    {
+                        b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
+                        if (rand.Next(1, 10) < 3)
+                            if (Block.Convert(b) != Block.tnt)
+                            {
+                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
+                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
+                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
+                            }
+                        if (b == Block.tnt)
+                        {
+                            AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
+                        }
+                        else if (b == Block.supernuke)
+                        {
+                            AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
+                        }                    }
+       }
         public void Firework(ushort x, ushort y, ushort z, int size)
         {
             ushort xx, yy, zz; Random rand = new Random(); int storedRand1, storedRand2;
