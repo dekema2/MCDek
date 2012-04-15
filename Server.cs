@@ -103,11 +103,11 @@ namespace MCDek
         public static List<Level> levels;
         //reviewlist intitialize
         public static List<string> reviewlist = new List<string>();
-        //Translate settings initialize
         public static bool transenabled = false;
         public static string translang = "en";
         public static List<string> transignore = new List<string>();
         //public static List<levelID> allLevels = new List<levelID>();
+        public static List<string> gcaccepted = new List<string>();
         public struct levelID { public int ID; public string name; }
 
         public static List<string> afkset = new List<string>();

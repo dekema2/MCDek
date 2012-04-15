@@ -1899,7 +1899,6 @@ namespace MCLawl
             buffer[7] = rotx; buffer[8] = roty;
             SendRaw(8, buffer);
         }
-        //TODO: Figure a way to SendPos without changing rotation
         public void SendDie(byte id) { SendRaw(0x0C, new byte[1] { id }); }
         public void SendBlockchange(ushort x, ushort y, ushort z, byte type)
         {
@@ -2403,7 +2402,7 @@ namespace MCLawl
         }
         #endregion
         #region == Host <> Network ==
-        public static byte[] HTNO(int x)
+        public static byte[] HTNO(ushort x)
         {
             byte[] y = BitConverter.GetBytes(x); Array.Reverse(y); return y;
         }
