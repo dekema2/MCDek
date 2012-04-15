@@ -107,8 +107,6 @@ namespace MCDek
         public static bool transenabled = false;
         public static string translang = "en";
         public static List<string> transignore = new List<string>();
-        //Global Chat Rules Accepted list
-        public static List<string> gcaccepted = new List<string>();
         //public static List<levelID> allLevels = new List<levelID>();
         public struct levelID { public int ID; public string name; }
 
