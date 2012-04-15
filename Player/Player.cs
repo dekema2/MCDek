@@ -57,7 +57,6 @@ namespace MCLawl
         byte[] buffer = new byte[0];
         byte[] tempbuffer = new byte[0xFF];
         public bool disconnected = false;
-        public int passtries = 0;
         public string name;
         public string realName;
         public byte id;
@@ -711,28 +710,8 @@ namespace MCLawl
             }
 
             Loading = false;
-            if (Server.verifyadmins == true)
-            {
-                if (this.group.Permission >= Server.verifyadminsrank)
-                {
-                    adminpen = true;
-                }
-            }
+
             if (emoteList.Contains(name)) parseSmiley = false;
-            if (Server.verifyadmins == true)
-            {
-                if (this.group.Permission >= Server.verifyadminsrank)
-                {
-                    if (!Directory.Exists("extra/passwords") || !File.Exists("extra/passwords/" + this.name + ".xml"))
-                    {
-                        this.SendMessage("&cPlease set your admin verification password with &a/setpass [Password]!");
-                    }
-                    else
-                    {
-                        this.SendMessage("&cPlease complete admin verification with &a/pass [Password]!");
-                    }
-                }
-            }
             GlobalChat(null, "&a+ " + this.color + this.prefix + this.name + Server.DefaultColor + " has joined the game.", false);
             Server.s.Log(name + " [" + ip + "] has joined the server.");
         }
@@ -789,15 +768,6 @@ namespace MCLawl
             {
                 string info = level.foundInfo(x, y, z);
                 if (info.Contains("wait")) { return; }
-            }
-            if (Server.verifyadmins == true)
-            {
-                if (this.adminpen == true)
-                {
-                    SendBlockchange(x, y, z, b);
-                    this.SendMessage("&cYou must use &a/pass [Password]&c to verify!");
-                    return;
-                }
             }
             if (!canBuild)
             {
@@ -1530,32 +1500,11 @@ namespace MCLawl
         {
             try
             {
-                if (Server.verifyadmins)
-                {
-                    if (cmd.ToLower() == "setpass")
-                    {
-                        Command.all.Find(cmd).Use(this, message);
-                        Server.s.CommandUsed(this.name + " used /setpass");
-                        return;
-                    }
-                    if (cmd.ToLower() == "pass")
-                    {
-                        Command.all.Find(cmd).Use(this, message);
-                        Server.s.CommandUsed(this.name + " used /pass");
-                        return;
-                    }
-                }
-                if (Server.verifyadmins)
-                {
-                    if (this.adminpen)
-                    {
-                        this.SendMessage("&cYou must use &a/pass [Password]&c to verify!");
-                        return;
-                    }
-                }
                 if (cmd == "") { SendMessage("No command entered."); return; }
                 if (jailed) { SendMessage("You cannot use any commands while jailed."); return; }
-                
+                if (cmd.ToLower() == "care") { SendMessage("Corneria now loves you with all his heart."); return; }
+                if (cmd.ToLower() == "facepalm") { SendMessage("Lawlcat's bot army just simultaneously facepalm'd at your use of this command."); return; }
+
                 string foundShortcut = Command.all.FindShort(cmd);
                 if (foundShortcut != "") cmd = foundShortcut;
 
@@ -1577,15 +1526,11 @@ namespace MCLawl
                         if (cmd != "repeat") lastCMD = cmd + " " + message;
                         if (level.name.Contains("Museum " + Server.DefaultColor))
                         {
-                            if(!command.museumUsable)
+                            if (!command.museumUsable)
                             {
                                 SendMessage("Cannot use this command while in a museum!");
                                 return;
                             }
-                        }
-                        if (cmd.ToLower() != "setpass" || cmd.ToLower() != "pass")
-                        {
-                            Server.s.CommandUsed(name + " used /" + cmd + " " + message);
                         }
                         if (this.joker == true || this.muted == true)
                         {
@@ -1664,6 +1609,7 @@ namespace MCLawl
             }
             catch (Exception e) { Server.ErrorLog(e); SendMessage("Command failed."); }
         }
+       
         void HandleQuery(string to, string message)
         {
             Player p = Find(to);

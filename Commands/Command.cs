@@ -208,6 +208,7 @@ namespace MCLawl
             all.Add(new CmdXhide());
             all.Add(new CmdRob());
             all.Add(new CmdRPS());
+            all.Add(new CmdGunBattle());
 
 
             core.commands = new List<Command>(all.commands);

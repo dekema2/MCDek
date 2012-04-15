@@ -49,21 +49,6 @@ namespace MCDek.Gui
                 {
                     opchatperm = grp.name;
                 }
-                if (grp.Permission == Server.verifyadminsrank)
-                {
-                    verifyadminsperm = grp.name;
-                }
-                            listPasswords.Items.Clear();
-                            if (Directory.Exists("extra/passwords"))
-                            {
-                                DirectoryInfo di = new DirectoryInfo("extra/passwords/");
-                                FileInfo[] fi = di.GetFiles("*.xml");
-                                Thread.Sleep(10);
-                                foreach (FileInfo file in fi)
-                                {
-                                    listPasswords.Items.Add(file.Name.Replace(".xml", ""));
-                                }
-                            }
             }
             cmbDefaultRank.SelectedIndex = 1;
             cmbVerificationRank.SelectedIndex = (verifyadminsperm != "") ? cmbVerificationRank.Items.IndexOf(verifyadminsperm) : 1;

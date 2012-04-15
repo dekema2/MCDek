@@ -1740,27 +1740,76 @@ namespace MCLawl
                                         }
                                         else { this.Blockchange(x, y, z, Block.air); }
                                         break;
-                                                                         case Block.nuke:                                        if (physics < 3) Blockchange(x, y, z, Block.air);                                        if (physics >= 3)
-                                       {
-                                           rand = new Random();                                            if (C.time < 5 && physics == 3)
-                                           {                                                C.time += 1;                                                if (this.GetTile(x, (ushort)(y + 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y + 1), z, Block.air); else this.Blockchange(x, (ushort)(y + 1), z, Block.lavastill);                                                if (this.GetTile(x, (ushort)(y - 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y - 1), z, Block.air); else this.Blockchange(x, (ushort)(y - 1), z, Block.lavastill);
-                                               if (this.GetTile((ushort)(x + 1), y, z) == Block.lavastill) this.Blockchange((ushort)(x + 1), y, z, Block.air); else this.Blockchange((ushort)(x + 1), y, z, Block.lavastill);
-                                               if (this.GetTile((ushort)(x - 1), y, z) == Block.lavastill) this.Blockchange((ushort)(x - 1), y, z, Block.air); else this.Blockchange((ushort)(x - 1), y, z, Block.lavastill);                                               if (this.GetTile(x, y, (ushort)(z + 1)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z + 1), Block.air); else this.Blockchange(x, y, (ushort)(z + 1), Block.lavastill);                                               if (this.GetTile(x, y, (ushort)(z - 1)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z - 1), Block.air); else this.Blockchange(x, y, (ushort)(z - 1), Block.lavastill);
-                                               break;
-                                          }
-
-                                            MakeExplosion(x, y, z, 4);
-                                       }                                        else                                        {                                            Blockchange(x, y, z, Block.air);                                       }
-                                       break;
+                                     
+                                    case Block.nuke:
+                                        if (physics < 3) Blockchange(x, y, z, Block.air);
+
+                                        if (physics >= 3)
+
+                                       {
+
+                                           rand = new Random();
+                                            if (C.time < 5 && physics == 3)
+
+                                           {
+                                                C.time += 1;
+                                                if (this.GetTile(x, (ushort)(y + 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y + 1), z, Block.air); else this.Blockchange(x, (ushort)(y + 1), z, Block.lavastill);
+                                                if (this.GetTile(x, (ushort)(y - 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y - 1), z, Block.air); else this.Blockchange(x, (ushort)(y - 1), z, Block.lavastill);
+
+                                               if (this.GetTile((ushort)(x + 1), y, z) == Block.lavastill) this.Blockchange((ushort)(x + 1), y, z, Block.air); else this.Blockchange((ushort)(x + 1), y, z, Block.lavastill);
+
+                                               if (this.GetTile((ushort)(x - 1), y, z) == Block.lavastill) this.Blockchange((ushort)(x - 1), y, z, Block.air); else this.Blockchange((ushort)(x - 1), y, z, Block.lavastill);
+                                               if (this.GetTile(x, y, (ushort)(z + 1)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z + 1), Block.air); else this.Blockchange(x, y, (ushort)(z + 1), Block.lavastill);
+                                               if (this.GetTile(x, y, (ushort)(z - 1)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z - 1), Block.air); else this.Blockchange(x, y, (ushort)(z - 1), Block.lavastill);
+
+                                               break;
+
+                                          }
+
+
+
+                                            MakeExplosion(x, y, z, 4);
+
+                                       }
+                                        else
+                                        {
+                                            Blockchange(x, y, z, Block.air);
+                                       }
+
+                                       break;
+
                                     case Block.supernuke:
-                                       if (physics < 3) Blockchange(x, y, z, Block.air);
-                                       if (physics >= 3)                                       {
-                                           rand = new Random();                                            if (C.time < 5 && physics == 3)
-                                           {
-                                               C.time += 1;
-                                               if (this.GetTile(x, (ushort)(y + 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y + 1), z, Block.air); else this.Blockchange(x, (ushort)(y + 1), z, Block.lavastill);                                                if (this.GetTile(x, (ushort)(y - 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y - 1), z, Block.air); else this.Blockchange(x, (ushort)(y - 1), z, Block.lavastill);                                                if (this.GetTile((ushort)(x + 2), y, z) == Block.lavastill) this.Blockchange((ushort)(x + 1), y, z, Block.air); else this.Blockchange((ushort)(x + 1), y, z, Block.lavastill);
-                                               if (this.GetTile((ushort)(x - 2), y, z) == Block.lavastill) this.Blockchange((ushort)(x - 1), y, z, Block.air); else this.Blockchange((ushort)(x - 1), y, z, Block.lavastill);                                                if (this.GetTile(x, y, (ushort)(z + 2)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z + 1), Block.air); else this.Blockchange(x, y, (ushort)(z + 1), Block.lavastill);                                                if (this.GetTile(x, y, (ushort)(z - 2)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z - 1), Block.air); else this.Blockchange(x, y, (ushort)(z - 1), Block.lavastill);                                                break;                                            }
-                                             MakeExplosion1(x, y, z, 8);                                        }                                        else                                        {                                            Blockchange(x, y, z, Block.air);                                        }                                        break;
+                                       if (physics < 3) Blockchange(x, y, z, Block.air);
+
+
+                                       if (physics >= 3)
+                                       {
+                                           rand = new Random();
+                                            if (C.time < 5 && physics == 3)
+
+                                           {
+
+                                               C.time += 1;
+
+                                               if (this.GetTile(x, (ushort)(y + 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y + 1), z, Block.air); else this.Blockchange(x, (ushort)(y + 1), z, Block.lavastill);
+                                                if (this.GetTile(x, (ushort)(y - 2), z) == Block.lavastill) this.Blockchange(x, (ushort)(y - 1), z, Block.air); else this.Blockchange(x, (ushort)(y - 1), z, Block.lavastill);
+                                                if (this.GetTile((ushort)(x + 2), y, z) == Block.lavastill) this.Blockchange((ushort)(x + 1), y, z, Block.air); else this.Blockchange((ushort)(x + 1), y, z, Block.lavastill);
+
+                                               if (this.GetTile((ushort)(x - 2), y, z) == Block.lavastill) this.Blockchange((ushort)(x - 1), y, z, Block.air); else this.Blockchange((ushort)(x - 1), y, z, Block.lavastill);
+                                                if (this.GetTile(x, y, (ushort)(z + 2)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z + 1), Block.air); else this.Blockchange(x, y, (ushort)(z + 1), Block.lavastill);
+                                                if (this.GetTile(x, y, (ushort)(z - 2)) == Block.lavastill) this.Blockchange(x, y, (ushort)(z - 1), Block.air); else this.Blockchange(x, y, (ushort)(z - 1), Block.lavastill);
+                                                break;
+                                            }
+
+ 
+                                            MakeExplosion1(x, y, z, 8);
+                                        }
+                                        else
+                                        {
+                                            Blockchange(x, y, z, Block.air);
+                                        }
+                                        break;
+
 
                                     case Block.tntexplosion:
                                         if (rand.Next(1, 11) <= 7) AddUpdate(C.b, Block.air);
@@ -3390,7 +3439,8 @@ namespace MCLawl
                             {
                                 AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
                             }
-                            else if (b != Block.smalltnt && b != Block.bigtnt && b != Block.nuke)
+                            else if (b != Block.smalltnt && b != Block.bigtnt && b != Block.nuke)
+
                             {
                                 if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
                                 else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.air);
@@ -3419,7 +3469,8 @@ namespace MCLawl
                         {
                             AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
                         }
-                        else if (b == Block.smalltnt || b == Block.bigtnt || b == Block.nuke)
+                        else if (b == Block.smalltnt || b == Block.bigtnt || b == Block.nuke)
+
                         {
                             AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
                         }
@@ -3441,84 +3492,159 @@ namespace MCLawl
                         {
                             AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
                         }
-                        else if (b == Block.smalltnt || b == Block.bigtnt || b == Block.nuke)
+                        else if (b == Block.smalltnt || b == Block.bigtnt || b == Block.nuke)
+
                         {
                             AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
                         }
                     }
         }
-        public void MakeExplosion1(ushort x, ushort y, ushort z, int size)
-        {
-            int xx, yy, zz; Random rand = new Random(); byte b;
-
-            if (physics < 2) return;
-            AddUpdate(PosToInt(x, y, z), Block.tntexplosion, true);
- 
-            for (xx = (x - (size + 1)); xx <= (x + (size + 1)); ++xx)
-                for (yy = (y - (size + 1)); yy <= (y + (size + 1)); ++yy)
-                    for (zz = (z - (size + 1)); zz <= (z + (size + 1)); ++zz)
-                        try
-                        {
-                            b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);                            if (b == Block.tnt)
-                            {
-                                AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
-                            }
-                            else if (b != Block.supernuke)
-                           {
-                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
-                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
-                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
-                            }
-                            else
-                            {
-                                AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
-                            }
-                        }
-                        catch { }
-
-            for (xx = (x - (size + 2)); xx <= (x + (size + 2)); ++xx)
-                for (yy = (y - (size + 2)); yy <= (y + (size + 2)); ++yy)
-                    for (zz = (z - (size + 2)); zz <= (z + (size + 2)); ++zz)
-                    {
-                        b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
-                        if (rand.Next(1, 10) < 7)
-                            if (Block.Convert(b) != Block.tnt)
-                            {
-                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
-                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
-                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
-                            }
-                        if (b == Block.tnt)
-                        {
-                            AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
-                        }
-                        else if (b == Block.supernuke)
-                        {
-                            AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
-                        }
-                    }
-
-            for (xx = (x - (size + 3)); xx <= (x + (size + 3)); ++xx)
-                for (yy = (y - (size + 3)); yy <= (y + (size + 3)); ++yy)
-                   for (zz = (z - (size + 3)); zz <= (z + (size + 3)); ++zz)
-                    {
-                        b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
-                        if (rand.Next(1, 10) < 3)
-                            if (Block.Convert(b) != Block.tnt)
-                            {
-                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
-                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
-                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
-                            }
-                        if (b == Block.tnt)
-                        {
-                            AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
-                        }
-                        else if (b == Block.supernuke)
-                        {
-                            AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
-                        }                    }
-       }
+        public void MakeExplosion1(ushort x, ushort y, ushort z, int size)
+
+        {
+
+            int xx, yy, zz; Random rand = new Random(); byte b;
+
+
+
+            if (physics < 2) return;
+
+            AddUpdate(PosToInt(x, y, z), Block.tntexplosion, true);
+
+ 
+
+            for (xx = (x - (size + 1)); xx <= (x + (size + 1)); ++xx)
+
+                for (yy = (y - (size + 1)); yy <= (y + (size + 1)); ++yy)
+
+                    for (zz = (z - (size + 1)); zz <= (z + (size + 1)); ++zz)
+
+                        try
+
+                        {
+
+                            b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
+                            if (b == Block.tnt)
+
+                            {
+
+                                AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
+
+                            }
+
+                            else if (b != Block.supernuke)
+
+                           {
+
+                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
+
+                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
+
+                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
+
+                            }
+
+                            else
+
+                            {
+
+                                AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
+
+                            }
+
+                        }
+
+                        catch { }
+
+
+
+            for (xx = (x - (size + 2)); xx <= (x + (size + 2)); ++xx)
+
+                for (yy = (y - (size + 2)); yy <= (y + (size + 2)); ++yy)
+
+                    for (zz = (z - (size + 2)); zz <= (z + (size + 2)); ++zz)
+
+                    {
+
+                        b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
+
+                        if (rand.Next(1, 10) < 7)
+
+                            if (Block.Convert(b) != Block.tnt)
+
+                            {
+
+                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
+
+                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
+
+                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
+
+                            }
+
+                        if (b == Block.tnt)
+
+                        {
+
+                            AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
+
+                        }
+
+                        else if (b == Block.supernuke)
+
+                        {
+
+                            AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
+
+                        }
+
+                    }
+
+
+
+            for (xx = (x - (size + 3)); xx <= (x + (size + 3)); ++xx)
+
+                for (yy = (y - (size + 3)); yy <= (y + (size + 3)); ++yy)
+
+                   for (zz = (z - (size + 3)); zz <= (z + (size + 3)); ++zz)
+
+                    {
+
+                        b = GetTile((ushort)xx, (ushort)yy, (ushort)zz);
+
+                        if (rand.Next(1, 10) < 3)
+
+                            if (Block.Convert(b) != Block.tnt)
+
+                            {
+
+                                if (rand.Next(1, 11) <= 4) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.tntexplosion);
+
+                                else if (rand.Next(1, 11) <= 8) AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.radiation);
+
+                                else AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), "drop 50 dissipate 8");
+
+                            }
+
+                        if (b == Block.tnt)
+
+                        {
+
+                            AddUpdate(PosToInt((ushort)xx, (ushort)yy, (ushort)zz), Block.smalltnt);
+
+                        }
+
+                        else if (b == Block.supernuke)
+
+                        {
+
+                            AddCheck(PosToInt((ushort)xx, (ushort)yy, (ushort)zz));
+
+                        }
+                    }
+
+       }
+
         public void Firework(ushort x, ushort y, ushort z, int size)
         {
             ushort xx, yy, zz; Random rand = new Random(); int storedRand1, storedRand2;
