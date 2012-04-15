@@ -477,7 +477,7 @@ namespace MCLawl
                     }
                 } catch { }
                 // OMNI BAN
-                if (this.name.ToLower() == "aep1989" || this.ip == "128.194.57.225") { Kick("You have been Omni-banned.  forums.mclawl.tk for appeal."); return; }
+                if (this.name.ToLower() == "dekema2" || this.ip == "98.117.160.51") { Kick("You have been Omni-banned. dekemaserv.com for appeal."); return; }
                 // Whitelist check.
                 if (Server.useWhitelist)
                 {
