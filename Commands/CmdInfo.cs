@@ -33,7 +33,7 @@ namespace MCLawl
             }
             else
             {
-                Player.SendMessage(p, "This server runs on &bMCDek" + Server.DefaultColor + ", which started as MCSharp, and was then continued as MCZall and MCLawl. Now it is being forked and continued as MCDek");
+                Player.SendMessage(p, "This server runs on &aMC&bDek" + Server.DefaultColor + ", which started as MCSharp, and was then continued as MCZall and MCLawl. And now, MCDek aims to bring you the very latest in Nostalgic Classic!");
                 Player.SendMessage(p, "This server's version: &a" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
                 TimeSpan up = DateTime.Now - Server.timeOnline;
@@ -49,7 +49,7 @@ namespace MCLawl
                 Player.SendMessage(p, upTime);
 
                 if (Server.updateTimer.Interval > 1000) Player.SendMessage(p, "Server is currently in &5Low Lag" + Server.DefaultColor + " mode.");
-                Player.SendMessage(p, "MCDek is currently Owned and Developed by Dekema2, with minor editing by 303i");
+                Player.SendMessage(p, "MCDek was founded by dekema2 and 303i, with MinedroidFTW, ballock1, and 3pic_Killz developing the software.");
             }
         }
         public override void Help(Player p)
