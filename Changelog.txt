@@ -1,39 +1,39 @@
 (4/9/12)-v0.4.0.0: Added Command:
-                   - /gunbattle
-				   - /buy
-				   - /ezone
-                   Added Block:
-                   - radiation
-				   - nuke
-				   - supernuke
+- /gunbattle
+- /buy
+- /ezone
+Added Block:
+- radiation
+- nuke
+- supernuke
 (4/3/12)-v0.3.8.0: Added Command:
-                     -/rob 
-					 -/rps
-				   Added Block:
-				     - mine
-(4/3/12)-v0.3.7.0: Worked on Mapviewer GUI is now cleaner almost working :D
-                   - /gun now doesnt have that annoying glass just shoot = requested by Capierian
-				   - Admin Verification
-				   - Moved Mapviewer to a seperate .exe to reduce lag
+-/rob 
+-/rps
+Added Block:
+- mine
+(4/3/12)-v0.3.7.0: Worked on Mapviewer GUI is now cleaner almost working 
+- /gun now doesnt have that annoying glass just shoot = requested by Capierian
+- Admin Verification
+- Moved Mapviewer to a seperate .exe to reduce lag
 (4/2/12)-v0.3.2.0- v0.3.4.0: Added Commands
-                   - Converse
-				   - Xhide = requested by Capierian
-				   - Vote
-				   Fixed URL errors
-				   Major Debugging 
+- Converse
+- Xhide = requested by Capierian
+- Vote
+Fixed URL errors
+Major Debugging 
 (4/1/12)-v0.3.2.0: Added Commands
-				   - FastHouse
-				   - Push
-				   Added Blocks
-				   - opdoor
+- FastHouse
+- Push
+Added Blocks
+- opdoor
 (3/31/12)-v0.3.1.0: Added Commands
-				   - OpTest
-				   - AutoC
-				   - Detonate
-				   - Uban
-				   - ChristmasTree
-				   - Mimic
-				   - GriefPatrol
+- OpTest
+- AutoC
+- Detonate
+- Uban
+- ChristmasTree
+- Mimic
+- GriefPatrol
 (3/30/12)-v0.3.0.0: Created /converse, a new pre-defined chat messaging system
 (3/01/12)-v0.2.6.0: Added the commands /home, /killserv, and /airraid. All of these need substansial work 
 (2/25/12)-v0.2.0.0: Updated jkush321's MapViewer to allow non-square maps, added [commands], courtesy of ballock1
